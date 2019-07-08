@@ -20,16 +20,19 @@ module load annovar
 #pwd
 #/cluster/projects/kridelgroup/RAP_ANALYSIS/chr
 
-#this is part 1 of the best protocols GATK steps for identifying SNVs and INDELS
+#this is part 2 of the best protocols GATK steps for identifying SNVs and INDELS
 #https://software.broadinstitute.org/gatk/best-practices/workflow?id=11146
 
-#using output from samtools (split original bam files into chrosome based files)
+#Summarizes counts of reads that support reference, alternate and 
+#other alleles for given sites. Results can be used with CalculateContamination.
 
+#using chromosome specific bam files
+
+# get file name
 #find -L . -name "*.cram.bai" > mutect_jobs #480
 #sed 's/.bai//' mutect_jobs > mutect_jobs_clean
 
-#pwd
-names=($(cat mutect_jobs))
+names=($(cat mutect_jobs_clean))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
 tum=($(samtools view -H ${names[${SLURM_ARRAY_TASK_ID}]} | grep '^@RG' | sed "s/.*SM:\([^\t]*\).*/\1/g" | uniq))
@@ -39,12 +42,11 @@ export tum
 chr=($(echo ${names[${SLURM_ARRAY_TASK_ID}]} | awk -F'[_.]' '{print $8}'))
 echo "${chr}"
 
-gatk Mutect2 \
+gatk GetPileupSummaries \
 -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
 -I "${names[${SLURM_ARRAY_TASK_ID}]}" \
--I /cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam \
 -L "${chr}" \
--tumor "${tum}" \
--O ${names[${SLURM_ARRAY_TASK_ID}]}.vcf.gz \
---germline-resource /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz
+-O ${names[${SLURM_ARRAY_TASK_ID}]}.pileups.table \
+-V /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz
+
 

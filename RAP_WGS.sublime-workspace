@@ -1,0 +1,306 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"RA",
+				"RAP_ANALYSIS"
+			],
+			[
+				"minor",
+				"minor_cn"
+			],
+			[
+				"pycln",
+				"pyclone_input"
+			],
+			[
+				"mutation",
+				"mutation_id"
+			],
+			[
+				"res_",
+				"res_all"
+			],
+			[
+				"mutat",
+				"mutation_id"
+			],
+			[
+				"bam",
+				"bamrecount"
+			],
+			[
+				"res",
+				"res_bamrecounts"
+			],
+			[
+				"minro",
+				"minor_cn"
+			],
+			[
+				"mut_",
+				"mut_end"
+			],
+			[
+				"T1",
+				"t1_specific"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"pack",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 136.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": true,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/kisaev/RAP_WGS"
+	],
+	"file_history":
+	[
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/reading_CITUP_results.py",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_CITUP.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_samp_003.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_samp_005.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_samp_001.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/RAP/003_mutect2_RAP.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/BC_vcf_files_analysis/running_annovar.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/004_mutect2_run_LY_CNSrel_001_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/RAP/setting_up_analysis_001.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/RAP/004_mutect2_RAP.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/RAP/setting_up_symlinks.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs_002.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs_003.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs_004.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs_005.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/cnvkit/cnvkit_intersect_bed_wVCFs.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/cnvkit/cnvkit_segmentation.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/cnvkit/cnvkit_set_up.sh",
+		"/Users/kisaev/Desktop/metal.yaml",
+		"/Users/kisaev/Desktop/build.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/test_no_cnas.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/plotting_pyclone_results.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_samp_007.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_samp_006.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_run_analysis.sh",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/007B_analyzing_tests_REAL_DATA_1000_en_runs.R",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/V2_march_2019_permutations_elsatic_net_lncRNAs_main_script.R",
+		"/Users/kisaev/Documents/pyclone_analysis/samp001_config_file.yaml",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/bam_readcount_parseline.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/BC_vcf_files_analysis/001_paired_exomes_analysis.R",
+		"/Users/kisaev/Documents/pyclone_analysis/config_file.yaml",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/003_mutect2_run_LY_CNSrel_003_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/pyclone_pipeline_command.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/BC_vcf_files_analysis/normalize_vcf_files_annovar_annotation.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/KI_filter_norm_annotated_mutect2_vcfs.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/setting_up_individual_pyclone_inputs.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/pyclone/building_genotype_file.sh",
+		"/Users/kisaev/Downloads/tutorial/config.yaml",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/running_annovar.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/003_mutect2_run_LY_CNSrel_001_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/002_bam_index_files.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/002_bam_index_files.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/comparing_vcf_files.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/003_mutect2_run_LY_CNSrel_001_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/004_mutect2_run_LY_CNSrel_003_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/003_mutect2_run_LY_CNSrel_003_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/002_paired_exomes_analysis.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/001_paired_exomes_analysis.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/filter_mutect2_calls.sh",
+		"/Users/kisaev/Downloads/genenames_conversions_2019.txt",
+		"/Users/kisaev/DLBCL-CNS-relapse/normalize_vcf_files_annovar_annotation.sh",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/011_survival_and_correlations_Figure2_survival_summary_TCGA_all_cancers_survival.R",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/Figure2_code.R",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/Figure5_analysis_figure.R",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/TCGA_biolinks_figure5_code.R",
+		"/Users/kisaev/lncRNAs_TCGA/NewTCGA_2017scripts/Thesis_final_scripts/Prognostic_lncs_more_detail_paper/final_scripts_2019/figure2_d_pcgs_lncs.R",
+		"/Users/kisaev/lncRNAs_TCGA/elastic_net_permutations/001_main_elastic_net_1000_runs_analyzing.R",
+		"/Users/kisaev/DLBCL-CNS-relapse/001_symlinks_BC_BAM_files.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/001_symlinks_BC_VCF_files.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/004_mutect2_run_LY_CNSrel_005_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_scripts_run_cluster/004_mutect2_run_LY_CNSrel_007_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_001_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/004_mutect2_run_LY_CNSrel_003_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/004_mutect2_run_LY_CNSrel_001_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/004_mutect2_run_LY_CNSrel_006_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/004_mutect2_run_LY_CNSrel_005_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/004_mutect2_run_LY_CNSrel_007_paired.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_006_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_006_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_007_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_007_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_001_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_003_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_003_T2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/003_mutect2_run_LY_CNSrel_005_T1.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/gatk_mutect2.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/001_symlinks.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/README.md",
+		"/Users/kisaev/DLBCL-CNS-relapse/mutect2_run.sh",
+		"/Users/kisaev/DLBCL-CNS-relapse/annovar_to_maf.R",
+		"/Users/kisaev/Desktop/406_CCNB1IP1_survival.R",
+		"/Users/kisaev/Desktop/survival_analysis_pcgs_fullTCGA.R",
+		"/Users/kisaev/Desktop/full_survival.R",
+		"/Users/kisaev/Downloads/survival.R"
+	],
+	"find":
+	{
+		"height": 39.0
+	},
+	"find_in_files":
+	{
+		"height": 133.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 59.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 102.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "RAP_WGS.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 533.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
