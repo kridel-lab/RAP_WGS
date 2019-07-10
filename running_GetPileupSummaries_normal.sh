@@ -5,6 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J MUTECT2
+#SBATCH --array=0-23 # job array index
 
 #need to run Mutect2 on all bam files from tumour samples
 #author: Karin Isaev
@@ -17,7 +18,7 @@ module load gatk
 module load annovar
 
 #pwd
-#/cluster/projects/kridelgroup/RAP_ANALYSIS/chr
+#/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/control/chr
 
 #this is part 2 of the best protocols GATK steps for identifying SNVs and INDELS
 #https://software.broadinstitute.org/gatk/best-practices/workflow?id=11146
@@ -25,13 +26,27 @@ module load annovar
 #Summarizes counts of reads that support reference, alternate and 
 #other alleles for given sites. Results can be used with CalculateContamination.
 
-#get pileup summary table for matched normal sample to use with 
+#using chromosome specific bam files
+
+# get file name
+#find -L . -name "*.bam.bai" > mutect_jobs 
+#sed 's/.bai//' mutect_jobs > mutect_jobs_clean
+
+names=($(cat mutect_jobs_clean))
+echo ${names[${SLURM_ARRAY_TASK_ID}]}
+
+tum=($(samtools view -H ${names[${SLURM_ARRAY_TASK_ID}]} | grep '^@RG' | sed "s/.*SM:\([^\t]*\).*/\1/g" | uniq))
+echo "${tum}"
+export tum
+
+chr=($(echo ${names[${SLURM_ARRAY_TASK_ID}]} | awk -F'[_.]' '{print $4}'))
+echo "${chr}"
 
 gatk GetPileupSummaries \
 -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
--I /cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam \
--O match_normal.pileups.table \
--V /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz \
--L /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz \
+-I "${names[${SLURM_ARRAY_TASK_ID}]}" \
+-L "${chr}" \
+-O ${names[${SLURM_ARRAY_TASK_ID}]}.pileups.table \
+-V af-only-gnomad.raw.sites.b37.vcf.gz
 
 
