@@ -121,8 +121,8 @@ genes_muts$V2 = factor(genes_muts$V2, levels=unique(genes_muts$V2))
 
 cols = colorRampPalette(solarized_pal()(3))(17)
 
-g = ggbarplot(genes_muts, x="V2", y="fraction", fill="V1")
+g = ggbarplot(genes_muts, x="V2", y="fraction")
 ggpar(g, font.tickslab = c(12,"plain", "black"), xtickslab.rt=90, legend ="right")+
-  scale_fill_manual(values =cols)  
+  facet_wrap(~V1, nrow=6, ncol= 3, scales= "free_x")  
 
 

@@ -109,17 +109,115 @@ ssm_files = as.data.table(ldply(llply(all_muts, get_input)))
 t = as.data.table(table(ssm_files$gene, ssm_files$patient))
 rm = filter(t, N >=2)$V1
 ssm_files = as.data.table(filter(ssm_files, !(gene %in% rm)))
+dim(ssm_files)
 
 #find mutations that are not present in all samples
 #need to fill in the blank --> retrieve reads from BAM files
-
 t = as.data.table(table(ssm_files$gene))
 need_to_retrieve = as.data.table(filter(t, N <20))
 
 #get chr, start, end, ref, alt for all the mutations that need retrival 
 retrieve = as.data.table(filter(ssm_files, gene %in% need_to_retrieve$V1))
 retrieve = unique(retrieve[,c("CHROM", "POS", "POS", "REF", "ALT")])
-write.table(retrieve, file="mutations_to_retrieve_from_bam_files.bed", quote=F, row.names=F, sep="\t")
+#write.table(retrieve, file="mutations_to_retrieve_from_bam_files.bed", quote=F, row.names=F, sep="\t")
+
+#remove mutations that aren't present in everyone from original file
+ssm_files = as.data.table(filter(ssm_files, !(gene %in% need_to_retrieve$V1)))
+dim(ssm_files)
+
+##results
+#find -L . -name "*missing_counts.bed" > bam_readcount_results #20
+files = (fread("bam_readcount_results", header=F))
+files = files$V1
+
+#in R 
+library(params)
+library(readr)
+source("/cluster/home/kisaev/scripts/bam_readcount_parseline.R")
+
+get_dat = function(file){
+  #readcount output 
+  x = file 
+  #mutation data 
+  bed_f = "mutations_to_retrieve_from_bam_files.bed"
+  bed = fread(bed_f)
+  colnames(bed) = c("chr", "start", "end", 
+                                     "ref_allele", "alt_allele")
+
+  write.table(bed, bed_f, quote=F, row.names=F, sep="\t")
+  bed = bed_f
+  samplename = unlist(strsplit(file, "/"))[6]
+  #get output 
+  output_reads_for_muts = bam_readcount.parse(x, samplename = samplename, bed)
+  output_reads_for_muts = as.data.table(output_reads_for_muts)
+
+  return(output_reads_for_muts)
+}
+
+missing_variants_data1 = llply(files, get_dat, .progress="text")
+missing_variants_data = ldply(missing_variants_data1)
+missing_variants_data$samplename = sapply(missing_variants_data$samplename, function(x){paste(unlist(strsplit(x, "_"))[1:6], collapse="_")})
+missing_variants_data = as.data.table(missing_variants_data)
+
+#now need to convert this into PhyloWGS format 
+head(ssm_files)
+
+missing_variants_data$ID = ""
+missing_variants_data$gene = paste(missing_variants_data$chr, missing_variants_data$start, sep="_")
+missing_variants_data$a = missing_variants_data$ref_count
+missing_variants_data$d = missing_variants_data$ref_count + missing_variants_data$alt_count
+missing_variants_data$mu_r = 0.999
+missing_variants_data$mu_v = 0.499
+colnames(missing_variants_data)[7] = "patient"
+colnames(missing_variants_data)[c(1:2, 4:5)] = c("CHROM", "POS", "REF", "ALT")
+
+cols = colnames(ssm_files)[which(colnames(ssm_files) %in% colnames(missing_variants_data))]
+missing_variants_data = missing_variants_data[,..cols]
+
+all_muts = rbind(missing_variants_data, ssm_files)
+
+#now merge all patient entries into one line for each mutation = 1 line per mutation = 40807
+muts = unique(all_muts$gene)
+
+get_merge = function(mut){
+    mut_dat = as.data.table(filter(all_muts, gene == mut))
+    colnames(mut_dat)[1] = "id"
+    cols = c("id", "gene", "a", "d", "mu_r", "mu_v")
+    order = mut_dat$patient
+    print(order)
+    mut_dat = mut_dat[,..cols]
+    a = paste(mut_dat$a, collapse=",")
+    d = paste(mut_dat$d, collapse=",")
+    mut_dat = mut_dat[1,]
+    mut_dat$a = a
+    mut_dat$d = d
+    return(mut_dat)
+}
+
+muts_final = as.data.table(ldply(llply(muts, get_merge, .progress="text")))
+muts_final$id = paste("s", 0:(nrow(muts_final)-1))
+
+order =  c("LY_RAP_0003_Aut_FzT_01", "LY_RAP_0003_Aut_FzT_02", "LY_RAP_0003_Aut_FzT_03",
+ "LY_RAP_0003_Aut_FzT_04" ,"LY_RAP_0003_Aut_FzT_05" ,"LY_RAP_0003_Aut_FzT_06",
+ "LY_RAP_0003_Aut_FzT_07" ,"LY_RAP_0003_Aut_FzT_09", "LY_RAP_0003_Aut_FzT_10",
+ "LY_RAP_0003_Aut_FzT_11" ,"LY_RAP_0003_Aut_FzT_12" ,"LY_RAP_0003_Aut_FzT_13",
+ "LY_RAP_0003_Aut_FzT_14" ,"LY_RAP_0003_Aut_FzT_15" ,"LY_RAP_0003_Aut_FzT_16",
+ "LY_RAP_0003_Aut_FzT_17" ,"LY_RAP_0003_Aut_FzT_18" ,"LY_RAP_0003_Dia_FoT_01",
+ "LY_RAP_0003_Dia_FoT_03" ,"LY_RAP_0003_Dia_FoT_05")
+
+date = Sys.Date()
+write.table(muts_final, file=paste(date, "ssm_data_RAP_WGS_input.txt", sep="_"), quote=F, row.names=F, sep="\t")
+write.table(order, file=paste(date, "ssm_data_RAP_WGS_input_order.txt", sep="_"), quote=F, row.names=F, sep="\t")
+
+
+
+
+
+
+
+
+
+
 
 
 

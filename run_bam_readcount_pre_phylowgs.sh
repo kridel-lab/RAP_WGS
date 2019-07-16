@@ -24,12 +24,12 @@ module load bam-readcount
 #this is the last part of the best protocols GATK steps for identifying SNVs and INDELS
 #https://software.broadinstitute.org/gatk/best-practices/workflow?id=11146
 
-#find -L . -name "*cram" > jobs #20
+#find -L . -name "*bam" > jobs_bamreadcount #20
 
 #pwd
-names=($(cat jobs))
+names=($(cat jobs_bamreadcount))
 
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
-bam-readcount -f /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta ${names[${SLURM_ARRAY_TASK_ID}]} -l /cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final/mutations_to_retrieve_from_bam_files.bed
+bam-readcount -f /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta ${names[${SLURM_ARRAY_TASK_ID}]} -l /cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final/mutations_to_retrieve_from_bam_files.bed > ${names[${SLURM_ARRAY_TASK_ID}]}_missing_counts.bed
 
