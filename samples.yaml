@@ -1,0 +1,6 @@
+samples:
+  tumor_sample_1: LY_RAP_0003_Aut_FzT_01_files/gatk/LY_RAP_0003_Aut_FzT_01.sorted.dup.recal.cram.bam
+  normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
+
+pairings:
+  tumor_sample_1:  normal_sample_1
