@@ -1,5 +1,5 @@
 ## path to tools
-samTools:  samtools
+samTools: samtools
 
 ## path to scripts ##
 readCounterScript:  /cluster/home/kisaev/hmmcopy_utils-master/bin/readCounter
@@ -32,8 +32,8 @@ binSize:  10000
 
 ## ichorCNA params ##
 ichorCNA_gcWig: /cluster/home/kisaev/ichorCNA/inst/extdata/gc_hg19_10kb.wig
-ichorCNA_mapWig:  /cluster/home/kisaev/ichorCNA/inst/extdata/to/map_hg19_10kb.wig
-ichorCNA_chrs:  c(1:22, \"X\")
+ichorCNA_mapWig:  /cluster/home/kisaev/ichorCNA/inst/extdata/map_hg19_10kb.wig
+ichorCNA_chrs:  c(1:22)
 ichorCNA_normal:  c(0.5)  
 ichorCNA_ploidy:  c(2,3)  
 ichorCNA_estimateNormal:  TRUE
