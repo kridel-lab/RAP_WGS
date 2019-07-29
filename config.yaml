@@ -55,7 +55,7 @@ vcf_quality:  100
 
 ## TitanCNA params ##
 TitanCNA_maxNumClonalClusters: 5
-TitanCNA_chrs:  c(1:22, \"X\")
+TitanCNA_chrs:  c(1:22)
 TitanCNA_normalInit: 0.5
 TitanCNA_maxPloidy: 3
 TitanCNA_estimateNormal:  map
