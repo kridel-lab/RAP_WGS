@@ -8,7 +8,7 @@
 
 module load samtools
 module load python3
-module load R 
+module load R/3.6.1
 
 ###-------PART 1---------------------------------------------------------------------------------------
 cluster=/cluster/home/kisaev/TitanCNA/scripts/snakemake/config/cluster_slurm.yaml
@@ -26,6 +26,6 @@ cluster=/cluster/home/kisaev/TitanCNA/scripts/snakemake/config/cluster_slurm.yam
 
 ###-------PART 3---------------------------------------------------------------------------------------
 icho=/cluster/home/kisaev/TitanCNA/scripts/snakemake/TitanCNA.snakefile
-snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50
+snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50 --unlock
 
 

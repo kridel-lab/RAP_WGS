@@ -117,8 +117,9 @@ runEMclonalCN <- function(data, params,
     piGi <- vector("list", numChrs)
     # initialise the chromosome index and the init
     # state distributions
-    print(unique(data$chr))
-    for (i in 1:numChrs) {
+    #print(unique(data$chr))
+    print(chrs)
+    for(i in 1:numChrs) {
         chrsI[[i]] <- which(data$chr == chrs[i])
     }
     chrPos_0 <- unlist(lapply(chrsI, head, 1)) # index of first datapoint for each chromosome

@@ -190,11 +190,13 @@ bsg <- paste0("BSgenome.Hsapiens.UCSC.", genomeBuild)
 seqinfo = readRDS("/cluster/home/kisaev/seqinfo_ichorCNA_titan.rds")
 print("loaded seqinfo")
 #seqlevelsStyle(chrs) <- genomeStyle
+print(chrs)
 chrs <- mapSeqlevels(chrs, genomeStyle, drop = FALSE)[1, ]
+print(chrs)
 ## exclude chrX if gender==male ##
-if (gender == "male" || gender == "Male" || gender == "MALE"){
-	chrs <- chrs[chrs!=grep("X", chrs, value=TRUE)]
-}
+#if (gender == "male" || gender == "Male" || gender == "MALE"){
+#	chrs <- chrs[chrs!=grep("X", chrs, value=TRUE)]
+#}
 
 pseudo_counts <- 1e-300
 centromereFlank <- 100000
@@ -204,6 +206,8 @@ message('Running TITAN...')
 
 #### LOAD DATA ####
 data <- loadAlleleCounts(hetfile, header=T, genomeStyle = genomeStyle)
+#data$chr = as.numeric(data$chr)
+print(head(data$chr))
 
 #### REMOVE CENTROMERES ####
 if (!is.null(centromere)){
@@ -217,9 +221,13 @@ cnData$chr <- setGenomeStyle(cnData$chr, genomeStyle = genomeStyle)
 
 #### ADD CORRECTED LOG RATIOS TO DATA OBJECT ####
 message('titan: Extracting read depth...')
+head(cnData)
+print(colnames(data))
 logR <- getPositionOverlap(data$chr,data$posn,cnData)
 data$logR <- log(2^logR)
 rm(logR,cnData)
+
+print(colnames(data))
 
 #### FILTER DATA FOR DEPTH, MAPPABILITY, NA, etc ####
 if (!is.null(mapWig)){
@@ -228,6 +236,10 @@ if (!is.null(mapWig)){
 }else{
   mScore <- NULL
 }
+
+print(mScore)
+print(chrs)
+print(colnames(data))
 data <- filterData(data,chrs,minDepth=minDepth,maxDepth=maxDepth,
                    centromeres = centromere, centromere.flankLength = 1e6,
                    map=mScore,mapThres=mapThres)
@@ -249,7 +261,8 @@ params$ploidyParams$phi_0 <- ploidy_0
 params$normalParams$n_0 <- norm_0
 #params$genotypeParams$rt[c(4, 9)] <- hetAR
 message("titan: Parameter estimation")
-print(unique(data$chr))
+
+print(colnames(data))
 convergeParams <- runEMclonalCN(data, params,
                                 maxiter=maxI,maxiterUpdate=1500,
                                 txnExpLen=txn_exp_len,txnZstrength=txn_z_strength,
