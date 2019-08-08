@@ -195,7 +195,7 @@ get_merge = function(mut){
 }
 
 muts_final = as.data.table(ldply(llply(muts, get_merge, .progress="text")))
-muts_final$id = paste("s", 0:(nrow(muts_final)-1))
+muts_final$id = paste("s", 0:(nrow(muts_final)-1), sep="_")
 
 order =  c("LY_RAP_0003_Aut_FzT_01", "LY_RAP_0003_Aut_FzT_02", "LY_RAP_0003_Aut_FzT_03",
  "LY_RAP_0003_Aut_FzT_04" ,"LY_RAP_0003_Aut_FzT_05" ,"LY_RAP_0003_Aut_FzT_06",
