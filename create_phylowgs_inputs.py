@@ -258,7 +258,6 @@ class MutectSmchetParser(VariantParser):
 
   def _calc_read_counts(self, variant):
     tumor_i = self._get_tumor_index(variant, self._tumor_sample)
-    print(tumor_i)
     ref_reads = int(variant.samples[tumor_i]['AD'][0])
     variant_reads = int(variant.samples[tumor_i]['AD'][1])
     total_reads = ref_reads + variant_reads
@@ -1104,12 +1103,13 @@ def parse_priority_ssms(priority_ssm_filename):
 def impute_missing_total_reads(total_reads, missing_variant_confidence):
   # Change NaNs to masked values via SciPy.
   masked_total_reads = ma.fix_invalid(total_reads)
-
+  print(masked_total_reads)
   # Going forward, suppose you have v variants and s samples in a v*s matrix of
   # read counts. Missing values are masked.
 
   # Calculate geometric mean of variant read depth in each sample. Result: s*1
   sample_means = gmean(masked_total_reads, axis=0)
+  print(sample_means)
   assert np.sum(sample_means <= 0) == np.sum(np.isnan(sample_means)) == 0
   # Divide every variant's read count by its mean sample read depth to get read
   # depth enrichment relative to other variants in sample. Result: v*s
@@ -1181,11 +1181,14 @@ def parse_variants(samples, vcf_files, vcf_types, tumor_sample, missing_variant_
     else:
       raise Exception('Unknowon variant type: %s' % vcf_type)
 
+    print(variant_parser)  
+    print(variant_parser.list_variants())
     parsed_variants.append(variant_parser.list_variants())
     variant_ids = [VariantId(str(v[0].CHROM), int(v[0].POS)) for v in parsed_variants[-1]]
     all_variant_ids += variant_ids
 
   all_variant_ids = list(set(all_variant_ids)) # Eliminate duplicates.
+  print(all_variant_ids)
   all_variant_ids.sort(key = variant_key)
   num_variants = len(all_variant_ids)
   variant_positions = dict(zip(all_variant_ids, range(num_variants)))
@@ -1193,6 +1196,7 @@ def parse_variants(samples, vcf_files, vcf_types, tumor_sample, missing_variant_
   total_read_counts = np.zeros((num_variants, num_samples))
   total_read_counts.fill(np.nan)
   ref_read_counts = np.copy(total_read_counts)
+  print(ref_read_counts)
 
   for sample_idx, parsed in enumerate(parsed_variants):
     for variant, ref_reads, total_reads in parsed:
@@ -1293,7 +1297,6 @@ def main():
   parser.add_argument('--verbose', dest='verbose', action='store_true')
   parser.add_argument('vcf_files', nargs='+', help='Path to VCF file for each sample. Specified as <sample>=<VCF path>.')
   args = parser.parse_args()
-  print(args)
 
   log.verbose = args.verbose
   params = {}
@@ -1301,7 +1304,10 @@ def main():
   samples, vcf_files, vcf_types, cnv_files = extract_sample_data(args.vcf_files, args.vcf_types, args.cnv_files)
   params['samples'], params['vcf_files'], params['vcf_types'], params['cnv_files'] = samples, vcf_files, vcf_types, cnv_files
   num_samples = len(samples)
+  print(samples)
+  print(vcf_types)
   print(num_samples)
+  print(vcf_files)
   variant_ids, ref_read_counts, total_read_counts = parse_variants(samples, vcf_files, vcf_types, args.tumor_sample, args.missing_variant_confidence)
 
   # Fix random seed to ensure same set of SSMs chosen when subsampling on each

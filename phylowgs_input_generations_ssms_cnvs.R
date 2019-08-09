@@ -120,6 +120,58 @@ colnames(test) = c("a", "d")
 
 ssms_in_cnvs$a = test$a
 ssms_in_cnvs$d = test$d
+ssms_in_cnvs$cna = paste(ssms_in_cnvs$cnv_chr, ssms_in_cnvs$cnv_start, ssms_in_cnvs$cnv_end, sep="_")
+length(unique(ssms_in_cnvs$cna))
+
+#function that merged ssms per cna 
+unique_cnas = unique(ssms_in_cnvs$cna)
+
+get_list_ssms = function(ssm){
+  res = paste(ssm, filter(dat, ssm_id == ssm)$major_cn, filter(dat, ssm_id == ssm)$minor_cn, sep=",")
+  return(res)
+}
+
+get_cna_ssms = function(cna_id){
+    dat = as.data.table(filter(ssms_in_cnvs, cna == cna_id))
+    num_pats = length(unique(dat$sample_id))
+
+    #cnv: identifier for each CNV. Identifiers must start at c0 and increment, so the first data row will have c0, the second row c1, and so forth.
+    #a: number of reference reads covering the CNV.
+    #d: total number of reads covering the CNV. This will be affected by factors such as total copy number at the locus, sequencing depth, and the size of the chromosomal region spanned by the CNV.
+    #ssms: SSMs that overlap with this CNV. Each entry is a comma-separated triplet consisting of SSM ID, maternal copy number, and paternal copy number. These triplets are separated by semicolons.
+
+    #multiple patients have cna
+    if(num_pats == 1){
+      cnv = cna
+      a = dat$a[1]
+      d = dat$d[1]
+      ssms=paste(sapply(dat$ssm_id, get_list_ssms), collapse=";")
+    }
+
+    if((num_pats >1) & (num_pats < 20)){
+      cna_status = unique(dat$major_cn)
+      #are they the same copy number?
+      if(length(unique(cna_status)==1)){
+
+      }
+      
+      #are they diff copy number?
+      if(length(unique(cna_status)==1)){
+        #if diff need to split into multiple lines 
+        
+      }
+
+    }
+
+    #only one patient has cna 
+    if(num_pats ==20){
+
+    }
+
+}
+
+
+
 
 
 
