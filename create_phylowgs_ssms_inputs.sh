@@ -55,12 +55,7 @@ tumor_sample_20_vcf=LY_RAP_0003_Dia_FoT_05_mutect_patient_results_all.vcf_filter
 #python /cluster/home/kisaev/phylowgs/parser/create_phylowgs_inputs.py --cnvs tumor_sample_15=$tumor_sample_15 --cnvs tumor_sample_16=$tumor_sample_16 --vcf-type tumor_sample_15=mutect_smchet --vcf-type tumor_sample_16=mutect_smchet tumor_sample_15=$tumor_sample_15_vcf tumor_sample_16=$tumor_sample_16_vcf --verbose 
 parser=/cluster/home/kisaev/phylowgs/parser/create_phylowgs_inputs.py 
 
-python2 $parser --cnvs s1=$tumor_sample_1 --cnvs s2=$tumor_sample_2 --cnvs s3=$tumor_sample_3 --cnvs s4=$tumor_sample_4 \
---cnvs s5=$tumor_sample_5 --cnvs s6=$tumor_sample_6 --cnvs s7=$tumor_sample_7 --cnvs s8=$tumor_sample_8 \
---cnvs s9=$tumor_sample_9 --cnvs s10=$tumor_sample_10 --cnvs s11=$tumor_sample_11 --cnvs s12=$tumor_sample_12 \
---cnvs s13=$tumor_sample_13 --cnvs s14=$tumor_sample_14 --cnvs s15=$tumor_sample_15 --cnvs s16=$tumor_sample_16 \
---cnvs s17=$tumor_sample_17 --cnvs s18=$tumor_sample_18 --cnvs s19=$tumor_sample_19 --cnvs s20=$tumor_sample_20 \
---vcf-type s1=mutect_smchet --vcf-type s2=mutect_smchet --vcf-type s3=mutect_smchet --vcf-type s4=mutect_smchet \
+python2 $parser --vcf-type s1=mutect_smchet --vcf-type s2=mutect_smchet --vcf-type s3=mutect_smchet --vcf-type s4=mutect_smchet \
 --vcf-type s5=mutect_smchet --vcf-type s6=mutect_smchet --vcf-type s7=mutect_smchet --vcf-type s8=mutect_smchet \
 --vcf-type s9=mutect_smchet --vcf-type s10=mutect_smchet --vcf-type s11=mutect_smchet --vcf-type s12=mutect_smchet \
 --vcf-type s13=mutect_smchet --vcf-type s14=mutect_smchet --vcf-type s15=mutect_smchet --vcf-type s16=mutect_smchet \
@@ -69,9 +64,8 @@ s1=$tumor_sample_1_vcf s2=$tumor_sample_2_vcf s3=$tumor_sample_3_vcf s4=$tumor_s
 s5=$tumor_sample_5_vcf s6=$tumor_sample_6_vcf s7=$tumor_sample_7_vcf s8=$tumor_sample_8_vcf \
 s9=$tumor_sample_9_vcf s10=$tumor_sample_10_vcf s11=$tumor_sample_11_vcf s12=$tumor_sample_12_vcf \
 s13=$tumor_sample_13_vcf s14=$tumor_sample_14_vcf s15=$tumor_sample_15_vcf s16=$tumor_sample_16_vcf \
-s17=$tumor_sample_17_vcf s18=$tumor_sample_18_vcf s19=$tumor_sample_19_vcf s20=$tumor_sample_20_vcf --verbose
+s17=$tumor_sample_17_vcf s18=$tumor_sample_18_vcf s19=$tumor_sample_19_vcf s20=$tumor_sample_20_vcf --regions=all --verbose 
 
-mv ssm_data.txt cnv_data.txt phylowgs_wd/
 
 
 
