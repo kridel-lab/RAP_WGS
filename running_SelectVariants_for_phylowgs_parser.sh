@@ -31,12 +31,19 @@ echo ${names[${SLURM_ARRAY_TASK_ID}]}
 tum_sample=$(echo ${names[${SLURM_ARRAY_TASK_ID}]} | cut -d'_' -f 1,2,3,4,5,6)
 echo ${tum_sample}
 
+gatk IndexFeatureFile \
+     -F ${names[${SLURM_ARRAY_TASK_ID}]}
+
 gatk SelectVariants \
    -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
    -V ${names[${SLURM_ARRAY_TASK_ID}]} \
-   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_phylowgs_parser_input.vcf.gz \
+   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_phylowgs_parser_input_no_indels.vcf.gz \
    --exclude-filtered true \
+   --select-type-to-exclude INDEL\
    -select "DP > 100 && POP_AF < 0.001" \
    -sn ${tum_sample} \
+   --exclude-intervals Y \
+   --exclude-intervals X \
+
 
 
