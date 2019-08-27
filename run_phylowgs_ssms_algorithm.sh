@@ -5,6 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J run_phylowgs
+#SBATCH -c 8
 	
 module load python2
 
@@ -35,8 +36,9 @@ tumor_sample_20_vcf=LY_RAP_0003_Dia_FoT_05_mutect_patient_results_all.vcf_filter
 #make empty CNV file
 #run phylowgs
 phylowgs=/cluster/home/kisaev/phylowgs/multievolve.py 
-python2 $phylowgs --num-chains 4 --ssms ssm_data_additional_soft_filters.txt --cnvs test_cnv_data.txt 
-
+#less ssm_data.txt | head -100 > test_ssm_data_input.txt
+#python2 $phylowgs --num-chains 4 --ssms ssm_data_additional_soft_filters.txt --cnvs test_cnv_data.txt 
+python2 $phylowgs --num-chains 4 --ssms ssm_data.txt --cnvs test_cnv_data.txt --burnin-samples 1 --mcmc-samples 1
 
 
 

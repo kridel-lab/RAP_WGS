@@ -16,6 +16,7 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.tabl
 lapply(packages, require, character.only = TRUE)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final")
+date = Sys.Date()
 
 #----------------------------------------------------------------------
 #purpose
@@ -175,10 +176,12 @@ get_dat = function(file){
   return(output_reads_for_muts)
 }
 
-missing_variants_data1 = llply(files, get_dat, .progress="text")
-missing_variants_data = ldply(missing_variants_data1)
-missing_variants_data$samplename = sapply(missing_variants_data$samplename, function(x){paste(unlist(strsplit(x, "_"))[1:6], collapse="_")})
-missing_variants_data = as.data.table(missing_variants_data)
+#missing_variants_data1 = llply(files, get_dat, .progress="text")
+#missing_variants_data = ldply(missing_variants_data1)
+#missing_variants_data$samplename = sapply(missing_variants_data$samplename, function(x){paste(unlist(strsplit(x, "_"))[1:6], collapse="_")})
+#missing_variants_data = as.data.table(missing_variants_data)
+#saveRDS(missing_variants_data, file="missing_variants_data.rds")
+missing_variants_data = readRDS("missing_variants_data.rds")
 
 #now need to convert this into PhyloWGS format 
 head(ssm_files)
@@ -204,14 +207,17 @@ unique_muts = unique(all_muts$gene) #33120 unique muts
 make_input = function(mut){
   mut_dat = as.data.table(filter(all_muts, gene == mut))
   dup=mut_dat[which(duplicated(mut_dat$patient))]$patient
+  check=length(which(is.na(mut_dat$vaf)))
   if(!(length(dup)==0)){
     z = which((mut_dat$patient %in% dup) & (mut_dat$tag == "bam_readcounts"))
     mut_dat = mut_dat[-z,]}
-  if(dim(mut_dat)[1] == 20){
+  if((dim(mut_dat)[1] == 20) & (check ==0)){
   mut_dat = mut_dat[order(patient)]
   mut_dat$binary[mut_dat$tag == "bam_readcounts"] = 0
   mut_dat$binary[mut_dat$tag == "somatic_this_patient_recount_others"] = 1
+  mut_dat$binary[mut_dat$tag == "somatic_across_all"] = 1
   description = paste(mut_dat$binary, collapse="")
+  description = paste(0, description, sep="")
   mut_dat$profile = description
   mut_dat$Normal = 0
   mut_dat_f = as.data.table(dcast(mut_dat, CHROM+ POS+gene + profile + Normal ~ patient, value.var = "vaf"))
@@ -222,8 +228,7 @@ make_input = function(mut){
 liche_input = as.data.table(ldply(llply(unique_muts, make_input, .progress="text")))
 colnames(liche_input)[1:4] = c("#chr" , "position" , "description" , "profile") 
 
-#some were not available through bam readcount, either remove or label as 0
-
+write.table(liche_input, paste(date, "liche_input", "somatic_muts.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
 
 

@@ -5,7 +5,8 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J cnv_parse
-	
+#SBATCH -c 8
+
 module load python2
 
 #define list of CNV parsed files
@@ -69,9 +70,9 @@ s1=$tumor_sample_1_vcf s2=$tumor_sample_2_vcf s3=$tumor_sample_3_vcf s4=$tumor_s
 s5=$tumor_sample_5_vcf s6=$tumor_sample_6_vcf s7=$tumor_sample_7_vcf s8=$tumor_sample_8_vcf \
 s9=$tumor_sample_9_vcf s10=$tumor_sample_10_vcf s11=$tumor_sample_11_vcf s12=$tumor_sample_12_vcf \
 s13=$tumor_sample_13_vcf s14=$tumor_sample_14_vcf s15=$tumor_sample_15_vcf s16=$tumor_sample_16_vcf \
-s17=$tumor_sample_17_vcf s18=$tumor_sample_18_vcf s19=$tumor_sample_19_vcf s20=$tumor_sample_20_vcf --verbose
+s17=$tumor_sample_17_vcf s18=$tumor_sample_18_vcf s19=$tumor_sample_19_vcf s20=$tumor_sample_20_vcf --verbose --output-cnvs multisample_cnvs_all.txt --output-variants multisample_ssms_all.txt
 
-mv ssm_data.txt cnv_data.txt phylowgs_wd/
+mv multisample_cnvs_all.txt multisample_ssms_all.txt phylowgs_wd/
 
 
 

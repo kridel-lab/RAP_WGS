@@ -66,7 +66,7 @@ s9=$tumor_sample_9_vcf s10=$tumor_sample_10_vcf s11=$tumor_sample_11_vcf s12=$tu
 s13=$tumor_sample_13_vcf s14=$tumor_sample_14_vcf s15=$tumor_sample_15_vcf s16=$tumor_sample_16_vcf \
 s17=$tumor_sample_17_vcf s18=$tumor_sample_18_vcf s19=$tumor_sample_19_vcf s20=$tumor_sample_20_vcf --regions=all --verbose 
 
-awk 'BEGIN {srand()} !/^$/ { if (rand() <= .05 || FNR==1) print > "ssm_data_sample_10000_.txt"}' ssm_data.txt
+#awk 'BEGIN {srand()} !/^$/ { if (rand() <= .05 || FNR==1) print > "ssm_data_sample_10000_.txt"}' ssm_data.txt
 
 
 

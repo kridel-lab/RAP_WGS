@@ -24,6 +24,9 @@ module load annovar
 #find -L . -name "*vcf.gz_norm.vcf" > normalized_vcf_files_pre_annovar
 #ls *vcf.gz_norm.vcf > normalized_vcf_files_pre_annovar
 
+#for annovar annotated files try
+ls *annovar_new.vcf.gz.hg19_multianno.vcf > normalized_vcf_files_after_annovar
+
 #pwd
 names=($(cat normalized_vcf_files_pre_annovar))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
@@ -37,7 +40,7 @@ gatk IndexFeatureFile \
 gatk SelectVariants \
    -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
    -V ${names[${SLURM_ARRAY_TASK_ID}]} \
-   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_phylowgs_parser_input_no_indels.vcf.gz \
+   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_final_selected_variants.vcf.gz \
    --exclude-filtered true \
    --select-type-to-exclude INDEL\
    -select "DP > 100 && POP_AF < 0.001" \
