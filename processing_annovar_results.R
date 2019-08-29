@@ -10,7 +10,7 @@
 
 options(stringsAsFactors=F)
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final")
 
 #load libraries 
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr", 

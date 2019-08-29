@@ -40,10 +40,9 @@ gatk IndexFeatureFile \
 gatk SelectVariants \
    -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
    -V ${names[${SLURM_ARRAY_TASK_ID}]} \
-   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_final_selected_variants.vcf.gz \
+   -O vcfs_final/${names[${SLURM_ARRAY_TASK_ID}]}_phylowgs_parser_input_no_indels.vcf.gz \
    --exclude-filtered true \
    --select-type-to-exclude INDEL\
-   -select "DP > 100 && POP_AF < 0.001" \
    -sn ${tum_sample} \
    --exclude-intervals Y \
    --exclude-intervals X \

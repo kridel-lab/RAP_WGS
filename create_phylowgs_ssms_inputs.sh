@@ -5,6 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J ssm_parse
+#SBATCH -c 8
 	
 module load python2
 
