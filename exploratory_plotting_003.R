@@ -38,7 +38,11 @@ display.brewer.pal(9, "Set1")
 
 #1. Summary SNV data 
 #muts = readRDS("final_somatic_mutations_RAP_WGS_20_samples.rds")
-muts = readRDS("2019-08-28_all_soft_filtered_SNVs_overlapping_titan_cna_calls.rds")
+#muts = readRDS("2019-08-28_all_soft_filtered_SNVs_overlapping_titan_cna_calls.rds")
+#clean up file
+#muts = muts[,c(1:11, 13, 38, 47,48, 49:50, 57:61, 65, 69, 71, 73)]
+#write.table(muts, paste(date, "mutect2_filtered_variants_wTITAN_CNA_calls.txt", sep="_"), quote=F, row.names=F, sep="\t")
+muts = fread("2019-08-29_mutect2_filtered_variants_wTITAN_CNA_calls.txt")
 
 #2. Sample summary 
 dna = fread("RAP_DNA.txt") ; dna=dna[,1:3] ; colnames(dna)[2] = "barcode"; dna$barcode = as.numeric(dna$barcode)
@@ -152,7 +156,25 @@ plot_grid(plotlist=list(barplot, g), ncol=1,
 
 ggsave(paste(date, "007_summary_SNVS_CNAs_in_potential_drivers_CP_from_TITAN.pdf", sep="_"))
 
+dev.off()
+
 #make gene specific geom_tile plot
-function(gene){
+muts$mutation_id = paste(muts$mutation_id, muts$region, sep="_")
+get_plot = function(gene){
   gene_dat = as.data.table(filter(muts, Symbol == gene)) 
+  g = ggplot(gene_dat, aes(x=id, y=mutation_id)) + geom_tile(aes(fill=Corrected_Call,width=0.75, height=0.75),size=0.55, colour = "black") +
+    coord_flip() +xlab("Region")
+  g= ggpar(g, x.text.angle = 90, legend ="bottom") + ggtitle(gene)
+  print(g)
 }
+
+pdf(paste(date, "008_predicted_driver_gene_summaries.pdf", sep="_"))
+llply(unique(drivers$Symbol), get_plot)
+dev.off()
+
+#which mutations are found only in diagnostic samples
+sites = as.data.table(table(muts$Specimen_Type, muts$id, muts$Symbol)); sites = as.data.table(filter(sites, N >0))
+
+sites_freq = as.data.table(table(sites$V3)) ; sites_freq = as.data.table(filter(sites_freq, N >=17, !(V1 %in% sites$V3[sites$V1=="FFPE"])))
+
+

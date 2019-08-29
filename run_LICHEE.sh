@@ -8,7 +8,7 @@
 cd /Users/kisaev/lichee/LICHeE/release
 
 lichee_input=/Users/kisaev/Documents/RAP_ANALYSIS/2019-08-23_liche_input_somatic_muts.txt	
-less $lichee_input | head -1000 > test_lichee.txt
+less $lichee_input | head -6000 > test_lichee.txt
 
 #run 
 ./lichee -build -i $lichee_input -n 0 -showTree 1 -color -dot -sampleProfile 
