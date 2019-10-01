@@ -14,3 +14,6 @@ module load python2
 
 python2 /cluster/home/kisaev/phylowgs/multievolve.py --num-chains 4 --ssms test_ssm.txt --cnvs cnv_data.txt --burnin-samples 1 --mcmc-samples 1
 
+sed -n "$({ echo 1; seq $(wc -l <ssm_data.txt) | sed 1d | shuf | head -n 500 | sort -n; } | sed 's/$/p/')" ssm_data.txt > test_data.txt
+
+python2 /cluster/home/kisaev/phylowgs/multievolve.py --num-chains 4 --ssms test_data.txt --cnvs cnv_data.txt --burnin-samples 1 --mcmc-samples 1
