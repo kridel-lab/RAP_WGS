@@ -38,8 +38,8 @@ tumor_sample_20_vcf=LY_RAP_0003_Dia_FoT_05_mutect_patient_results_all.vcf_filter
 phylowgs=/cluster/home/kisaev/phylowgs/multievolve.py 
 #less ssm_data.txt | head -100 > test_ssm_data_input.txt
 #python2 $phylowgs --num-chains 4 --ssms ssm_data_additional_soft_filters.txt --cnvs test_cnv_data.txt 
-python2 $phylowgs --num-chains 4 --ssms ssm_data.txt --cnvs test_cnv_data.txt --burnin-samples 1 --mcmc-samples 1
+#python2 $phylowgs --num-chains 4 --ssms test_data_ssm_cleaned.txt --cnvs cnv_data.txt --burnin-samples 1 --mcmc-samples 1
 
+python2 $phylowgs --num-chains 4 --ssms ssm_data.txt --cnvs cnv_data.txt
 
-
-
+python2 $phylowgs --num-chains 2 --ssms ssm_data.txt --cnvs cnv_data.txt --burnin-samples 1 --mcmc-samples 1 -O testing_all_data

@@ -10,7 +10,7 @@
 
 options(stringsAsFactors=F)
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final/vcfs_annovar_annotated")
 
 #load libraries 
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr", 
@@ -35,6 +35,9 @@ lapply(packages, require, character.only = TRUE)
 #----------------------------------------------------------------------
 
 paired = list.files(pattern="hg19_multianno.vcf")
+z = which(str_detect(paired, "no_AF"))
+paired = paired[z]
+
 #z = which(str_detect(paired, "paired"))
 #paired=paired[-z]
 
@@ -71,8 +74,8 @@ clean_up_001 = function(paired_vcf){
   print(paste("number of variants that passed filtering=", dim(vcf)[1]))
 
   #2. filter by coverage 
-  #pyclone needs at least 100x coverage
-  vcf = as.data.table(filter(vcf, DP >=30))
+  #try 60X
+  vcf = as.data.table(filter(vcf, DP >=100))
   print(paste("number of variants that passed coverage=", dim(vcf)[1]))
 
   #3. combine vcf and gt info 
@@ -97,23 +100,26 @@ clean_up_001 = function(paired_vcf){
 
   #8. remove variants from chromosome X and Y 
   gt = as.data.table(filter(gt, !(CHROM %in% c("X", "Y"))))
+  print(paste("number of variants that passed X Y=", dim(gt)[1]))
 
   z = which(str_detect(gt$ID, "rs"))
   if(!(length(z)==0)){
   gt = gt[-z,]
   }
 
+  print(paste("number of variants that passed rs=", dim(gt)[1]))
+
   #9. get hugo gene names
   gt = merge(gt, genes, by= "Gene.ensGene")
+  print(paste("number of variants that passed gene merge", dim(gt)[1]))
 
   #10. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
   pat = gt$Indiv[1]
-  file = paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final/", pat, "_final_vcf_file_filtered.bed", collapse="_", sep="")
+  file = paste("vcf_summary_text/", pat, "_final_vcf_file_filtered.bed", collapse="_", sep="")
   write.table(gt, file, quote=F, row.names=F, sep="\t", col.names=T)
   print("done")
 }
 
 clean_up_001(paired[index])
 
-#output from this script is analyzed using cnvkit/cnvkit_intersect_bed_wVCFs.sh
 

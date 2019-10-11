@@ -45,7 +45,7 @@ colnames(dna)[7] = "Tissue_Site"
 colnames(dna)[8] = "Specimen_Type" 
 dna$Specimen_Type = "FT"
 
-dna = as.data.table(filter(dna, Indiv %in% muts$vcf_sample))
+dna = as.data.table(filter(dna, Indiv %in% muts$Indiv))
 ffpe = as.data.table(matrix(ncol=ncol(dna), nrow=3))
 colnames(ffpe) = colnames(dna)
 ffpe = as.data.frame(ffpe)
@@ -59,6 +59,9 @@ ffpe$DNA = "DNA"
 ffpe$STUDY_PATIENT_ID = "LY_RAP_0003"
 dna = rbind(dna, ffpe)
 dna$id = paste(dna$Specimen_Type, dna$Tissue_Site, dna$barcode, sep="_")
+
+#save SAMPLE data 
+write.table(dna, file="RAP_samples_information.txt", quote=F, row.names=F, sep="\t")
 
 #2. set up Mutational Pattern
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"

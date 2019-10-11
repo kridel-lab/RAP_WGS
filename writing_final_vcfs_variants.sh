@@ -6,7 +6,7 @@
 #author: Karin Isaev
 #date started: May 28, 2019
 
-module load R 
+module load R/3.5.0 
 
 #loop over 8/10 annotated vcf files and turn them into simplified bed files for intersection with cnvkit output
 
