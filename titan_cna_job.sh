@@ -18,14 +18,16 @@ cluster=/cluster/home/kisaev/TitanCNA/scripts/snakemake/config/cluster_slurm.yam
 #done! after finished running, comment out "icho" and snakemake command above and run the icho and 
 #snakemake below then repeat for part 3 
 
-
 ###-------PART 2---------------------------------------------------------------------------------------
 #icho=/cluster/home/kisaev/TitanCNA/scripts/snakemake/getAlleleCounts.snakefile
 #snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50
 
-
 ###-------PART 3---------------------------------------------------------------------------------------
 icho=/cluster/home/kisaev/TitanCNA/scripts/snakemake/TitanCNA.snakefile
-snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50 --unlock
+snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50 
+
+#RUN FULL SNAKEMAKE PIPELINE 
+#titancna=/cluster/home/kisaev/TitanCNA/scripts/snakemake/TitanCNA.snakefile
+#snakemake -s $titancna --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50 --unlock
 
 
