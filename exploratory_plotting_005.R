@@ -20,6 +20,8 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.tabl
 lapply(packages, require, character.only = TRUE)
 
 library(RColorBrewer)
+library(openxlsx)
+
 display.brewer.all()
 display.brewer.pal(9, "Set1")
 
@@ -36,7 +38,22 @@ display.brewer.pal(9, "Set1")
 #----------------------------------------------------------------------
 
 #1. Summary SNV data 
-muts = readRDS("2019-10-17_SSMs_went_into_phyloWGS.rds")
+muts = readRDS("2019-10-31_all_muts_merged_mut_calls.rds")
+#blacklist mutations were already removed 
+
+#additional filters 
+#TLOD - min 10 - confidence score for variant being really somatic 
+gghistogram(muts, "TLOD", bins=200)
+muts = as.data.table(filter(muts, TLOD > 10)) 
+print(length(unique(muts$mut_id)))
+gghistogram(muts, "TLOD", bins=200)
+
+#min counts for alternative reads 
+gghistogram(muts, "alt_counts", bins=200)
+muts = as.data.table(filter(muts, alt_counts > 10))
+length(unique(muts$mut_id))
+print(length(unique(muts$mut_id)))
+gghistogram(muts, "alt_counts", bins=200)
 
 #2. Sample summary 
 dna = fread("~/Documents/RAP_analysis/RAP_DNA.txt") ; dna=dna[,1:3] ; colnames(dna)[2] = "barcode"; dna$barcode = as.numeric(dna$barcode)
@@ -63,11 +80,13 @@ dna = rbind(dna, ffpe)
 dna$id = paste(dna$Specimen_Type, dna$Tissue_Site, dna$barcode, sep="_")
 
 muts = merge(muts, dna, by="Indiv", all=TRUE)
-#increase minimum depth to 60
-muts = as.data.table(filter(muts, DP>=60, DP < 500))
 
 #Mutation data from WGS Morin et al 2013
-tables2 = fread("TableS2.csv")
+#Table S3. All somatic SNVs identified from 40 genome pairs and 13 cell lines (XLSX, 918 KB)
+morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
+
+#Copy number data 
+cnas = readRDS()
 
 #----------------------------------------------------------------------
 #analysis
@@ -78,19 +97,67 @@ muts$Tissue_Site[is.na(muts$Tissue_Site)] = "FFPE"
 #1. -------------------------------------------------------------------
 
 #total mutations 
-table(muts$Indiv)
+sum_muts = as.data.table(table(muts$id)) ; sum_muts = sum_muts[order(-N)]
+print(sum_muts)
+ggbarplot(sum_muts, x = "V1", y="N") + rotate_x_text(90)
 
-heatmap = as.data.table(filter(muts, Gene.ensGene %in% tables2$`Ensembl ID`))
+#how many founder mutatiotns 
+founds = filter(as.data.table(table(muts$mut_id, muts$Indiv)), N >0)
+founds = as.data.table(filter(as.data.table(table(founds$V1)), N ==20)) #8268 unique variants present in everyone, 18902/52302 = 36%
 
-#make heatmap so summarize VAFs of mutations across the samples
-heatmap = melt(heatmap, id.vars = c("Indiv", "Specimen_Type", "Tissue_Site", "mut_id", "hg19.ensemblToGeneName.value"),
-     measure.vars = c("gt_AF"))
+#where are they?
+founds = (as.data.table(filter(muts, mut_id %in% founds$V1)))
+founds = unique(founds[,c("mut_id", "Func.ensGene", "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "AAChange.ensGene", "cosmic68", "hg19.ensemblToGeneName.value")])
 
-# Create the heatmap
-p = ggplot(heatmap, aes(Tissue_Site, hg19.ensemblToGeneName.value, fill = value))+
-  geom_tile(color="black") +
-  scale_fill_gradient(low = "white", high = "steelblue", na.value="transparent") +
-  theme_classic()
-p + rotate_x_text(90) + rremove("y.ticks")#+
-  #rremove("y.text")
+#any of the genes from Morin paper in founders?
+morin$chr = sapply(morin$Chromosome, function(x){unlist(strsplit(x, "chr"))[2]})
+morin$mut_id = paste(morin$chr, morin$Position, sep="_")
+
+#how many unique mutations per patient? 
+unique = filter(as.data.table(table(muts$mut_id, muts$id)), N >0)
+unique_muts = as.data.table(filter(as.data.table(table(unique$V1)), N ==1)) #9133 unique variants present, 14800/52302 = 28%
+unique_muts = merge(unique_muts, unique, by = c("V1", "N"))
+unique_muts_sum = as.data.table(table(unique_muts$V2)) ;  unique_muts_sum = unique_muts_sum[order(-N)]
+print(unique_muts_sum)
+ggbarplot(unique_muts_sum, x = "V1", y="N") + rotate_x_text(90)
+
+#where are they?
+unique_muts = (as.data.table(filter(muts, mut_id %in% unique_muts$V1)))
+unique_muts = unique(unique_muts[,c("mut_id", "Func.ensGene", "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "AAChange.ensGene", "cosmic68", "hg19.ensemblToGeneName.value")])
+genes = as.data.table(table(unique_muts$hg19.ensemblToGeneName.value))
+
+#save final list of mutations to filter out VCF files 
+muts_keep = unique(muts[,c("CHROM", "POS")])
+muts_keep = muts_keep[order(CHROM, POS)]
+muts_keep$pos_end = muts_keep$POS
+write.table(muts_keep, paste(date, "final_SNVs_include_in_VCFs.bed", sep="_"), quote=F, row.names=F, sep="\t", col.names = F)
+saveRDS(muts, file=paste(date, file="final_list_of_mutations_input_palimpsest.rds", sep="_"))
+
+#2. -------------------------------------------------------------------
+
+#cluster samples based on mutation profiles, see which samples are more related to each other than others 
+#generate binary matrix with 0s and 1s or VAFs? 
+
+#remove founder and unique variants since they are not informative for this task 
+muts_matrix = as.data.frame(dcast(muts, mut_id ~ id, value.var = "gt_AF"))
+muts_matrix = subset(muts_matrix, !(mut_id %in% founds$mut_id))
+muts_matrix = subset(muts_matrix, !(mut_id %in% unique_muts$mut_id))
+
+rownames(muts_matrix) = muts_matrix$mut_id
+muts_matrix$mut_id = NULL
+
+#replace all NAs with zeros for now
+muts_matrix[is.na(muts_matrix)] = 0
+
+require(vegan)
+muts_matrix = t(muts_matrix)
+dist.mat<-vegdist(muts_matrix,method="jaccard", na.rm = TRUE)
+clust.res<-hclust(dist.mat)
+plot(clust.res)
+
+
+
+
+
+
 

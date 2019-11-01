@@ -24,6 +24,9 @@ lapply(packages, require, character.only = TRUE)
 library(igraph)
 library(randomcoloR)
 library(RColorBrewer)
+library(ggplotify)
+library(plotly)
+
 display.brewer.all()
 display.brewer.pal(9, "Set1")
 pal = brewer.pal(9, "Set1")
@@ -174,6 +177,7 @@ p
 
 p = ggline(pats, x = "Cluster_Name", y = "prop", 
        color = "Indiv") + scale_color_manual(values=distinctColorPalette(length(unique(pats$Indiv)))) 
+print(p)
 ggsave("phylowgs_tree_nodes_proportion_mutations_in_each_sample.png")
 ggplotly(p)
 chart_link = api_create(p, filename = "public-graph")
