@@ -82,4 +82,82 @@ signature_content_plot <- deconvolution_exposure(signatures_exp$sig_nums,signatu
 print(signature_content_plot)
 dev.off()
 
+#-------------------------------------------------------------------------------------------------
+# 2] Extract previously known signatures (COSMIC)
+#-------------------------------------------------------------------------------------------------
+resdir. <- file.path(resdir,"Signatures_COSMIC");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
+
+# define list of colors for visualizing mutational signatures. Selecting default colors
+#mycol <- c("darkgreen","deepskyblue4","grey","orangered1","darkred","goldenrod1","deeppink4","royalblue4","darkolivegreen3","purple4");names(mycol) <- liver_signature_names
+
+# Calculating contributions (exposures) of signatures in each sample:
+signatures_exp <- deconvolution_fit(vcf=vcf,type = "SNV",input_data = propMutsByCat,threshold = 6,input_signatures = COSMIC_Signatures,sig_cols = mycol,plot = T,resdir = resdir.)
+
+# Plotting the exposures of signatures across the series:
+pdf(file.path(resdir.,"signature_content_plot.pdf"),width=10,height=7)
+mycol <- readRDS("/cluster/home/kisaev/data/palette_96_cols.rds")
+mycol = mycol[1:nrow(COSMIC_Signatures)]
+names(mycol) <- rownames(COSMIC_Signatures)
+signature_content_plot <- deconvolution_exposure(signatures_exp$sig_nums,signatures_exp$sig_props, sig_cols = mycol)
+print(signature_content_plot)
+dev.off()
+
+#-------------------------------------------------------------------------------------------------
+# 4] Clonality analysis
+#-------------------------------------------------------------------------------------------------
+resdir. <- file.path(resdir,"Clonality");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
+
+# Calculate the Cancer Cell Fraction (CCF) of each mutation.
+# This step is a bit long... Be patient!
+vcf$Tumor_Varcount = as.numeric(vcf$Tumor_Varcount)
+vcf$Tumor_Depth = as.numeric(vcf$Tumor_Depth)
+vcf$Normal_Depth = as.numeric(vcf$Normal_Depth)
+
+vcf <- cnaCCF_annot(vcf=vcf,annot_data = annotation,cna_data = cnas,CCF_boundary=0.95)
+
+# Generate graphical representations of clonality analysis
+cnaCCF_plots(vcf=vcf,resdir=resdir.)
+
+#-------------------------------------------------------------------------------------------------
+# 5] Compare mutational signatures between early clonal and late subclonal mutations in each tumor
+#-------------------------------------------------------------------------------------------------
+resdir. <- file.path(resdir,"Signatures_early_vs_late");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
+
+# Estimate the contribution of each signature to clonal and subclonal mutations in each tumor
+vcf.clonal <- vcf[which(vcf$Clonality=="clonal"),]
+propMutsByCat.clonal <- palimpsestInput(vcf = vcf.clonal,type="SNV",sample.col = "Sample", mutcat.col = "mutcat3", proportion = TRUE)
+signatures_exp_clonal <- deconvolution_fit(vcf = vcf.clonal,type = "SNV",input_data = propMutsByCat.clonal,threshold = 6,input_signatures = COSMIC_Signatures,sig_cols = mycol,plot = F,resdir = resdir.)
+
+vcf.subclonal <- vcf[which(vcf$Clonality=="subclonal"),]
+propMutsByCat.subclonal <- palimpsestInput(vcf = vcf.subclonal,type="SNV",sample.col = "Sample",mutcat.col = "mutcat3",proportion = TRUE)
+signatures_exp_subclonal <- deconvolution_fit(vcf = vcf.subclonal,type = "SNV",input_data = propMutsByCat.subclonal,threshold = 6,input_signatures = COSMIC_Signatures,sig_cols = mycol,plot = F,resdir = resdir.)
+
+# Generate tumor-wise comparisons of clonal and subclonal mutations
+palimpsest_DissectSigs(vcf=vcf, signatures_exp_clonal = signatures_exp_clonal, signatures_exp_subclonal = signatures_exp_subclonal,sig_cols = mycol,resdir=resdir.)
+
+# Generate across the series comparisons of signature assigned to clonal and subclonal mutations
+palimpsest_clonalitySigsCompare(clonsig = signatures_exp_clonal$sig_nums, subsig = signatures_exp_subclonal$sig_nums, msigcol = mycol, resdir = resdir.)
+
+#-------------------------------------------------------------------------------------------------
+# 7] Timing Chromosomal Gains
+#-------------------------------------------------------------------------------------------------
+resdir. <- file.path(resdir,"ChromosomeDups_timing");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
+
+# Annotate vcf with chromomal gain timings
+chrom_dup_time <- chrTime_annot(vcf=vcf,cna_data = cnas, cyto=cyto)
+vcf <- chrom_dup_time$vcf; point.mut.time <- chrom_dup_time$point.mut.time; cna_data <- chrom_dup_time$cna_data
+
+# Visualizing timing plots
+chrTime_plot(vcf = vcf, point.mut.time = point.mut.time, resdir = resdir.)
+
+#-------------------------------------------------------------------------------------------------
+# 8] Visualize the natural history of tumor samples:
+#-------------------------------------------------------------------------------------------------
+resdir. <- file.path(resdir,"Natural_history");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
+
+palimpsest_plotTumorHistories(vcf = vcf, sv.vcf = NULL, cna_data, point.mut.time, clonsig=signatures_exp_clonal$sig_props, subsig=signatures_exp_subclonal$sig_props, msigcol=mycol, resdir=resdir.)
+
+
+
+
 
