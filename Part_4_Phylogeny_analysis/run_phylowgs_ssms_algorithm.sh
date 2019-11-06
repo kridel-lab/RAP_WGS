@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+#SBATCH -N 1 # Ensure that all cores are on one machine
+#SBATCH -p himem
+#SBATCH --mem=61440M
+#SBATCH -t 5-00:00 # Runtime in D-HH:MM
+#SBATCH -J run_phylowgs
+#SBATCH -c 8
+	
+module load python2
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/phyloWGS
+
+#the way the files are listed below is the order in which the samplse are represented in the SSM input file 
+
+#define list of VCFs in same order to match CNV files
+tumor_sample_1_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Dia_FoT_05_merged_variants.vcf.vcf
+tumor_sample_2_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Dia_FoT_03_merged_variants.vcf.vcf
+tumor_sample_3_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Dia_FoT_01_merged_variants.vcf.vcf
+tumor_sample_4_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_18_merged_variants.vcf.vcf
+tumor_sample_5_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_17_merged_variants.vcf.vcf
+tumor_sample_6_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_16_merged_variants.vcf.vcf
+tumor_sample_7_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_15_merged_variants.vcf.vcf
+tumor_sample_8_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_14_merged_variants.vcf.vcf
+tumor_sample_9_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_13_merged_variants.vcf.vcf
+tumor_sample_10_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_12_merged_variants.vcf.vcf
+tumor_sample_11_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_11_merged_variants.vcf.vcf
+tumor_sample_12_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_10_merged_variants.vcf.vcf
+tumor_sample_13_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_09_merged_variants.vcf.vcf
+tumor_sample_14_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_07_merged_variants.vcf.vcf
+tumor_sample_15_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_06_merged_variants.vcf.vcf
+tumor_sample_16_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_05_merged_variants.vcf.vcf
+tumor_sample_17_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_04_merged_variants.vcf.vcf
+tumor_sample_18_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_03_merged_variants.vcf.vcf
+tumor_sample_19_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_02_merged_variants.vcf.vcf
+tumor_sample_20_vcf=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/filtered_LY_RAP_0003_Aut_FzT_01_merged_variants.vcf.vcf
+
+#run phylowgs
+phylowgs=/cluster/home/kisaev/phylowgs/multievolve.py 
+
+python2 $phylowgs --num-chains 2 --ssms ssm_data.txt --cnvs cnv_data.txt -O full_run 
