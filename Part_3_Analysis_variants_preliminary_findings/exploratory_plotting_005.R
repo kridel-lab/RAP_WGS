@@ -47,6 +47,7 @@ gghistogram(muts, "TLOD", bins=200)
 muts = as.data.table(filter(muts, TLOD > 10)) 
 print(length(unique(muts$mut_id)))
 gghistogram(muts, "TLOD", bins=200)
+table(muts$Indiv)
 
 #min counts for alternative reads 
 gghistogram(muts, "alt_counts", bins=200)
@@ -54,6 +55,7 @@ muts = as.data.table(filter(muts, alt_counts > 10))
 length(unique(muts$mut_id))
 print(length(unique(muts$mut_id)))
 gghistogram(muts, "alt_counts", bins=200)
+table(muts$Indiv)
 
 #2. Sample summary 
 dna = fread("~/Documents/RAP_analysis/RAP_DNA.txt") ; dna=dna[,1:3] ; colnames(dna)[2] = "barcode"; dna$barcode = as.numeric(dna$barcode)
@@ -86,7 +88,7 @@ muts = merge(muts, dna, by="Indiv", all=TRUE)
 morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
 
 #Copy number data 
-cnas = readRDS()
+cnas = fread("copy_number_alteration_data_palimpsest_input.txt")
 
 #----------------------------------------------------------------------
 #analysis
@@ -155,9 +157,59 @@ dist.mat<-vegdist(muts_matrix,method="jaccard", na.rm = TRUE)
 clust.res<-hclust(dist.mat)
 plot(clust.res)
 
+#3. -------------------------------------------------------------------
+#which genes most mutated ? 
+#in founders? unique samples? across the board?
 
+#1. in founds 
+genes_founds = as.data.table(table(founds$hg19.ensemblToGeneName.value)) ; genes_founds = genes_founds[order(-N)]
 
+#2. in unique 
+genes_unique = as.data.table(table(unique_muts$hg19.ensemblToGeneName.value)) ; genes_unique = genes_unique[order(-N)]
 
+#3. across the board 
+genes_all = as.data.table(table(muts$hg19.ensemblToGeneName.value)) ; genes_all = genes_all[order(-N)]
 
+#4. -------------------------------------------------------------------
+#just Y-RNAs? what's going on with them?
+ensgs = as.data.table(table(all_Y_RNA$Gene.ensGene))
+ensgs = ensgs[order(-N)]
 
+#5. -------------------------------------------------------------------
+#remove founder mutations for phyloWGS input
+phylo_input_current = fread("ssm_data.txt")
+phylo_input_current = as.data.table(filter(phylo_input_current, !(gene %in% founds$mut_id)))
 
+#overlap SNVs with CNAs 
+
+overlap_snvs_cnas = function(sample){
+  print(sample)
+  snvs = as.data.table(filter(muts, Indiv==sample))
+  cnas_pat = as.data.table(filter(cnas, Sample == sample))
+  
+  #make granges objects
+  snvs$CHROM = paste("chr", snvs$CHROM, sep="")
+  snvs_gr = GRanges(
+    seqnames = snvs$CHROM,
+    ranges = IRanges(snvs$POS, end = snvs$POS),
+    strand = rep("*", length(snvs$POS)),
+    score = 1:length(snvs$POS))
+  
+  cnas_gr = GRanges(
+    seqnames = cnas_pat$CHROM,
+    ranges = IRanges(cnas_pat$POS_START, end = cnas_pat$POS_END),
+    strand = rep("*", length(cnas_pat$POS_START)),
+    logR = cnas_pat$LogR)
+    
+  #intersect them
+  #Then subset the original objects with the negative indices of the overlaps:
+  
+  hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
+  hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
+  print(head(hits_overlap))
+  return(hits_overlap)
+}
+
+muts_wCNAs = as.data.table(ldply(llply(unique(muts$Indiv), overlap_snvs_cnas, .progress = "text")))
+founds_wCNAs = as.data.table(filter(muts_wCNAs, mut_id %in% founds$mut_id))
+only_neutral = as.data.table(filter(founds_wCNAs, ntot==4))
