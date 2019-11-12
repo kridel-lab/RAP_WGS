@@ -20,7 +20,7 @@ python3 -c 'import cplex'
 normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline variants 
 
 #RUN
-python treeomics -d input/merged_vcfs --wes_filtering -n $normal -l 5000 -f 0.1 -threads 20
+python treeomics -d input/merged_vcfs --wes_filtering -n $normal -l 5 -f 0.1 -threads 20
 
 
 

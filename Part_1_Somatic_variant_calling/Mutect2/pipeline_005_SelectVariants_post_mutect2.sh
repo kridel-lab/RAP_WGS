@@ -43,4 +43,5 @@ gatk SelectVariants \
 
 
 #DONE 
-#once these are done move folder mutect2_filtered to MUTECT2_RESULTS
+#once these are done move folder mutect2_filtered (/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/mutect2_filtered) 
+#to MUTECT2_RESULTS (/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_RESULTS/mutect2_filtered)

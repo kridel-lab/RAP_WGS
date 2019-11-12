@@ -23,7 +23,6 @@ library(RColorBrewer)
 library(openxlsx)
 library(plotly)
 
-
 display.brewer.all()
 display.brewer.pal(9, "Set1")
 

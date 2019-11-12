@@ -22,23 +22,14 @@ lapply(packages, require, character.only = TRUE)
 #purpose
 #----------------------------------------------------------------------
 
-#mutect2 was run on paired mode compaing cns to diagnostic tumour
-#now it's time to:
-#summarize cns specific mutations
-#but first should still filter out false positives (note, these are unfilitered variants)
-#see how many appear in multiple comparisons (n=5 total)
-
-#note these vcf files have been normalized and fed through annovar 
-#for annotations
-
 #----------------------------------------------------------------------
 #data
 #----------------------------------------------------------------------
 
 vcfs = list.files(pattern="no_info")
 
-args = commandArgs(trailingOnly = TRUE)
-index = as.integer(args[1])
+#args = commandArgs(trailingOnly = TRUE)
+#index = as.integer(args[1])
 
 #gene annotations
 genes = unique(fread("/cluster/projects/kridelgroup/paired_cns/ucsc_table_browser_gene_IDs.txt"))
