@@ -77,10 +77,6 @@ all_muts$RU = NULL
 all_muts$STR = NULL
 all_muts$ALLELE_END = NULL
 
-#save file so far --> download locally and plot summary stats for various variable 
-length(unique(all_muts$mut_id))
-saveRDS(all_muts, file=paste(date, "all_muts_merged_mut_calls.rds", sep="_"))
-
 #TLOD - min 10 - confidence score for variant being really somatic 
 all_muts = as.data.table(filter(all_muts, TLOD > 10)) #64970 unique mutations 
 
@@ -88,13 +84,9 @@ all_muts = as.data.table(filter(all_muts, TLOD > 10)) #64970 unique mutations
 all_muts = as.data.table(filter(all_muts, alt_counts > 10))
 length(unique(all_muts$mut_id))
 
-#how many founder mutatiotns 
-founds = filter(as.data.table(table(all_muts$mut_id, all_muts$Indiv)), N >0)
-founds = as.data.table(filter(as.data.table(table(founds$V1)), N ==20)) #25151 unique variants present in everyone, 25151/67835 = 37%
-
-#where are they?
-founds = (as.data.table(filter(all_muts, mut_id %in% founds$V1)))
-founds = unique(founds[,c("mut_id", "Func.ensGene", "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "AAChange.ensGene", "cosmic68", "hg19.ensemblToGeneName.value")])
+#save file so far --> download locally and plot summary stats for various variable 
+length(unique(all_muts$mut_id))
+saveRDS(all_muts, file=paste(date, "all_muts_merged_mut_calls.rds", sep="_")) #this file is used for downstream exploratory analysis 
 
 
 
