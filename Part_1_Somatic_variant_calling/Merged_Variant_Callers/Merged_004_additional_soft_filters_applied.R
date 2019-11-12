@@ -21,12 +21,9 @@ lapply(packages, require, character.only = TRUE)
 #----------------------------------------------------------------------
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
-#these are merged variant files obtained by both strelka and mutect2 
-#these have been annotated by annovar 
-#soft fitlers such as variant population frequncy were applied 
-#this is final set 
-#collect mutations across samples 
-#summarize frequenices of mutations 
+
+#here:
+#1. remove blacklisted region mutations
 
 #----------------------------------------------------------------------
 #data
