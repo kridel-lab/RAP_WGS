@@ -21,6 +21,8 @@ lapply(packages, require, character.only = TRUE)
 
 library(RColorBrewer)
 library(openxlsx)
+library(plotly)
+
 
 display.brewer.all()
 display.brewer.pal(9, "Set1")
@@ -132,8 +134,8 @@ genes = as.data.table(table(unique_muts$hg19.ensemblToGeneName.value))
 muts_keep = unique(muts[,c("CHROM", "POS")])
 muts_keep = muts_keep[order(CHROM, POS)]
 muts_keep$pos_end = muts_keep$POS
-write.table(muts_keep, paste(date, "final_SNVs_include_in_VCFs.bed", sep="_"), quote=F, row.names=F, sep="\t", col.names = F)
-saveRDS(muts, file=paste(date, file="final_list_of_mutations_input_palimpsest.rds", sep="_"))
+#write.table(muts_keep, paste(date, "final_SNVs_include_in_VCFs.bed", sep="_"), quote=F, row.names=F, sep="\t", col.names = F)
+#saveRDS(muts, file=paste(date, file="final_list_of_mutations_input_palimpsest.rds", sep="_"))
 
 #2. -------------------------------------------------------------------
 
@@ -172,8 +174,11 @@ genes_all = as.data.table(table(muts$hg19.ensemblToGeneName.value)) ; genes_all 
 
 #4. -------------------------------------------------------------------
 #just Y-RNAs? what's going on with them?
+all_Y_RNA = as.data.table(filter(muts, hg19.ensemblToGeneName.value == "Y_RNA"))
 ensgs = as.data.table(table(all_Y_RNA$Gene.ensGene))
 ensgs = ensgs[order(-N)]
+y_rna_muts = as.data.table(table(all_Y_RNA$mut_id))
+y_rna_muts = y_rna_muts[order(-N)]
 
 #5. -------------------------------------------------------------------
 #remove founder mutations for phyloWGS input
@@ -181,6 +186,7 @@ phylo_input_current = fread("ssm_data.txt")
 phylo_input_current = as.data.table(filter(phylo_input_current, !(gene %in% founds$mut_id)))
 
 #overlap SNVs with CNAs 
+library(GenomicRanges)
 
 overlap_snvs_cnas = function(sample){
   print(sample)
@@ -211,5 +217,52 @@ overlap_snvs_cnas = function(sample){
 }
 
 muts_wCNAs = as.data.table(ldply(llply(unique(muts$Indiv), overlap_snvs_cnas, .progress = "text")))
+muts_wCNAs = muts_wCNAs[order(CHROM, POS)]
+
+y_rnas_wcnas = as.data.table(filter(muts_wCNAs, mut_id %in% y_rna_muts$V1))
+
+#plot just founders 
 founds_wCNAs = as.data.table(filter(muts_wCNAs, mut_id %in% founds$mut_id))
-only_neutral = as.data.table(filter(founds_wCNAs, ntot==4))
+
+pdf("Exploratory_Analysis/all_founder_mutations_wCNAs.pdf", width=25)
+g = ggplot(founds_wCNAs, aes(x=mut_id, y=id)) + geom_tile(aes(fill=ntot)) +
+  xlab("Region")
+g= ggpar(g, x.text.angle = 90, legend ="bottom") + scale_fill_gradient2(low = "blue", mid = "white",
+                                                                        high = "red", midpoint = 2) +
+  rremove("ticks")+
+  rremove("x.text")
+print(g)
+#ggplotly(g)
+dev.off()
+
+#plot just unique muts 
+unique_wCNAs = as.data.table(filter(muts_wCNAs, mut_id %in% unique_muts$mut_id))
+
+pdf("Exploratory_Analysis/all_unique_mutations_wCNAs.pdf", width=25)
+g = ggplot(unique_wCNAs, aes(x=mut_id, y=id)) + geom_tile(aes(fill=ntot)) +
+  xlab("Region")
+g= ggpar(g, x.text.angle = 90, legend ="bottom") + scale_fill_gradient2(low = "blue", mid = "white",
+                                                                        high = "red", midpoint = 2) +
+  rremove("ticks")+
+  rremove("x.text")
+print(g)
+#ggplotly(g)
+dev.off()
+
+#CNAs 
+get_plot = function(sample){
+  cnas_sam = as.data.table(filter(cnas, Sample == sample))
+  cnas_sam$mut_id = paste(cnas_sam$CHROM, cnas_sam$POS_START, sep="_")
+  
+  g = ggplot(cnas_sam, aes(x=mut_id, y=ntot)) + geom_tile(aes(fill=LogR)) +
+    xlab("Region")
+  
+  g= g + scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 2) +
+    rremove("ticks")+
+    rremove("x.text") + ggtitle(sample)
+  print(g)
+  #ggplotly(g)
+}
+
+#llply(unique(muts$Indiv), get_plot)
+
