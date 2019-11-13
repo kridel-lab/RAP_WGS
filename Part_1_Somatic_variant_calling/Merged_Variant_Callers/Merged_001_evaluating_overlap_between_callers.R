@@ -1,6 +1,10 @@
 #----------------------------------------------------------------------
 
+#Merged_001_evaluating_overlap_between_callers.R
+
 #----------------------------------------------------------------------
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS")
 
 #----------------------------------------------------------------------
 #load functions and libraries 
@@ -24,6 +28,10 @@ lapply(packages, require, character.only = TRUE)
 #gene annotations
 genes = unique(fread("/cluster/projects/kridelgroup/paired_cns/ucsc_table_browser_gene_IDs.txt"))
 colnames(genes)[2] = "Gene.ensGene"
+
+#these files below are summaries of VCF files produced by each tool
+#to which additional soft filters were applied 
+#note these VCF files were normalized after each tool was run 
 
 strelka = list.files("STRELKA_RESULTS/strelka_filtered/vcf_to_bed")
 mutect2 = list.files("MUTECT2_RESULTS/mutect2_filtered/vcf_to_bed")

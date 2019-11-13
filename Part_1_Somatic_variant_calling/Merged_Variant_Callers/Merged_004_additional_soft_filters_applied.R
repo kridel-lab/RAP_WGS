@@ -1,9 +1,9 @@
 #----------------------------------------------------------------------
 #karin isaev
-#oct 30, 2019
 #----------------------------------------------------------------------
 
 date = Sys.Date()
+print(date)
 
 #----------------------------------------------------------------------
 #load functions and libraries 
@@ -76,9 +76,11 @@ all_muts$RPA = NULL
 all_muts$RU = NULL
 all_muts$STR = NULL
 all_muts$ALLELE_END = NULL
+length(unique(all_muts$mut_id))
 
 #TLOD - min 10 - confidence score for variant being really somatic 
 all_muts = as.data.table(filter(all_muts, TLOD > 10)) #64970 unique mutations 
+length(unique(all_muts$mut_id))
 
 #min counts for alternative reads 
 all_muts = as.data.table(filter(all_muts, alt_counts > 10))

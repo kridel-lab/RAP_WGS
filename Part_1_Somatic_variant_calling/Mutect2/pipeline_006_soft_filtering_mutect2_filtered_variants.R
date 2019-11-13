@@ -35,11 +35,11 @@ lapply(packages, require, character.only = TRUE)
 #data
 #----------------------------------------------------------------------
 
-vcfs = list.files(pattern=".vcf.gz")
-vcfs = vcfs[-(which(str_detect(vcfs, "tbi")))]
+vcfs = list.files(pattern="vcf.gz.normalized.vcf.gz") #normalized vcf files
+#vcfs = vcfs[-(which(str_detect(vcfs, "tbi")))]
 
-args = commandArgs(trailingOnly = TRUE)
-index = as.integer(args[1])
+#args = commandArgs(trailingOnly = TRUE)
+#index = as.integer(args[1])
 
 #gene annotations
 genes = unique(fread("/cluster/projects/kridelgroup/paired_cns/ucsc_table_browser_gene_IDs.txt"))
@@ -95,4 +95,13 @@ clean_up_001 = function(vcf){
 }
 
 llply(vcfs, clean_up_001, .progress="text")
+
+#once these are done move folder mutect2_filtered (/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/mutect2_filtered) 
+#to MUTECT2_RESULTS (/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_RESULTS/mutect2_filtered)
+
+#cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+#mv chr/mutect2_filtered MUTECT2_RESULTS/
+
+#DONE
+
 
