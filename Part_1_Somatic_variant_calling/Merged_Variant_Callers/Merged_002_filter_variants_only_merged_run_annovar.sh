@@ -27,7 +27,7 @@ module load bedtools
 module load tabix
 
 #pwd
-#/cluster/projects/kridelgroup/RAP_ANALYSIS
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 #pwd
 names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/patient_ids.txt))

@@ -95,7 +95,7 @@ cnas = fread("copy_number_alteration_data_palimpsest_input.txt")
 #analysis
 #----------------------------------------------------------------------
 
-muts$Tissue_Site[is.na(muts$Tissue_Site)] = "FFPE"
+#muts$Tissue_Site[is.na(muts$Tissue_Site)] = "FFPE"
 
 #1. -------------------------------------------------------------------
 
