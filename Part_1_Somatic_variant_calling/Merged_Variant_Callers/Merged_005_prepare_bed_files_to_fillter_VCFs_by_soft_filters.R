@@ -155,15 +155,15 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.txt", sep="_")
 #PRESENT AT LOWER DEPTH = MUTATIONA ACTUALLY STILL THERE 
 #INCREASE THRESHOLD FOR AUTOPSY SAMPLES BUT KEEP THE SAME FOR DIAGNOSTIC? 
 
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% founds$V1), !(mut_id %in% unique$V1), ntot==2))
+pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), ntot==2))
 diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=19)) #median alt count
 autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=31)) #median alt count
 
-pyclone_input = rbind(diagnostic, autopsy) #15,258 unique mutations... 
-pyclone_input = as.data.table(filter(pyclone_input, !(Func.ensGene == "intergenic"))) #7,323 unique mutations
+pyclone_input = rbind(diagnostic, autopsy) #29,279 unique mutations... 
+pyclone_input = as.data.table(filter(pyclone_input, !(Func.ensGene == "intergenic"))) #13,805 unique mutations
 t=filter(as.data.table(table(pyclone_input$mut_id)), N==1) #remove unique mutations 
 z = which(pyclone_input$mut_id %in% t$V1)
-pyclone_input = pyclone_input[-z,] #6,634 unique mutations
+pyclone_input = pyclone_input[-z,] #13,085 unique mutations
 write.table(pyclone_input, file=paste(date, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t") 
 
 
