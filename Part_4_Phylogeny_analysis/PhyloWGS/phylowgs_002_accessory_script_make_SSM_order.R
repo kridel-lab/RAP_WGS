@@ -19,7 +19,7 @@ print(index)
 f = fread("ssm_data.txt")
 
 #randomly sample file rows and keep header
-z = sample(f$id, 1000)
+z = sample(f$id, 500)
 random_data = f[which(f$id %in% z),]
 
 random_data$id = paste("s", 0:(nrow(random_data)-1), sep="")

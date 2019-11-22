@@ -45,6 +45,7 @@ make_input = function(patient){
   pat_dat$normal_cn = 2
   pat_dat = unique(pat_dat[,c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj", "hg19.ensemblToGeneName.value", "Func.ensGene", "id")])
   print(table(pat_dat$Nmaj))
+  pat_dat = as.data.table(filter(pat_dat, Nmaj > 0))
   colnames(pat_dat) = c("mutation_id", "ref_counts", "var_counts", "normal_cn", "minor_cn", "major_cn", "gene_name", "region", "id")
   write.table(pat_dat, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/", patient, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
 }

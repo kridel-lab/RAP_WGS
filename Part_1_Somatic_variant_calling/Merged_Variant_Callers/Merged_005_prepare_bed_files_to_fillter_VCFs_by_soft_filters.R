@@ -155,7 +155,7 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.txt", sep="_")
 #PRESENT AT LOWER DEPTH = MUTATIONA ACTUALLY STILL THERE 
 #INCREASE THRESHOLD FOR AUTOPSY SAMPLES BUT KEEP THE SAME FOR DIAGNOSTIC? 
 
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), ntot==2))
+pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1)))
 diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=19)) #median alt count
 autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=31)) #median alt count
 

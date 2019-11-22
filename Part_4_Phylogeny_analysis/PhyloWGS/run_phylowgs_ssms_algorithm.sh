@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 #SBATCH -N 1 # Ensure that all cores are on one machine
-#SBATCH -p himem
-#SBATCH --mem=31440M
-#SBATCH -t 5-00:00 # Runtime in D-HH:MM
+#SBATCH -p long
+#SBATCH --mem=20000M
+#SBATCH -t 9-00:00 # Runtime in D-HH:MM
 #SBATCH -J run_phylowgs_faster
 #SBATCH -c 8
         
