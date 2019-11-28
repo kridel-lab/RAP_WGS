@@ -23,5 +23,3 @@ _LY_RAP_0003_Aut_FzT_18_pyclone_input.tsv _LY_RAP_0003_Dia_FoT_01_pyclone_input.
 PyClone build_table --config_file RAP_WGS_pyclone/config.yaml --out_file RAP_WGS_pyclone_table_file.txt --table_type loci
 PyClone build_table --config_file RAP_WGS_pyclone/config.yaml --out_file RAP_WGS_pyclone_table_file_cluster.txt --table_type cluster
 
-
-
