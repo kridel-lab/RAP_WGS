@@ -39,7 +39,7 @@ display.brewer.pal(9, "Set1")
 #----------------------------------------------------------------------
 
 #1. Summary SNV data 
-muts = fread("2019-11-19_READ_ONLY_ALL_MERGED_MUTS.txt") 
+muts = fread("2019-11-27_READ_ONLY_ALL_MERGED_MUTS.txt") 
 morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
 
 #----------------------------------------------------------------------
