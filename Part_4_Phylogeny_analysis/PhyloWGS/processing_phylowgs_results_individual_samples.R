@@ -49,23 +49,29 @@ muts = fread("2019-11-27_READ_ONLY_ALL_MERGED_MUTS.txt")
 morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
 tables2 = morin
 
-#PhyloWGS results 
-phylo_res_summ = fromJSON(file="phylowgs_low_run_time_mode/run_name.summ.json")
-phylo_tree_summary = as.data.frame(phylo_res_summ$trees$`0`$populations)
-
-phylo_res_muts = fromJSON(file="phylowgs_low_run_time_mode/run_name.muts.json")
-phylo_res_tree = fromJSON(file="phylowgs_low_run_time_mode/run_name.mutass/0.json")
-phylo_res_tree = phylo_res_tree$mut_assignments
-
-#PhyloWGS sample order 
-ssm_order = fread("2019-07-16_ssm_data_RAP_WGS_input_order.txt")
-
-#PhyloWGS SSM input file 
-ssm_input = fread("ssm_dat_35512_variants_filtered.txt")
+#PhyloWGS results - one folder for each sample within this folder
+folders = list.files("phylowgs_post_witness/")
 
 #-----------------------------------------------------------------------------------
 #ANALYSIS 
 #-----------------------------------------------------------------------------------
+
+open_phylo_res = function(folder){
+  #get sample name 
+  sample_name = paste(unlist(strsplit(folder, "_"))[3:8], collapse="_")
+  phylo_res_summ = fromJSON(file=paste("phylowgs_post_witness/", folder, "/", sample_name, ".summ.json", sep=""))
+  phylo_tree_summary = as.data.frame(phylo_res_summ$trees$`0`$populations)
+  
+  phylo_res_muts = fromJSON(file=paste("phylowgs_post_witness/", folder, "/", sample_name, ".muts.json", sep=""))
+  
+  #need to extract zipped tree folder
+  phylo_res_tree = fromJSON(file=paste("phylowgs_post_witness/", folder, "/", sample_name, ".mutass", "/0.json", sep="")) 
+  phylo_res_tree = phylo_res_tree$mut_assignments
+}
+
+
+
+
 
 #[CELLULAR PREVALENCES OF CLUSTERS ACROSS SAMPLES]
 
