@@ -78,7 +78,14 @@ clean_up_001 = function(vcf){
   #turn SV coordinates into Granges object and intersect with genes 
   vcf_dat$MATEID = as.character(vcf_dat$MATEID)
   vcf_dat$ALT = as.character(vcf_dat$ALT)
-  vcf_dat = unique(vcf_dat[,c("seqnames", "start", "end", "MATEID", "REF", "ALT", "id", "SVTYPE", "IMPRECISE", "BND_DEPTH", "MATE_BND_DEPTH")])
+  vcf_dat$SVLEN = as.character(vcf_dat$SVLEN)
+  vcf_dat$HOMLEN = as.character(vcf_dat$HOMLEN)
+  vcf_dat$HOMSEQ = as.character(vcf_dat$HOMSEQ)
+  vcf_dat$SVINSLEN = as.character(vcf_dat$SVINSLEN)
+  vcf_dat$SVINSSEQ = as.character(vcf_dat$SVINSSEQ)
+
+  vcf_dat = unique(vcf_dat[,c("seqnames", "start", "end", "MATEID", "REF", "ALT", "id", "SVTYPE", "SVLEN", "IMPRECISE", "BND_DEPTH", "MATE_BND_DEPTH", "HOMLEN", "HOMSEQ", "SVINSLEN", 
+    "SVINSSEQ")])
   vcf_dat$seqnames = paste("chr", vcf_dat$seqnames, sep="")
   vcf_dat_coords = vcf_dat
   vcf_dat_coords = makeGRangesFromDataFrame(vcf_dat_coords)
@@ -112,11 +119,17 @@ clean_up_001 = function(vcf){
     print(check)
     if(!(check)){
       dat = as.data.table(filter(vcf_dat, id == get_mate))
+      dat_old = dat
       #add colnames
       cols_add = colnames(BND)[which(!(colnames(BND) %in% colnames(dat)))]
       new_dat = as.data.table(matrix(ncol=length(cols_add), nrow=1))
       colnames(new_dat) = cols_add
       dat = cbind(dat, new_dat)
+      dat$SV_CHR = dat$seqnames
+      dat$SV_start = dat$start
+      dat$SV_end = dat$end
+      dat$geneid = paste(dat$SV_CHR, dat$SV_start, dat$SV_end, sep="_")
+
       return(dat)
     }
     }
