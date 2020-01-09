@@ -1,11 +1,8 @@
 #----------------------------------------------------------------------
-#exploratory_plotting_002.R
-#karin isaev
-#last updated: June 24th 2019
 #----------------------------------------------------------------------
 
-Sys.setenv("plotly_username"="karini925")
-Sys.setenv("plotly_api_key"="pmHjbMwifJL3JzMCNM78")
+#Sys.setenv("plotly_username"="karini925")
+#Sys.setenv("plotly_api_key"="pmHjbMwifJL3JzMCNM78")
 
 #----------------------------------------------------------------------
 #load functions and libraries 
@@ -26,6 +23,7 @@ library(randomcoloR)
 library(RColorBrewer)
 library(ggplotify)
 library(plotly)
+library(openxlsx)
 
 display.brewer.all()
 display.brewer.pal(9, "Set1")
@@ -68,8 +66,6 @@ open_phylo_res = function(folder){
   phylo_res_tree = fromJSON(file=paste("phylowgs_post_witness/", folder, "/", sample_name, ".mutass", "/0.json", sep="")) 
   phylo_res_tree = phylo_res_tree$mut_assignments
 }
-
-
 
 
 

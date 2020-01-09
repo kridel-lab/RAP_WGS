@@ -36,7 +36,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs")
 #data 
 #----------------------------------------------------------------------
 
-all_SVs = list.files(pattern = "_2019-12-10")
+all_SVs = list.files(pattern = "_2019-12-16")
 
 read_f = function(filee){
   f = readRDS(filee)

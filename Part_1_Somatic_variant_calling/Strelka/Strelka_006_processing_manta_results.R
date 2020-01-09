@@ -48,6 +48,14 @@ all_genes$chromosome_name = paste("chr", all_genes$chromosome_name, sep="")
 all_genes$geneid = paste(all_genes$chromosome_name, all_genes$start_position, all_genes$end_position, sep="_")
 all_genes = unique(all_genes[,c("ensembl_gene_id", "hgnc_symbol", "chromosome_name", "start_position", "end_position", "geneid")])
 
+#add extra window to start and end of gene to capture gene even if not directly overlapping 
+all_genes$start_position = all_genes$start_position - 5000
+all_genes$end_position = all_genes$end_position + 5000
+all_genes = as.data.table(filter(all_genes, chromosome_name %in% c("chr1", "chr2", "chr3", "chr4", "chr5", "chr6",
+  "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", 
+  "chr20", "chr21", "chr22", "chrX", "chrY", "chrMT")))
+all_genes = as.data.table(filter(all_genes, !(hgnc_symbol == "")))
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -90,18 +98,15 @@ clean_up_001 = function(vcf){
   vcf_dat_coords = vcf_dat
   vcf_dat_coords = makeGRangesFromDataFrame(vcf_dat_coords)
    
-  all_genes_coords = unique(all_genes[,c("chromosome_name", "start_position", "end_position")])
-  colnames(all_genes_coords) = c("seqnames", "start", "end")
-  all_genes_coords = makeGRangesFromDataFrame(all_genes_coords)
+  all_genes_coords = unique(all_genes[,c("chromosome_name", "start_position", "end_position", "hgnc_symbol")])
+  colnames(all_genes_coords) = c("seqnames", "start", "end", "gene")
+  all_genes_coords = makeGRangesFromDataFrame(all_genes_coords, keep.extra.columns =TRUE)
 
   hits <- findOverlaps(vcf_dat_coords, all_genes_coords, ignore.strand=TRUE)
   hits_overlap = cbind(as.data.table(vcf_dat[queryHits(hits),]), as.data.table(all_genes_coords)[subjectHits(hits),])
   print(head(hits_overlap))
   colnames(hits_overlap)[1:3] = c("SV_CHR", "SV_start", "SV_end")
-  hits_overlap$geneid = paste(hits_overlap$seqnames, hits_overlap$start, hits_overlap$end, sep="_")
-
-  hits_overlap = merge(hits_overlap, all_genes, by = c("geneid"))
-
+ 
   #if translocation (BND) - need to make sure we preserved the mate 
   #means region didnt map to a gene 
   #bring it back to dataset though otherwise will miss it 
@@ -128,7 +133,6 @@ clean_up_001 = function(vcf){
       dat$SV_CHR = dat$seqnames
       dat$SV_start = dat$start
       dat$SV_end = dat$end
-      dat$geneid = paste(dat$SV_CHR, dat$SV_start, dat$SV_end, sep="_")
 
       return(dat)
     }
