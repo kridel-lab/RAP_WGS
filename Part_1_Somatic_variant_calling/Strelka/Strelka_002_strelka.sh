@@ -7,12 +7,14 @@
 #SBATCH -J strelka
 #SBATCH -c 8
 #SBATCH --array=0-19 # job array index
-	
-module load strelka/2.9.10  
-module load python
-module load manta/1.6.0 
 
-#MANTA 
+module load strelka/2.9.10
+module load python
+module load manta/1.6.0
+
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+
+#MANTA
 STRELKA_INSTALL_PATH=/cluster/tools/software/centos7/strelka/2.9.10
 
 names=($(cat tum_samples_input_STRELKA_MANTA.txt))
@@ -37,7 +39,3 @@ ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
 
 #After succesfful configuration run the following:
 /cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR_$tum_name/runWorkflow.py -j 20 -m local
-
-
-
-

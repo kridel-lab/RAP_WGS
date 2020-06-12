@@ -5,5 +5,3 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_vari
 for filename in *.hg19_multianno.vcf
    do vt rminfo $filename -t AF -o no_info_AF_$filename
 done
-
-

@@ -41,13 +41,11 @@ gatk SelectVariants \
    --select-type-to-exclude INDEL\
    --exclude-intervals Y \
 
-#normalize file 
+#normalize file
 input_vcf=strelka_filtered/${tum}_strelka_selectvariants.vcf.gz
 
 #normalize variants, send to standard out and remove duplicates.
 ref=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta
 vt normalize ${input_vcf} -r $ref -o ${input_vcf}.normalized.vcf.gz
 
-#DONE 
-
-
+#DONE

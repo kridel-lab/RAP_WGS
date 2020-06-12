@@ -7,12 +7,14 @@
 #SBATCH -J manta
 #SBATCH -c 8
 #SBATCH --array=0-19 # job array index
-	
-module load strelka/2.9.10  
-module load python
-module load manta/1.6.0 
 
-#MANTA 
+module load strelka/2.9.10
+module load python
+module load manta/1.6.0
+
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+
+#MANTA
 MANTA_INSTALL_PATH=/cluster/tools/software/centos7/manta/1.6.0
 
 names=($(cat tum_samples_input_STRELKA_MANTA.txt))
@@ -30,4 +32,4 @@ ${MANTA_INSTALL_PATH}/bin/configManta.py \
 #After succesfful configuration run the following:
 /cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_WORKDIR_${names[${SLURM_ARRAY_TASK_ID}]}/runWorkflow.py -j 20
 
-
+#move final files into /cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS
