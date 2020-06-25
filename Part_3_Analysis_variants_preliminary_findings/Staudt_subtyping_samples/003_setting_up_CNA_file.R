@@ -103,6 +103,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 #make CNA list of genes
 gene_list = as.data.table(hits_overlap$ENTREZ.ID)
 colnames(gene_list) = "ENTREZ.ID"
+gene_list = unique(gene_list)
 write.table(gene_list, paste(date, "LymphGen_Sample_Flat_CNAs_gene_list.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
 hits_overlap = as.data.table(filter(hits_overlap, Type %in% c("AMP",
