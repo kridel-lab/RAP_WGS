@@ -82,3 +82,9 @@ dat = as.data.table(filter(dat, !(Type == "")))
 colnames(dat)=c("Sample", "ENTREZ.ID", "Type", "Location")
 
 write.table(dat, paste(date, "LymphGen_Sample_Flat_Mutations_File.txt", sep="_"), quote=F, row.names=F, sep="\t")
+
+#gene list
+gene_list = as.data.table(genes$entrez)
+colnames(gene_list) = "ENTREZ.ID"
+
+write.table(gene_list, paste(date, "LymphGen_Sample_Flat_Mutations_gene_list.txt", sep="_"), quote=F, row.names=F, sep="\t")
