@@ -79,7 +79,7 @@ dat$Type[(dat$Func.ensGene == "upstream") & (abs(dat$dist < 4000))] = "Synon"
 #final columns select
 dat = unique(dat[,c("Indiv", "entrez", "Type", "POS")])
 dat = as.data.table(filter(dat, !(Type == "")))
-colnames(dat)=c("Sample", "ENTREZ.ID", "Type", "Location")
+colnames(dat)=c("Sample.ID", "ENTREZ.ID", "Type", "Location")
 
 write.table(dat, paste(date, "LymphGen_Sample_Flat_Mutations_File.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
