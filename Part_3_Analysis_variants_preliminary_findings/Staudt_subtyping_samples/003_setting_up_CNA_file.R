@@ -98,6 +98,8 @@ hits_overlap$Type[hits_overlap$Type == "UBCNA"] = "AMP"
 hits_overlap$Type[hits_overlap$Type == "DLOH"] = "HETLOSS"
 hits_overlap$Type[hits_overlap$Type == "HOMD"] = "HOMDEL"
 
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
+
 #make CNA list of genes
 gene_list = as.data.table(hits_overlap$ENTREZ.ID)
 colnames(gene_list) = "ENTREZ.ID"
@@ -105,6 +107,4 @@ write.table(gene_list, paste(date, "LymphGen_Sample_Flat_CNAs_gene_list.txt", se
 
 hits_overlap = as.data.table(filter(hits_overlap, Type %in% c("AMP",
 "HETLOSS", "GAIN", "HOMDEL")))
-
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 write.table(hits_overlap, paste(date, "LymphGen_Sample_Flat_CNAs.txt", sep="_"), quote=F, row.names=F, sep="\t")
