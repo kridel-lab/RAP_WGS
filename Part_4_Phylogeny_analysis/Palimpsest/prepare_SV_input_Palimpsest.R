@@ -23,7 +23,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest")
 
 #using output from MANRA
 
-#4]. sv_data: structural variant data
+#[4]. sv_data: structural variant data
 
 #    Sample: Sample identifier. Any alphanumeric string.
 #    Type: Type of structural variant: INV/DEL/DUP/BND.
@@ -41,9 +41,10 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest")
 #----------------------------------------------------------------------
 
 svs = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/2019-12-17_RAP_WGS_MANTA_masterlist.csv")
+svs_full = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs/2019-12-16_all_SVs_samples.txt")
 
-svs_palimpsest = svs[,c("patient", "sv1_SVTYPE", "SV_CHR", "SV_start",
-"CHROM_2", "POS_2", "Tumor_Varcount",
+svs_palimpsest = svs[,c("patient", "sv1_SVTYPE", "sv1_CHR", "sv1_start",
+"sv2_CHR", "sv2_start", "sv1_BND_DEPTH",
 "Tumor_Depth", "Normal_Depth", "gene")]
 
 colnames(svs_palimpsest) = c("Sample", "Type", "CHROM_1", "POS_1",
