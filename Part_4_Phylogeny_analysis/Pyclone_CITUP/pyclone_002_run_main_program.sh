@@ -7,7 +7,7 @@
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 
-module load python2 
+module load python2
 module load pyclone/0.13.1
 
 #patient
@@ -22,4 +22,3 @@ _LY_RAP_0003_Aut_FzT_18_pyclone_input.tsv _LY_RAP_0003_Dia_FoT_01_pyclone_input.
 
 PyClone build_table --config_file RAP_WGS_pyclone/config.yaml --out_file RAP_WGS_pyclone_table_file.txt --table_type loci
 PyClone build_table --config_file RAP_WGS_pyclone/config.yaml --out_file RAP_WGS_pyclone_table_file_cluster.txt --table_type cluster
-

@@ -5,14 +5,14 @@
 #----------------------------------------------------------------------
 
 #----------------------------------------------------------------------
-#load functions and libraries 
+#load functions and libraries
 #----------------------------------------------------------------------
 
 options(stringsAsFactors=F)
 
-#load libraries 
-packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", 
-              "plyr", 
+#load libraries
+packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table",
+              "plyr",
               "ggrepel", "stringr", "maftools", "magrittr", "ggExtra", "cowplot")
 lapply(packages, require, character.only = TRUE)
 
@@ -23,7 +23,7 @@ date = Sys.Date()
 #----------------------------------------------------------------------
 
 #using output data tables from pyclone
-#let's plot VAfs of T1 versus T2 
+#let's plot VAfs of T1 versus T2
 #these output files were generated using the script --> pyclone_run_analysis.sh
 
 #----------------------------------------------------------------------
@@ -42,23 +42,23 @@ files_cluster = list.files(pattern="cluster.txt")
 #----------------------------------------------------------------------
 
 pyclone_file= fread(files)
-  
+
 #how many mutations in each cluster?
 cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
-  
+
 cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=2)
-  
-#let's keep only the clusters with more than two mutations in them 
+
+#let's keep only the clusters with more than two mutations in them
 pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1)
 
 muts = dcast(pyclone_file, cluster_id + mutation_id ~ sample_id, value.var = "cellular_prevalence")
-clusters = muts[,c(1:2)] 
+clusters = muts[,c(1:2)]
 
 #mutation file
 muts_final = muts[,c(3:ncol(muts))]
 file = paste(date, "rap_citup_input_freqs.txt", sep="_")
 write.table(muts_final, file, quote=F, row.names=F, col.names=F, sep="\t")
-  
+
 #cluster file
 clusters = muts[,c("cluster_id")]
 file = paste(date, "rap_citup_input_clusters.txt", sep="_")
@@ -67,11 +67,3 @@ write.table(clusters, file, quote=F, row.names=F, col.names=F, sep="\t")
 #-----
 #DONE-
 #-----
-
-
-
-
-
-
-
-
