@@ -8,7 +8,7 @@ Sys.setenv("plotly_username"="karini925")
 Sys.setenv("plotly_api_key"="pmHjbMwifJL3JzMCNM78")
 
 #----------------------------------------------------------------------
-#load functions and libraries 
+#load functions and libraries
 #----------------------------------------------------------------------
 
 date = Sys.Date()
@@ -16,10 +16,11 @@ date = Sys.Date()
 options(stringsAsFactors=F)
 setwd("~/Documents/RAP_analysis")
 
-#load libraries 
-packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", 
-              "plyr", "ggpubr", "rjson", 
-              "ggrepel", "stringr", "maftools", "magrittr", "ggExtra", "broom", "EnvStats", "ggthemes")
+#load libraries
+packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table",
+              "plyr", "ggpubr", "rjson",
+              "ggrepel", "stringr", "maftools", "magrittr", "ggExtra",
+              "broom", "EnvStats", "ggthemes")
 lapply(packages, require, character.only = TRUE)
 library(igraph)
 library(randomcoloR)
@@ -34,7 +35,7 @@ pal = brewer.pal(9, "Set1")
 #purpose
 #----------------------------------------------------------------------
 
-#summarized snvs and cnvs from 21 sequencing folders 
+#summarized snvs and cnvs from 21 sequencing folders
 #here, summarize number of mutations/sample/location
 #which genes are mutated across all sites which are unique?
 
@@ -42,14 +43,14 @@ pal = brewer.pal(9, "Set1")
 #data
 #----------------------------------------------------------------------
 
-#1. Summary SNV data 
-muts = fread("2019-11-27_READ_ONLY_ALL_MERGED_MUTS.txt") 
+#1. Summary SNV data
+muts = fread("2019-11-27_READ_ONLY_ALL_MERGED_MUTS.txt")
 
 #Mutation data from WGS Morin et al 2013
 morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
 tables2 = morin
 
-#PhyloWGS results 
+#PhyloWGS results
 phylo_res_summ = fromJSON(file="phylowgs_low_run_time_mode/run_name.summ.json")
 phylo_tree_summary = as.data.frame(phylo_res_summ$trees$`0`$populations)
 
@@ -57,14 +58,14 @@ phylo_res_muts = fromJSON(file="phylowgs_low_run_time_mode/run_name.muts.json")
 phylo_res_tree = fromJSON(file="phylowgs_low_run_time_mode/run_name.mutass/0.json")
 phylo_res_tree = phylo_res_tree$mut_assignments
 
-#PhyloWGS sample order 
+#PhyloWGS sample order
 ssm_order = fread("2019-07-16_ssm_data_RAP_WGS_input_order.txt")
 
-#PhyloWGS SSM input file 
+#PhyloWGS SSM input file
 ssm_input = fread("ssm_dat_35512_variants_filtered.txt")
 
 #-----------------------------------------------------------------------------------
-#ANALYSIS 
+#ANALYSIS
 #-----------------------------------------------------------------------------------
 
 #[CELLULAR PREVALENCES OF CLUSTERS ACROSS SAMPLES]
@@ -113,28 +114,28 @@ data_summary <- function(x) {
 }
 
 #make VAF plot
-ggplot(data = all_cluster_mutations, aes(x = cluster_name, y = gt_AF, colour=cluster_name)) + 
-  stat_summary(fun.data=data_summary, color="blue")+ 
+ggplot(data = all_cluster_mutations, aes(x = cluster_name, y = gt_AF, colour=cluster_name)) +
+  stat_summary(fun.data=data_summary, color="blue")+
    stat_summary(fun.y=median, geom="point", shape=18, size=3, color="red") +
 coord_flip() +facet_wrap(~id.y, ncol=4) #+
   #geom_jitter(position = position_jitter(width = 0.1, height = 0.1))
 ggsave("phylowgs_tree_nodes_vaf_summary.png")
 
 #make VAF plot comparing clusters
-ggplot(data = all_cluster_mutations, aes(x = id.y, y = gt_AF, colour=id.y)) + 
-  stat_summary(fun.data=data_summary, color="blue")+ 
+ggplot(data = all_cluster_mutations, aes(x = id.y, y = gt_AF, colour=id.y)) +
+  stat_summary(fun.data=data_summary, color="blue")+
   stat_summary(fun.y=median, geom="point", shape=18, size=3, color="red") +
   coord_flip() +facet_wrap(~cluster_name, ncol=4) #+
 #geom_jitter(position = position_jitter(width = 0.1, height = 0.1))
 ggsave("phylowgs_tree_nodes_vaf_summary_by_cluster.png")
 
-#WHAT GENES ARE IN EACH CLUSTER? 
+#WHAT GENES ARE IN EACH CLUSTER?
 t = as.data.table(table(all_cluster_mutations$cluster_name, all_cluster_mutations$hg19.ensemblToGeneName.value))
 t=as.data.table(filter(t, N >0))
 colnames(t) = c("cluster", "gene", "N")
 t=t[order(cluster)]
 
-#summarize which patient has most mutations in each cluster 
+#summarize which patient has most mutations in each cluster
 pats = as.data.table(table(all_cluster_mutations$id.y, all_cluster_mutations$cluster_name))
 colnames(pats) = c("Indiv", "Cluster_Name", "Num_mutations")
 tots = as.data.table(table(all_cluster_mutations$cluster_name))
@@ -142,20 +143,15 @@ colnames(tots) = c("Cluster_Name", "total_mutations")
 pats = merge(pats, tots, by = "Cluster_Name")
 pats$prop = pats$Num_mutations/pats$total_mutations
 
-#make barpot 
+#make barpot
 p <- ggplot(pats, aes(x=Indiv, y=prop, fill=Indiv)) +
   geom_bar(stat="identity", color="black", position=position_dodge())+
-  theme_minimal() + facet_wrap(~Cluster_Name, ncol=3) + rremove("x.text") 
-p 
+  theme_minimal() + facet_wrap(~Cluster_Name, ncol=3) + rremove("x.text")
+p
 
-p = ggline(pats, x = "Cluster_Name", y = "prop", 
-       color = "Indiv") + scale_color_manual(values=distinctColorPalette(length(unique(pats$Indiv)))) 
+p = ggline(pats, x = "Cluster_Name", y = "prop",
+       color = "Indiv") + scale_color_manual(values=distinctColorPalette(length(unique(pats$Indiv))))
 print(p)
 ggsave("phylowgs_tree_nodes_proportion_mutations_in_each_sample.png")
 ggplotly(p)
 chart_link = api_create(p, filename = "public-graph")
-
-
-
-
-
