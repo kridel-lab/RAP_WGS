@@ -15,6 +15,10 @@ options(stringsAsFactors=F)
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
 	"ggrepel", "stringr", "maftools")
 lapply(packages, require, character.only = TRUE)
+library(VariantAnnotation)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+library(BSgenome.Hsapiens.UCSC.hg19)
 
 #----------------------------------------------------------------------
 #purpose
@@ -29,8 +33,9 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 paired = list.files(pattern="no_info_AF")
 
 #gene annotations
-genes = unique(fread("/cluster/projects/kridelgroup/paired_cns/ucsc_table_browser_gene_IDs.txt"))
-colnames(genes)[2] = "Gene.ensGene"
+genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))
+genes = unique(genes[,c("ensgene", "symbol", "chr", "start", "end",
+"strand", "biotype")])
 
 #sample data
 samp_dat = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
@@ -75,8 +80,9 @@ clean_up_001 = function(paired_vcf){
   gt = as.data.table(filter(gt, (controls_AF_popmax < 0.001 | is.na(controls_AF_popmax))))
   print(paste("number of variants that passed controls_AF_popmax=", dim(gt)[1]))
 
-	#4. remove potential snps annotated by gnomad
-  z = which(str_detect(gt$avsnp142, "rs"))
+	#4. remove potential snps annotated by gnomad - these could include
+	#known disease causing variants
+  z = which((str_detect(gt$avsnp142, "rs")) & (gt$cosmic68 == "."))
   if(!(length(z)==0)){
   gt = gt[-z,]}
   print(paste("number of variants that passed avsnp142=", dim(gt)[1]))
@@ -90,21 +96,11 @@ clean_up_001 = function(paired_vcf){
   gt = as.data.table(filter(gt, !(CHROM %in% c("X", "Y"))))
   print(paste("number of variants that passed X Y=", dim(gt)[1]))
 
-  z = which(str_detect(gt$ID, "rs"))
-  if(!(length(z)==0)){
-  gt = gt[-z,]
-  }
-
-  print(paste("number of variants that passed rs=", dim(gt)[1]))
-
-  #9. remove synonymous variants
-  #gt = gt[-(which(gt$ExonicFunc.ensGene == "synonymous_SNV"))]
-
-  #10. add gene name
+  #9. add gene name
   #if multiple genes mapped to variant (usually if in between genes or upstream of genes)
   #keep id of first gene
-  gt$Gene.ensGene = sapply(gt$Gene.ensGene, function(t){unlist(strsplit(t, '\\x', fixed=TRUE))[1]})
-  gt = merge(gt, genes, by="Gene.ensGene")
+  gt$ensgene = sapply(gt$Gene.ensGene, function(t){unlist(strsplit(t, '\\x', fixed=TRUE))[1]})
+  gt = merge(gt, genes, by="ensgene")
 
   #11. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
   pat = gt$Indiv[1]

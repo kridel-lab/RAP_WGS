@@ -33,6 +33,7 @@ lapply(packages, require, character.only = TRUE)
 
 #sample annotation
 samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+colnames(samps)[2] = "Sample"
 
 #cnas
 
@@ -83,6 +84,10 @@ all_cnas_gr = makeGRangesFromDataFrame(all_cnas_gr, keep.extra.columns=TRUE)
 
 hits <- findOverlaps(all_cnas_gr, genes_gr, ignore.strand=TRUE)
 hits_overlap = cbind(all_cnas[queryHits(hits),], genes[subjectHits(hits),])
+upload_onedrive = merge(hits_overlap, samps, by="Sample")
+write.table(upload_onedrive, file=paste(date,
+  "all_CNAs_protein_coding_samples.txt", sep="_"), quote=F, row.names=F, sep="\t")
+
 hits_overlap = unique(hits_overlap[,c("Sample", "entrez", "TITAN_call")])
 colnames(hits_overlap)=c("Sample.ID", "ENTREZ.ID", "Type")
 
