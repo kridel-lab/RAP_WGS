@@ -49,7 +49,8 @@ muts = fread(list.files(pattern="all_SNVs_samples.txt")[length(list.files(patter
 #----------------------------------------------------------------------
 
 #mut-gene summary table for downstream use
-mut_gene = unique(muts[,c("mut_id", "symbol", "biotype", "Func.ensGene")])
+mut_gene = unique(muts[,c("mut_id", "symbol", "biotype", "Func.ensGene", "REF", "ALT", "ExonicFunc.ensGene",
+"AAChange.ensGene", "cosmic68")])
 
 #1. how many patient samples is each mutation found in?
 samples_per_mut = as.data.table(table(muts$mut_id))
@@ -102,14 +103,14 @@ write.table(samples_per_mut, file=paste(date, "mutation_summary_occurence_phylog
 quote=F, row.names=F, sep=";")
 
 samples_per_mut = as.data.table(filter(samples_per_mut, biotype == "protein_coding",
-!(Func.ensGene %in% c("intronic", "intergenic"))))
+Func.ensGene %in% c("exonic", "splicing")))
 
 drivers = as.data.table(table(samples_per_mut$driver, samples_per_mut$phylogeny))
 colnames(drivers) = c("Driver", "Phylogeny", "Num_muts")
 morin = as.data.table(table(samples_per_mut$morin, samples_per_mut$phylogeny))
 colnames(morin) = c("Morin", "Phylogeny", "Num_muts")
 
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/drivers_vs_phylogeny.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/drivers_vs_phylogeny_exonic_splicing_only.pdf")
 # Basic barplot
 p<-ggplot(data=drivers, aes(x=Driver, y=Num_muts, fill=Phylogeny)) +
   geom_bar(stat="identity", color="black", position=position_dodge())+theme_minimal()
@@ -131,7 +132,7 @@ convergent_muts$phylogeny = factor(convergent_muts$phylogeny, levels=c("ancestor
 convergent_muts$symbol = factor(convergent_muts$symbol, levels=convergent_cands)
 
 #summarize "convergent genes" (found in more than 2 phylogeny types)
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/convergent_genes_summary.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/convergent_genes_summary_exonic_splicing_only.pdf")
 p = ggplot(convergent_muts, aes(phylogeny, symbol)) +
   geom_tile(aes(fill = driver), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
