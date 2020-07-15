@@ -138,11 +138,6 @@ oicr_full$rap_wgs_muts[z] = "at_least_one_sample_wmut_in_gene"
 oicr_full$coverage = "full"
 
 #get intersection of mutations with oicr partial gene panel
-genes_gr = genes[,c("chr", "start", "end", "strand", "entrez", "symbol")]
-genes_gr$strand = as.character(genes_gr$strand)
-genes_gr$strand = "*"
-genes_gr = makeGRangesFromDataFrame(genes_gr, keep.extra.columns=TRUE)
-
 clean$START = clean$POS
 clean$END = clean$POS
 clean$CHR = paste("chr", clean$CHROM, sep = "")
@@ -178,5 +173,5 @@ oicr_full$COMMENT = ""
 oicr_full = oicr_full[,c("GENE", "REGION", "rap_wgs_muts", "COMMENT")]
 oicr_part = oicr_part[,c("GENE", "REGION", "rap_wgs_muts", "COMMENT")]
 all_oicr = rbind(oicr_part, oicr_full)
-write.csv(all_oicr, file=paste(date, "OICR_lymphoma_panel_summary_RAP_0003_patient.csv", sep="_"),
-quote=F, row.names=F)
+write.table(all_oicr, file=paste(date, "OICR_lymphoma_panel_summary_RAP_0003_patient.txt", sep="_"),
+quote=F, row.names=F, sep=";")
