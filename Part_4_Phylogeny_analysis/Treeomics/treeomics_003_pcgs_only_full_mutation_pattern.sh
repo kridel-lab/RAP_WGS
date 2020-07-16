@@ -34,6 +34,6 @@ awk -F"\t" '{print $3}' purities_no_cols.txt > treeomics_samples_purities.txt
 python treeomics -d input/mutect2_strelka_vcf_pcg_only -n $normal \
 --include `cat treeomics_samples_include.txt` \
 --purities `cat treeomics_samples_purities.txt` \
--u TRUE -l 10 \
+-u -l 10 \
 --driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
 -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_w_purities_pcgs_only_full_mp
