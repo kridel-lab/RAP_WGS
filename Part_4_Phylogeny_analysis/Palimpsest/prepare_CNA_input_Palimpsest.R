@@ -60,9 +60,16 @@ colnames(all_cnas)[1] = "barcode"
 all_cnas = merge(all_cnas, clusters, by = "barcode")
 all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
 
+#save for filtering SNVs
+all_cnas = all_cnas[,c("Sample", "CHROM", "Start", "End",
+"logR_Copy_Number", "MinorCN", "MajorCN", "TITAN_state",
+"Copy_Number", "Corrected_Call", "ploidy")]
 #save full dataset
-saveRDS(all_cnas, file="all_CNAs_by_TITAN.rds")
+saveRDS(all_cnas, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_TITAN.rds")
 
-all_cnas_palimpsest = all_cnas[,c("Sample", "CHROM", "Start", "End", "logR_Copy_Number", "Corrected_MinorCN", "Corrected_MajorCN", "Corrected_Copy_Number", "ploidy")]
-colnames(all_cnas_palimpsest) = c("Sample", "CHROM", "POS_START", "POS_END", "LogR", "Nmin", "Nmaj", "ntot", "Ploidy")
+all_cnas_palimpsest = all_cnas[,c("Sample", "CHROM", "Start", "End",
+"logR_Copy_Number", "MinorCN", "MajorCN",
+"Copy_Number", "ploidy")]
+colnames(all_cnas_palimpsest) = c("Sample", "CHROM", "POS_START",
+"POS_END", "LogR", "Nmin", "Nmaj", "ntot", "Ploidy")
 write.table(all_cnas_palimpsest, file="copy_number_alteration_data_palimpsest_input.txt", quote=F, row.names=F, sep="\t")

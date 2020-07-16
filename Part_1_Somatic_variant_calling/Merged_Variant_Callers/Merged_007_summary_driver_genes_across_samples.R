@@ -139,3 +139,18 @@ p = ggplot(convergent_muts, aes(phylogeny, symbol)) +
 	ggtitle("Summary of protein-coding genes mutated in more than 1 phylogeny")
 print(p)
 dev.off()
+
+#look at shared genes only
+#are there examples of genes mutated in multiple ways across shared samples?
+
+drivers = as.data.table(filter(samples_per_mut, driver=="driver",
+!(symbol %in% convergent_cands), !(ExonicFunc.ensGene == "synonymous_SNV")))
+
+drivers$gene_mut = paste(drivers$symbol, drivers$mut_id)
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/non_convergent_genes_summary_exonic_splicing_only.pdf")
+p = ggplot(drivers, aes(phylogeny, gene_mut)) +
+  geom_tile(aes(fill = morin), colour = "grey50") +
+  xlab("Phylogeny") + ylab("Gene") +
+	ggtitle("Summary of protein-coding genes mutated in only one phylogeny")
+print(p)
+dev.off()

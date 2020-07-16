@@ -14,9 +14,9 @@
 #go back to VCF files produeced by MUTECT2 (since they have fields required for Annvoar to work)
 #first extract only those common variants from those vcf files (the ones that were called by both tools)
 #via tabix
-#then using this new reduced VCF. file --> run annovar to annotate variants 
-#then in next script 
-#filter these variants using soft filters like population frequencies and genes 
+#then using this new reduced VCF. file --> run annovar to annotate variants
+#then in next script
+#filter these variants using soft filters like population frequencies and genes
 
 module load java/8  #8
 module load samtools
@@ -43,5 +43,3 @@ bedtools intersect -wa -wb \
     -b $variant_file -f 1.0 > merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants_only_soft_filtered.vcf
 
 #tabix -fhB $vcf_file $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants_only_soft_filtered.vcf
-
-

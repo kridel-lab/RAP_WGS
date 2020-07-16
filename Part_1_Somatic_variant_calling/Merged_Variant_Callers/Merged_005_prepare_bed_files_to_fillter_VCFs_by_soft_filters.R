@@ -25,17 +25,14 @@ lapply(packages, require, character.only = TRUE)
 library(RColorBrewer)
 library(openxlsx)
 library(plotly)
-
-#display.brewer.all()
-#display.brewer.pal(9, "Set1")
+library(readxl)
+library(GenomicRanges)
 
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
 
-#summarized snvs and cnvs from 21 sequencing folders
-#here, summarize number of mutations/sample/location
-#which genes are mutated across all sites which are unique?
+#prepare input mutation files for pyclone, treeomics and phylowgs
 
 #----------------------------------------------------------------------
 #data
@@ -77,17 +74,23 @@ muts = merge(muts, dna, by="Indiv", all=TRUE)
 
 #Mutation data from WGS Morin et al 2013
 #Table S3. All somatic SNVs identified from 40 genome pairs and 13 cell lines (XLSX, 918 KB)
-morin = read.xlsx("supp_blood-2013-02-483727_TableS3.xlsx")
+#DLBCL driver genes from Reddy et al 2017
+reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+
+#DLBCL mutations from Morin Blood 2013
+morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
+genes_sum=as.data.table(table(morin$Gene))
+genes_sum = as.data.table(filter(genes_sum, N > 5))
+colnames(genes_sum)=c("Gene", "num_samples_w_mut")
 
 #Copy number data
-cnas = fread("copy_number_alteration_data_palimpsest_input.txt")
+cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_TITAN.rds")
 
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
 
 #overlap SNVs with CNAs
-library(GenomicRanges)
 
 overlap_snvs_cnas = function(sample){
   print(sample)
@@ -104,13 +107,12 @@ overlap_snvs_cnas = function(sample){
 
   cnas_gr = GRanges(
     seqnames = cnas_pat$CHROM,
-    ranges = IRanges(cnas_pat$POS_START, end = cnas_pat$POS_END),
-    strand = rep("*", length(cnas_pat$POS_START)),
+    ranges = IRanges(cnas_pat$Start, end = cnas_pat$End),
+    strand = rep("*", length(cnas_pat$Start)),
     logR = cnas_pat$LogR)
 
   #intersect them
   #Then subset the original objects with the negative indices of the overlaps:
-
   hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
   hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
   print(head(hits_overlap))
@@ -119,22 +121,20 @@ overlap_snvs_cnas = function(sample){
 
 muts_wCNAs = as.data.table(ldply(llply(unique(muts$Indiv), overlap_snvs_cnas, .progress = "text")))
 muts_wCNAs = muts_wCNAs[order(CHROM, POS)]
-table(muts_wCNAs$ntot)
+table(muts_wCNAs$Copy_Number)
 
 #----------------------------------------------------------------------
 #SEPERATE FILES INTO FINAL SETS BASED ON TOOL INPUT
 #----------------------------------------------------------------------
 
 #1. READ-ONLY FILE = FINAL MUTATIONS = KEEP THIS WAY UNLESS MAJOR CHANGE NEEDED
-#FINAL soft filter for this is based on CNAs - keep only variants with less than 5 total copy number
-
-#read_only = as.data.table(filter(muts_wCNAs, ntot <=5))
 read_only = as.data.table(muts_wCNAs)
 write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
-#2. TREEOMICS INPUT VCF FILES = COPY NEUTRAL MUTATIONS ONLY
-
-treeomics_input = as.data.table(filter(read_only, ntot %in% c(1,2,3), !(ExonicFunc.ensGene == "unknown")))
+#2. TREEOMICS INPUT VCF FILES = remove mutations in noncoding genes
+#keep all copy number states
+treeomics_input = as.data.table(filter(read_only,
+!(ExonicFunc.ensGene %in% c("unknown", "."))))
 write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 #BED file for intersecting VCF files with this file
 #CHROM POS tab seperated
@@ -142,19 +142,20 @@ treeomics_input = unique(treeomics_input[,c("CHROM", "POS")])
 #remove CHR
 treeomics_input$CHROM = sapply(treeomics_input$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
 write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS_int_with_VCFs.txt", sep="_"), quote=F, row.names=F, sep="\t")
+write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS_int_with_VCFs.bed", sep="_"), quote=F, row.names=F, sep="\t")
 
-#3. PHYLOWGS INPUT = REMOVE FOUNDER MUTATIONS AND UNIQUE MUTATIONS
-
+#3. PHYLOWGS INPUT = REMOVE UNIQUE MUTATIONS
 founds = filter(as.data.table(table(read_only$mut_id)), N == 20)
 unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
-phylowgs_input = as.data.table(filter(read_only, !(mut_id %in% founds$V1), !(mut_id %in% unique$V1), !(Func.ensGene == "ncRNA_intronic")))
+phylowgs_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
 phylowgs_input = unique(phylowgs_input[,c("CHROM", "POS")])
 #remove CHR
 phylowgs_input$CHROM = sapply(phylowgs_input$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
 
-set.seed(100)
-z = sample(dim(phylowgs_input)[1], 10000)
-phylowgs_input = phylowgs_input[z,]
+#set.seed(100)
+#z = sample(dim(phylowgs_input)[1], 10000)
+#phylowgs_input = phylowgs_input[z,]
 write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_"), quote=F, row.names=F, sep="\t")
 
 #4. PYCLONE = REMOVE FOUNDER MUTATIONS AND UNIQUE MUTATIONS
@@ -163,21 +164,20 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_")
 #PRESENT AT LOWER DEPTH = MUTATION ACTUALLY STILL THERE
 #INCREASE THRESHOLD FOR AUTOPSY SAMPLES BUT KEEP THE SAME FOR DIAGNOSTIC?
 
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1)))
+#also remove noncoding mutations here, will make analysis easier
+pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
+
 diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
 autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
 
-pyclone_input = rbind(diagnostic, autopsy) #35,900 unique mutations...
-pyclone_input = as.data.table(filter(pyclone_input, !(Func.ensGene %in% c("intergenic", "intronic")))) #5,918 unique mutations
+pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
 t=filter(as.data.table(table(pyclone_input$mut_id)), !(N==1)) #remove unique mutations
 z = which(pyclone_input$mut_id %in% t$V1)
-pyclone_input = pyclone_input[z,] #5,645 unique mutations
-#remove muts with nmaj < 1
-pyclone_input = as.data.table(filter(pyclone_input, Nmaj > 1)) #5307 mutations
+pyclone_input = pyclone_input[z,] #1313 unique mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros
-
 t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
 muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
 muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
@@ -195,8 +195,8 @@ get_record = function(mutation){
     make_pat = function(pat){
       pat_dat = mut_dat[1,]
       pat_dat$id = pat
-      pat_dat$Nmaj=2
-      pat_dat$Nmin=0
+      pat_dat$MajorCN=2
+      pat_dat$MinorCN=0
       pat_dat$Ref_counts=0
       pat_dat$alt_counts=0
       return(pat_dat)
