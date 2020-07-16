@@ -76,6 +76,10 @@ muts = merge(muts, dna, by="Indiv", all=TRUE)
 #Table S3. All somatic SNVs identified from 40 genome pairs and 13 cell lines (XLSX, 918 KB)
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+treeomics_drivers = reddy
+colnames(treeomics_drivers)[1] = "Gene_Symbol"
+write.csv(treeomics_drivers, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv",
+quote=F, row.names=F)
 
 #DLBCL mutations from Morin Blood 2013
 morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
