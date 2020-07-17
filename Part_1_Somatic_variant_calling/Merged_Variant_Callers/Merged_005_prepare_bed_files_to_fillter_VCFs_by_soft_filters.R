@@ -185,6 +185,20 @@ t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
 muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
 muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
 
+#save muts_some so that can run bam readcount and extract counts in those mutations
+#across all samples
+#need chr, start, end, ref and alt save as bed file, no colnames, tab sep
+muts_some_bam_readcount = unique(muts_some[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
+muts_some_bam_readcount$mut_id = muts_some_bam_readcount$POS
+#remove chr from CHROM
+muts_some_bam_readcount$CHROM = sapply(muts_some_bam_readcount$CHR, function(x){
+unlist(strsplit(x, "chr"))[2]
+})
+
+write.table(muts_some_bam_readcount,
+  "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed",
+  col.names=F, quote=F, row.names=F, sep="\t")
+
 #for muts in muts_some ... need to generate a record for samples that dont have mutation
 get_record = function(mutation){
   print(mutation)

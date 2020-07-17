@@ -24,19 +24,21 @@ module load bam-readcount
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 #pwd
-names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/patient_ids.txt))
+names=($(cat tum_samples_input_STRELKA_MANTA.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
-pat=${names[${SLURM_ARRAY_TASK_ID}]}
-echo $pat
+MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
+
+tum_loc=${MYVAR%/*}
+tum_name=${tum_loc%_files/*}
 
 #file with mutations that need to be identified from each sample (bed_file)
-muts=
+muts=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed
 
 #sample BAM file
-bam_file=
+bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 
-#output file to save 
-$out_put_file
+#output file to save
+out_put_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts.bed
 
 #get counts
 bam-readcount -f human_g1k_v37_decoy.fasta \
