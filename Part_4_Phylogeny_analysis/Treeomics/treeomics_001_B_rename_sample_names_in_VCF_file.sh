@@ -43,7 +43,6 @@ gatk RenameSampleInVcf \
     -O ${pat}.vcf \
     --NEW_SAMPLE_NAME $pat
 
-rm $vcf_file
 rm $vcf_file.gz
 rm $vcf_file.gz.tbi
 rm $vcf_file.gz.csi
