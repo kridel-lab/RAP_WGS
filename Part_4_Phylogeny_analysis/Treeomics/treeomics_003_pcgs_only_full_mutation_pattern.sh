@@ -34,7 +34,7 @@ normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline varia
 
 #RUN
 python treeomics -d input/mutect2_strelka_vcf_pcg_only -n $normal \
---l 10 \
+-l 10 \
 --driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
 -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_w_purities_pcgs_only_full_mp
 
