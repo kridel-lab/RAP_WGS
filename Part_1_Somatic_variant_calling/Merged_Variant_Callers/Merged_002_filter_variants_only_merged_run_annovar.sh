@@ -14,9 +14,9 @@
 #go back to VCF files produeced by MUTECT2 (since they have fields required for Annvoar to work)
 #first extract only those common variants from those vcf files (the ones that were called by both tools)
 #via tabix
-#then using this new reduced VCF. file --> run annovar to annotate variants 
-#then in next script 
-#filter these variants using soft filters like population frequencies and genes 
+#then using this new reduced VCF. file --> run annovar to annotate variants
+#then in next script
+#filter these variants using soft filters like population frequencies and genes
 
 module load java/8  #8
 module load samtools
@@ -39,9 +39,7 @@ variant_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/_
 
 tabix -fhB $vcf_file $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants.vcf
 
-#RUN ANNOVAR 
+#RUN ANNOVAR
 anno_input=merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants.vcf
 
 table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb --protocol ensGene,gnomad211_genome,cosmic68,avsnp142 --operation g,f,f,f --outfile /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcfs_annovar_annotated/${pat}_annovar.vcf.gz --vcfinput
-
-

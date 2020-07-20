@@ -136,7 +136,7 @@ read_only = as.data.table(muts_wCNAs)
 write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
 #2. TREEOMICS INPUT VCF FILES = remove mutations in noncoding genes
-#keep all copy number states
+#keep all copy number states0
 treeomics_input = as.data.table(filter(read_only,
 !(ExonicFunc.ensGene %in% c("unknown", "."))))
 write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
