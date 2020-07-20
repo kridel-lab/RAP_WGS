@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #SBATCH -N 1 # Ensure that all cores are on one machine
+#SBATCH --mem=30000M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
 #SBATCH --array=0-19 # job array index
