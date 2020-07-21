@@ -32,11 +32,13 @@ normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline varia
 #purities
 #awk -F"\t" '{print $3}' purities_no_cols.txt > treeomics_samples_purities.txt
 
+#--wes_filtering Removes intronic and intergenic variants in WES data (default False)
+
 #RUN
-python treeomics -d input/mutect2_strelka_vcf_pcg_only -n $normal \
--l 50 \
+python treeomics -d input/mutect2_strelka_all_muts -n $normal \
+-l 5 --wes_filtering \
 --driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_w_purities_pcgs_only_50_mp
+-o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_all_muts_wes_mode_5_mp
 
 #--include `cat treeomics_samples_include.txt` \
 #--purities `cat treeomics_samples_purities.txt` \
