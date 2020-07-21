@@ -18,8 +18,39 @@ module load annovar
 module load bedtools
 module load tabix
 
+#first go into VCF files associated with protein coding genes only
+
+#++++ PCG only mutations +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/treeomics/src/input/mutect2_strelka_pcgs_only
+
 #pwd
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS/treeomics/src/input/mutect2_strelka_vcf_pcg_only
+names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_vcf_files))
+vcf_file=${names[${SLURM_ARRAY_TASK_ID}]}
+echo $vcf_file
+
+new_names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/samples_names))
+pat=${new_names[${SLURM_ARRAY_TASK_ID}]}
+echo $pat
+
+#bgzip
+bgzip $vcf_file
+
+#index file
+bcftools index $vcf_file.gz
+gatk IndexFeatureFile -F $vcf_file.gz
+
+#rename sample name
+gatk RenameSampleInVcf \
+    -I $vcf_file.gz \
+    -O ${pat}.vcf \
+    --NEW_SAMPLE_NAME $pat
+
+rm $vcf_file.gz
+rm $vcf_file.gz.tbi
+rm $vcf_file.gz.csi
+
+#++++ ALL mutations +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/treeomics/src/input/mutect2_strelka_all_muts
 
 #pwd
 names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_vcf_files))
