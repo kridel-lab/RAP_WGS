@@ -134,20 +134,7 @@ table(muts_wCNAs$Copy_Number)
 read_only = as.data.table(muts_wCNAs)
 write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
-#2. TREEOMICS INPUT VCF FILES = remove mutations in noncoding genes
-#keep all copy number states0
-treeomics_input = as.data.table(filter(read_only,
-!(ExonicFunc.ensGene %in% c("unknown", "."))))
-write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
-#BED file for intersecting VCF files with this file
-#CHROM POS tab seperated
-treeomics_input = unique(treeomics_input[,c("CHROM", "POS")])
-#remove CHR
-treeomics_input$CHROM = sapply(treeomics_input$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
-write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS_int_with_VCFs.txt", sep="_"), quote=F, row.names=F, sep="\t")
-write.table(treeomics_input, file=paste(date, "TREEOMICS_INPUT_MUTS_int_with_VCFs.bed", sep="_"), quote=F, row.names=F, sep="\t")
-
-#3. PHYLOWGS INPUT = REMOVE UNIQUE MUTATIONS
+#2. PHYLOWGS INPUT = REMOVE UNIQUE MUTATIONS
 founds = filter(as.data.table(table(read_only$mut_id)), N == 20)
 unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 phylowgs_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
@@ -161,7 +148,7 @@ phylowgs_input$CHROM = sapply(phylowgs_input$CHROM, function(x){unlist(strsplit(
 #phylowgs_input = phylowgs_input[z,]
 write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_"), quote=F, row.names=F, sep="\t")
 
-#4. PYCLONE = REMOVE FOUNDER MUTATIONS AND UNIQUE MUTATIONS
+#3. PYCLONE = REMOVE FOUNDER MUTATIONS AND UNIQUE MUTATIONS
 #OTHER FILTERS? DEPTH IS BIASED BECAUSE MIGHT NOT REACH THREHOLD IN DIAGNOSTIC BUT STILL BE
 #PRESENT AT LOWER DEPTH = MUTATION ACTUALLY STILL THERE
 #INCREASE THRESHOLD FOR AUTOPSY SAMPLES BUT KEEP THE SAME FOR DIAGNOSTIC?
@@ -170,13 +157,11 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_")
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 !(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
 
-diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
-autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
+#diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
+#autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
+#pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
 
-pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
-t=filter(as.data.table(table(pyclone_input$mut_id)), !(N==1)) #remove unique mutations
-z = which(pyclone_input$mut_id %in% t$V1)
-pyclone_input = pyclone_input[z,] #1313 unique mutations
+length(unique(pyclone_input$mut_id)) #1466 mutations 
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros

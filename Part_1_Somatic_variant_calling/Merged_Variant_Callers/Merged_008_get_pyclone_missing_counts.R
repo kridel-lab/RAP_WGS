@@ -28,7 +28,7 @@ library(readr)
 
 #used bam readcount to extract counts from all samples
 #overlapping mutations that were only found in some samples and not all
-#Pyclone input requires these values 
+#Pyclone input requires these values
 
 #----------------------------------------------------------------------
 #data
@@ -64,25 +64,25 @@ write.table(miss_vars, "pyclone_bam_readcount_input.bed", quote=F, row.names=F, 
 #analysis
 #----------------------------------------------------------------------
 
-#first combine all results from bamreadcount into one matrix 
+#first combine all results from bamreadcount into one matrix
 get_bam_readcount = function(file_res){
-	
+
 	#samplename
 	samplename = unlist(strsplit(file_res, "_missing_muts"))[1]
-	
+
 	#readcount output
 	x = file_res
 
 	#get output
 	output_t1reads_t2muts = as.data.table(bam_readcount.parse(x, samplename = samplename, "pyclone_bam_readcount_input.bed"))
-	
+
 	#save output
 	return(output_t1reads_t2muts)
 }
 
 missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount)))
 
-#unique mutations 
+#unique mutations
 unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
@@ -141,3 +141,9 @@ get_record = function(mutation){
 all_muts = unique(muts_some$mut_id)
 missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
 all_records = rbind(muts_all, missing_records)
+
+#check that now all mutations appear in all 20 samples
+t = as.data.table(table(all_records$mut_id))
+t=t[order(-N)]
+
+write.table(all_records, file=paste(date, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
