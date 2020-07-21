@@ -43,7 +43,6 @@ muts = readRDS(list.files(pattern="mut_calls.rds")[length(list.files(pattern="mu
 
 #blacklist mutations were already removed
 #TLOD filter and minimum # of alternative alleles was also filtered
-
 table(muts$Indiv)
 
 #2. Sample summary

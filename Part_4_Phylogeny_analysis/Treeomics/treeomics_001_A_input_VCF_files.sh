@@ -26,13 +26,26 @@ names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/patient_ids.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 pat=${names[${SLURM_ARRAY_TASK_ID}]}
 
+#use MUTECT2 VCF file since its format is more appropriate for Treeomics
 vcf_file=MUTECT2_RESULTS/mutect2_filtered/${pat}_mutect2_selectvariants.vcf.gz.normalized.vcf.gz
-variant_file=merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text/2020-07-16_TREEOMICS_INPUT_MUTS_int_with_VCFs.bed
 
+#variants specific to each patient found here:
+variant_file_all_muts=ANALYSIS/Treeomics/input_dat/${pat}_treeomics_input_all_muts_.bed
+variant_file_pcgs_only=ANALYSIS/Treeomics/input_dat/${pat}_treeomics_input_pcgs_only_.bed
+
+#RUN ONLY ONCE
 #first make tbi for vcf
 #tabix -p vcf $vcf_file
 
-#extract filtered variants from mutect2 VCF files so that Treeomics has less variants to analyze and hopefully
-tabix -fhB $vcf_file $variant_file > treeomics/src/input/mutect2_strelka_vcf_pcg_only/${pat}_mutect2_treeomics_input.vcf
-bcftools view -s $pat treeomics/src/input/mutect2_strelka_vcf_pcg_only/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_vcf_pcg_only/${pat}_mutect2_treeomics_input_just_tumour.vcf
-rm treeomics/src/input/mutect2_strelka_vcf_pcg_only/${pat}_mutect2_treeomics_input.vcf
+#extract filtered variants from mutect2 VCF files so that Treeomics has
+#less variants to analyze and hopefully
+
+#first ALL MUTATIONS
+tabix -fhB $vcf_file $variant_file_all_muts > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
+bcftools view -s $pat treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input_just_tumour.vcf
+rm treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
+
+#first ONLY PCGs
+tabix -fhB $vcf_file $variant_file_pcgs_only > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
+bcftools view -s $pat treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input_just_tumour.vcf
+rm  treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
