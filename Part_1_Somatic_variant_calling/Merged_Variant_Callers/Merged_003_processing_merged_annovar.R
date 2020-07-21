@@ -16,9 +16,9 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.tabl
 	"ggrepel", "stringr", "maftools")
 lapply(packages, require, character.only = TRUE)
 library(VariantAnnotation)
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-library(BSgenome.Hsapiens.UCSC.hg19)
+#library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+#library(BSgenome.Hsapiens.UCSC.hg19)
 
 #----------------------------------------------------------------------
 #purpose
