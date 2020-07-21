@@ -56,7 +56,7 @@ all_muts_cords$POSend = all_muts_cords$POS
 all_muts_cords$CHROM = paste("chr", all_muts_cords$CHROM, sep="")
 all_muts_cords = all_muts_cords[,c("CHROM", "POS", "POSend", "mut_id")]
 all_muts_cords=all_muts_cords[order(CHROM, POS)]
-#write.table(all_muts_cords, file="all_muts_pre_blacklist_filter.bed", quote=F, row.names=F, sep="\t", col.names=F)
+write.table(all_muts_cords, file="all_muts_pre_blacklist_filter.bed", quote=F, row.names=F, sep="\t", col.names=F)
 
 #DO NOT RUN
 #module load bedtools
@@ -94,18 +94,17 @@ all_muts$RPA = NULL
 all_muts$RU = NULL
 all_muts$STR = NULL
 all_muts$ALLELE_END = NULL
-length(unique(all_muts$mut_id))
+length(unique(all_muts$mut_id)) #67156
 
 #TLOD - min 10 - confidence score for variant being really somatic
-all_muts = as.data.table(filter(all_muts, TLOD > 10)) #64970 unique mutations
+all_muts = as.data.table(filter(all_muts, TLOD > 10))
 length(unique(all_muts$mut_id)) #64966
 
 #min counts for alternative reads
-all_muts = as.data.table(filter(all_muts, alt_counts > 10))
-length(unique(all_muts$mut_id)) #52354
+all_muts = as.data.table(filter(all_muts, alt_counts > 5))
+length(unique(all_muts$mut_id)) #64265
 
 #save file so far --> download locally and plot summary stats for various variable
-length(unique(all_muts$mut_id))
 saveRDS(all_muts, file=paste(date, "all_muts_merged_mut_calls.rds", sep="_")) #this file is used for downstream exploratory analysis
 
 #save clean version just columns that are important
