@@ -1,5 +1,4 @@
 #!/bin/bash
-#SBATCH -p veryhimem
 #SBATCH -p himem
 #SBATCH --mem=61440M
 #SBATCH -c 8
