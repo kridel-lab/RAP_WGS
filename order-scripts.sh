@@ -6,6 +6,9 @@
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J run_all_scripts
 
+#----navigate to main directory-------------------------------------------------
+/cluster/projects/kridelgroup/RAP_ANALYSIS
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #get list of mutations called by both tools
