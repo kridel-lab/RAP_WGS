@@ -14,7 +14,7 @@ module load pyclone/0.13.1
 PyClone run_analysis_pipeline --tumour_contents 0.789 0.7359 0.6651 0.96266 \
 0.91772 0.7864 \
 0.96735 0.824 0.94581 0.9119 0.8574 0.804 0.96301 \
-0.93695 0.8643 0.95118 0.95338 0.8487 0.95055 0.95822
+0.93695 0.8643 0.95118 0.95338 0.8487 0.95055 0.95822 \
 --in_files FFPE_left_breast_15\:S12966E_pyclone_input.tsv \
 FFPE_left_axilla_LN_15:S12966C_pyclone_input.tsv \
 FFPE_right_neck_LN_15\:S12966A_pyclone_input.tsv \
@@ -34,7 +34,7 @@ FT_Abdomen\,\ NOS_340889_pyclone_input.tsv \
 FT_Omentum_340885_pyclone_input.tsv \
 FT_Shoulder\,\ NOS_340881_pyclone_input.tsv \
 FT_Cervical\ lymph\ node_340867_pyclone_input.tsv \
-FT_Axilla\,\ NOS_340852_pyclone_input.tsv
+FT_Axilla\,\ NOS_340852_pyclone_input.tsv \ 
  --working_dir Pyclone_July2020
 
 PyClone build_table --config_file Pyclone_July2020/config.yaml --out_file Pyclone_July2020_table_file.txt --table_type loci

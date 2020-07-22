@@ -102,7 +102,7 @@ muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1))) #536 mutat
 get_record = function(mutation){
   print(mutation)
   mut_dat = as.data.table(filter(missing_mutations, id == mutation))
-	pyclone_dat_mut = as.data.table(filter(read_only, mut_id == mutation))
+	pyclone_dat_mut = as.data.table(filter(pyclone_input, mut_id == mutation))
   #columns that we need to edit
   #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj",
 	#"hg19.ensemblToGeneName.value", "Func.ensGene", "id")
