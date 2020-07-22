@@ -81,69 +81,76 @@ get_bam_readcount = function(file_res){
 }
 
 missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount)))
+missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
 
-#unique mutations
+#mutations that were only found in one sample
 unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 
+#get pyclone filtered data
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 !(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
 
-diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
-autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
-
-pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
-t=filter(as.data.table(table(pyclone_input$mut_id)), !(N==1)) #remove unique mutations
-z = which(pyclone_input$mut_id %in% t$V1)
-pyclone_input = pyclone_input[z,] #1313 unique mutations
-
-#for mutations that are not present in all samples need to generate an entry for them
-#ideally need to get count of reads mapping there but for now just gonna put in zeros
+#get list of mutations that are present in all
 t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
 muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
+muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1))) #536 mutations
 
-#save muts_some so that can run bam readcount and extract counts in those mutations
-#across all samples
-#need chr, start, end, ref and alt save as bed file, no colnames, tab sep
-muts_some_bam_readcount = unique(muts_some[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
-muts_some_bam_readcount$mut_id = muts_some_bam_readcount$POS
-#remove chr from CHROM
-muts_some_bam_readcount$CHROM = sapply(muts_some_bam_readcount$CHR, function(x){
-unlist(strsplit(x, "chr"))[2]
-})
+#for mutations that are found in only some patients
+#extract mutation info for those mutations across all samples
 
-#for muts in muts_some ... need to generate a record for samples that dont have mutation
 get_record = function(mutation){
   print(mutation)
-  mut_dat = as.data.table(filter(muts_some, mut_id == mutation))
-
+  mut_dat = as.data.table(filter(missing_mutations, id == mutation))
+	pyclone_dat_mut = as.data.table(filter(read_only, mut_id == mutation))
   #columns that we need to edit
-  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj", "hg19.ensemblToGeneName.value", "Func.ensGene", "id")
+  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj",
+	#"hg19.ensemblToGeneName.value", "Func.ensGene", "id")
   #which patients don't have
-  pats = unique(read_only$id)[which(!(unique(read_only$id) %in% mut_dat$id))]
+	pats = unique(mut_dat$samplename)
+	pats_missing = unique(read_only$Indiv)[which(!(unique(read_only$id) %in% pyclone_dat_mut$id))]
 
     make_pat = function(pat){
-      pat_dat = mut_dat[1,]
-      pat_dat$id = pat
-      pat_dat$MajorCN=2
-      pat_dat$MinorCN=0
-      pat_dat$Ref_counts=0
-      pat_dat$alt_counts=0
+      pat_dat = filter(mut_dat, samplename == pat)
+			pat_dat$mut_id = mutation
+			pat_dat$id = read_only$id[which(read_only$Indiv == pat)[1]]
+
+				if(pat %in% pats_missing){
+						pat_dat$MajorCN=2
+      			pat_dat$MinorCN=0
+						pat_dat$source = "bamreadcount"
+						}
+
+				if(!(pat %in% pats_missing)){
+					pat_dat$MajorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MajorCN
+					pat_dat$MinorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MinorCN
+					pat_dat$source = "mutation_called"
+				}
+
+			pat_dat$Ref_counts=pat_dat$ref_count
+      pat_dat$alt_counts=pat_dat$alt_count
+			pat_dat$symbol = read_only$symbol[which(read_only$mut_id == mutation)[1]]
+			pat_dat$Func.ensGene = read_only$Func.ensGene[which(read_only$mut_id == mutation)[1]]
       return(pat_dat)
     }
 
-  missing_pats = as.data.table(ldply(llply(pats, make_pat, .progress="text")))
-  mut_dat = rbind(mut_dat, missing_pats)
-  return(mut_dat)
-
+  all_pats = as.data.table(ldply(llply(pats, make_pat, .progress="text")))
+  return(all_pats)
 }
 
 all_muts = unique(muts_some$mut_id)
 missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
+
+#combine with mutation data for mutations that were called in all samples
+#need the same columns
+z = which(colnames(muts_all) %in% colnames(missing_records))
+muts_all = muts_all[,..z]
+
+z = which(colnames(missing_records) %in% colnames(muts_all))
+missing_records = missing_records[,..z]
+
+#now make them match wtih missing records columns so that can bind them together
+cols  = colnames(missing_records)
+muts_all = muts_all[,..cols]
+
 all_records = rbind(muts_all, missing_records)
-
-#check that now all mutations appear in all 20 samples
-t = as.data.table(table(all_records$mut_id))
-t=t[order(-N)]
-
 write.table(all_records, file=paste(date, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
