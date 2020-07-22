@@ -42,18 +42,19 @@ genes_sum = as.data.table(filter(genes_sum, N > 5))
 colnames(genes_sum)=c("Gene", "num_samples_w_mut")
 
 #Our mutations
-muts = fread(list.files(pattern="all_SNVs_samples.txt")[length(list.files(pattern="all_SNVs_samples.txt"))])
+#muts = fread(list.files(pattern="all_SNVs_samples.txt")[length(list.files(pattern="all_SNVs_samples.txt"))])
+read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
 
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
 
 #mut-gene summary table for downstream use
-mut_gene = unique(muts[,c("mut_id", "symbol", "biotype", "Func.ensGene", "REF", "ALT", "ExonicFunc.ensGene",
-"AAChange.ensGene", "cosmic68")])
+mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "REF", "ALT", "ExonicFunc.ensGene",
+"AAChange.ensGene", "cosmic68", "Corrected_Call", "logR_Copy_Number", "Copy_Number")])
 
 #1. how many patient samples is each mutation found in?
-samples_per_mut = as.data.table(table(muts$mut_id))
+samples_per_mut = as.data.table(table(read_only$mut_id))
 colnames(samples_per_mut) = c("mut_id", "num_of_samples_with_mut")
 samples_per_mut = merge(samples_per_mut, mut_gene, by="mut_id")
 samples_per_mut = samples_per_mut[order(-num_of_samples_with_mut)]
@@ -75,7 +76,7 @@ print(p)
 dev.off()
 
 #summarize biotypes - types of genes that are mutated
-biotypes = as.data.table(table(muts$biotype))
+biotypes = as.data.table(table(read_only$biotype))
 colnames(biotypes) = c("gene_type", "num_mutations_found_in_gene_type")
 biotypes = biotypes[order(-num_mutations_found_in_gene_type)]
 biotypes$gene_type = factor(biotypes$gene_type, levels=biotypes$gene_type)
@@ -93,6 +94,9 @@ samples_per_mut$driver = ""
 z = which(samples_per_mut$symbol %in% reddy$Gene)
 samples_per_mut$driver[z] = "driver"
 samples_per_mut$driver[-z] = "non_driver"
+
+paste(length(unique(samples_per_mut$mut_id)), "unique mutations")
+paste(length(unique(samples_per_mut$mut_id[samples_per_mut$driver == "driver"])), "unique mutations in driver genes including in non-exon regions")
 
 samples_per_mut$morin = ""
 z = which(samples_per_mut$symbol %in% genes_sum$Gene)
