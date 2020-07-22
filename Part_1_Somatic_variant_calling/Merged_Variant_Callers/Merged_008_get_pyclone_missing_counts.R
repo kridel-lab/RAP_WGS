@@ -87,8 +87,9 @@ missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep
 unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 
 #get pyclone filtered data
+#also remove noncoding mutations here, will make analysis easier
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
+!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
 
 #get list of mutations that are present in all
 t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
