@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -p himem
-#SBATCH --mem=61440M
+#SBATCH -p veryhimem
+#SBATCH --mem=175440M
 #SBATCH -J pyclone_RAP
 #SBATCH -c 8
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
@@ -34,7 +34,7 @@ FT_Abdomen\,\ NOS_340889_pyclone_input.tsv \
 FT_Omentum_340885_pyclone_input.tsv \
 FT_Shoulder\,\ NOS_340881_pyclone_input.tsv \
 FT_Cervical\ lymph\ node_340867_pyclone_input.tsv \
-FT_Axilla\,\ NOS_340852_pyclone_input.tsv \ 
+FT_Axilla\,\ NOS_340852_pyclone_input.tsv \
  --working_dir Pyclone_July2020
 
 PyClone build_table --config_file Pyclone_July2020/config.yaml --out_file Pyclone_July2020_table_file.txt --table_type loci
