@@ -148,20 +148,19 @@ phylowgs_input$CHROM = sapply(phylowgs_input$CHROM, function(x){unlist(strsplit(
 #phylowgs_input = phylowgs_input[z,]
 write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_"), quote=F, row.names=F, sep="\t")
 
-#3. PYCLONE = REMOVE FOUNDER MUTATIONS AND UNIQUE MUTATIONS
-#OTHER FILTERS? DEPTH IS BIASED BECAUSE MIGHT NOT REACH THREHOLD IN DIAGNOSTIC BUT STILL BE
-#PRESENT AT LOWER DEPTH = MUTATION ACTUALLY STILL THERE
-#INCREASE THRESHOLD FOR AUTOPSY SAMPLES BUT KEEP THE SAME FOR DIAGNOSTIC?
+#3. PYCLONE = REMOVE UNIQUE MUTATIONS
+#REMOVE MUTATION WITH NMAJ OF 0
+#KEEP WES GENE MUTATIONS TO SIMPLIFY
 
 #also remove noncoding mutations here, will make analysis easier
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
+!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
 
 #diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
 #autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
 #pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
 
-length(unique(pyclone_input$mut_id)) #1466 mutations 
+length(unique(pyclone_input$mut_id)) #1466 mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros
@@ -182,39 +181,3 @@ unlist(strsplit(x, "chr"))[2]
 write.table(muts_some_bam_readcount,
   "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed",
   col.names=F, quote=F, row.names=F, sep="\t")
-
-#for muts in muts_some ... need to generate a record for samples that dont have mutation
-get_record = function(mutation){
-  print(mutation)
-  mut_dat = as.data.table(filter(muts_some, mut_id == mutation))
-
-  #columns that we need to edit
-  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj", "hg19.ensemblToGeneName.value", "Func.ensGene", "id")
-  #which patients don't have
-  pats = unique(read_only$id)[which(!(unique(read_only$id) %in% mut_dat$id))]
-
-    make_pat = function(pat){
-      pat_dat = mut_dat[1,]
-      pat_dat$id = pat
-      pat_dat$MajorCN=2
-      pat_dat$MinorCN=0
-      pat_dat$Ref_counts=0
-      pat_dat$alt_counts=0
-      return(pat_dat)
-    }
-
-  missing_pats = as.data.table(ldply(llply(pats, make_pat, .progress="text")))
-  mut_dat = rbind(mut_dat, missing_pats)
-  return(mut_dat)
-
-}
-
-all_muts = unique(muts_some$mut_id)
-missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
-all_records = rbind(muts_all, missing_records)
-
-#check that now all mutations appear in all 20 samples
-t = as.data.table(table(all_records$mut_id))
-t=t[order(-N)]
-
-write.table(all_records, file=paste(date, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
