@@ -91,7 +91,8 @@ colnames(muts_per_sample) = c("Sample", "num_of_muts")
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pdf")
 # Basic barplot
 p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts)) +
-  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations per sample")
+  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations per sample")+
+	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 print(p)
 dev.off()
 
@@ -188,17 +189,22 @@ pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summa
 p = ggplot(drivers, aes(phylogeny, gene_mut)) +
   geom_tile(aes(fill = morin), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
-	ggtitle("Summary of driver genes")
+	ggtitle("Summary of mutations in driver genes")
 print(p)
 dev.off()
 
 #summarize copy number status of driver genes
 cnas_driver = as.data.table(filter(cnas_all, symbol %in% drivers$symbol))
 colnames(cnas_driver)[51] = "Sample_Name"
+cnas_driver$TITAN_call = factor(cnas_driver$TITAN_call, levels=c("DLOH", "NLOH",
+"HET", "ALOH", "ASCNA", "GAIN", "BCNA", "UBCNA"))
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/008_driver_genes_CNA_status.pdf")
 p = ggplot(cnas_driver, aes(Sample, symbol)) +
-  geom_tile(aes(fill = Corrected_Call), colour = "grey50") +
+  geom_tile(aes(fill = TITAN_call), colour = "grey50") +
   xlab("Sample") + ylab("Gene") +
+	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+	scale_fill_manual(values=c("dodgerblue1", "grey", "darkolivegreen3","salmon",
+	"orangered1", "orangered3", "red4", "violetred4"))+
 	ggtitle("Summary of driver genes CNAs")
 print(p)
 dev.off()

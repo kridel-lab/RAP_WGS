@@ -60,4 +60,4 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pycl
 
 
 #----Summary-Plots--------------------------------------------------------------
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/Merged_007_summary_driver_genes_across_samples.R
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_007_summary_driver_genes_across_samples.R
