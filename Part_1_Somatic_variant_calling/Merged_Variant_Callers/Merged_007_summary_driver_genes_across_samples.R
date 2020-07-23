@@ -23,11 +23,18 @@ library(GenomicRanges)
 #purpose
 #----------------------------------------------------------------------
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
+#summarize mutation patterns across samples and driver genes
+#check which mutations occur in all samples versus only 1 or several
 
 #----------------------------------------------------------------------
 #data
 #----------------------------------------------------------------------
+
+#CNAs annotated by gene that they overlap (no SNVs)
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+cnas_all = fread(list.files(pattern="all_CNAs_protein_coding_samples.txt")[length(list.files(pattern="all_CNAs_protein_coding_samples.txt"))])
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 
 #sample info
 samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
@@ -50,8 +57,8 @@ read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(lis
 #----------------------------------------------------------------------
 
 #mut-gene summary table for downstream use
-mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "REF", "ALT", "ExonicFunc.ensGene",
-"AAChange.ensGene", "cosmic68", "Corrected_Call", "logR_Copy_Number", "Copy_Number")])
+mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "ExonicFunc.ensGene",
+"AAChange.ensGene", "cosmic68")])
 
 #1. how many patient samples is each mutation found in?
 samples_per_mut = as.data.table(table(read_only$mut_id))
@@ -68,10 +75,23 @@ barplot = as.data.table(table(samples_per_mut$num_of_samples_with_mut))
 colnames(barplot) = c("num_of_samples_with_mut", "num_of_muts")
 barplot$num_of_samples_with_mut = factor(barplot$num_of_samples_with_mut, levels=barplot$num_of_samples_with_mut)
 
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/mutation_overview_A.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/001_samples_per_mutation.pdf")
 # Basic barplot
 p<-ggplot(data=barplot, aes(x=num_of_samples_with_mut, y=num_of_muts)) +
   geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of samples with a given mutation")
+print(p)
+dev.off()
+
+#summarize number of mutations per sample
+muts_per_sample = as.data.table(table(read_only$Indiv))
+muts_per_sample = muts_per_sample[order(-N)]
+muts_per_sample$V1 = factor(muts_per_sample$V1, levels=muts_per_sample$V1)
+colnames(muts_per_sample) = c("Sample", "num_of_muts")
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pdf")
+# Basic barplot
+p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts)) +
+  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations per sample")
 print(p)
 dev.off()
 
@@ -81,7 +101,20 @@ colnames(biotypes) = c("gene_type", "num_mutations_found_in_gene_type")
 biotypes = biotypes[order(-num_mutations_found_in_gene_type)]
 biotypes$gene_type = factor(biotypes$gene_type, levels=biotypes$gene_type)
 
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/mutation_overview_gene_types.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/003_all_mutation_overview_gene_types.pdf")
+# Basic barplot
+p<-ggplot(data=biotypes, aes(x=gene_type, y=num_mutations_found_in_gene_type)) +
+  geom_bar(stat="identity")+theme_minimal()
+p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ggtitle("Number of mutations found in each type of gene")
+dev.off()
+
+#biotypes but only unique mutations
+biotypes = as.data.table(table(samples_per_mut$biotype))
+colnames(biotypes) = c("gene_type", "num_mutations_found_in_gene_type")
+biotypes = biotypes[order(-num_mutations_found_in_gene_type)]
+biotypes$gene_type = factor(biotypes$gene_type, levels=biotypes$gene_type)
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/004_unique_mutation_overview_gene_types.pdf")
 # Basic barplot
 p<-ggplot(data=biotypes, aes(x=gene_type, y=num_mutations_found_in_gene_type)) +
   geom_bar(stat="identity")+theme_minimal()
@@ -106,15 +139,16 @@ samples_per_mut$morin[-z] = "not_in_morin"
 write.table(samples_per_mut, file=paste(date, "mutation_summary_occurence_phylogeny_driver_gene_status.txt", sep="_"),
 quote=F, row.names=F, sep=";")
 
+#keep only functional protein coding gene mutations
 samples_per_mut = as.data.table(filter(samples_per_mut, biotype == "protein_coding",
-Func.ensGene %in% c("exonic", "splicing")))
+Func.ensGene %in% c("exonic", "splicing"), !(ExonicFunc.ensGene == "synonymous_SNV")))
 
 drivers = as.data.table(table(samples_per_mut$driver, samples_per_mut$phylogeny))
 colnames(drivers) = c("Driver", "Phylogeny", "Num_muts")
 morin = as.data.table(table(samples_per_mut$morin, samples_per_mut$phylogeny))
 colnames(morin) = c("Morin", "Phylogeny", "Num_muts")
 
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/drivers_vs_phylogeny_exonic_splicing_only.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/005_drivers_vs_phylogeny_exonic_splicing_nonsynon_only.pdf")
 # Basic barplot
 p<-ggplot(data=drivers, aes(x=Driver, y=Num_muts, fill=Phylogeny)) +
   geom_bar(stat="identity", color="black", position=position_dodge())+theme_minimal()
@@ -136,7 +170,7 @@ convergent_muts$phylogeny = factor(convergent_muts$phylogeny, levels=c("ancestor
 convergent_muts$symbol = factor(convergent_muts$symbol, levels=convergent_cands)
 
 #summarize "convergent genes" (found in more than 2 phylogeny types)
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/convergent_genes_summary_exonic_splicing_only.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/006_convergent_genes_cands_summary_exonic_splicing_nonsynon_only.pdf")
 p = ggplot(convergent_muts, aes(phylogeny, symbol)) +
   geom_tile(aes(fill = driver), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
@@ -146,15 +180,25 @@ dev.off()
 
 #look at shared genes only
 #are there examples of genes mutated in multiple ways across shared samples?
-
 drivers = as.data.table(filter(samples_per_mut, driver=="driver",
 !(symbol %in% convergent_cands), !(ExonicFunc.ensGene == "synonymous_SNV")))
 
 drivers$gene_mut = paste(drivers$symbol, drivers$mut_id)
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/non_convergent_genes_summary_exonic_splicing_only.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summary_exonic_splicing_nonsynon_only.pdf")
 p = ggplot(drivers, aes(phylogeny, gene_mut)) +
   geom_tile(aes(fill = morin), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
-	ggtitle("Summary of protein-coding genes mutated in only one phylogeny")
+	ggtitle("Summary of driver genes")
+print(p)
+dev.off()
+
+#summarize copy number status of driver genes
+cnas_driver = as.data.table(filter(cnas_all, symbol %in% drivers$symbol))
+colnames(cnas_driver)[51] = "Sample_Name"
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/008_driver_genes_CNA_status.pdf")
+p = ggplot(cnas_driver, aes(Sample, symbol)) +
+  geom_tile(aes(fill = Corrected_Call), colour = "grey50") +
+  xlab("Sample") + ylab("Gene") +
+	ggtitle("Summary of driver genes CNAs")
 print(p)
 dev.off()
