@@ -53,6 +53,15 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pycl
 #run pyclone low mem
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_low_mem.sh
 
+#prepare input for CITUP
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_low_mem.sh
+
+
+#run through CITUP
+
+#summarize results from pyclone
+
+
 #----Treeomics------------------------------------------------------------------
 
 

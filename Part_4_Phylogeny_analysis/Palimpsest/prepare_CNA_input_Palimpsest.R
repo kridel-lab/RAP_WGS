@@ -50,6 +50,13 @@ colnames(samples) = c("barcode", "Sample")
 clusters = fread("optimalClusterSolution.txt")
 clusters= merge(samples, clusters, by = "barcode")
 
+#save sample cluster and purity info and upload to files
+cna_save = clusters[,c("Sample", "numClust", "cellPrev",
+"purity", "norm", "ploidy")]
+
+write.table(cna_save, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/TitanCNA_summary.txt",
+quote=F, row.names=F, sep=";")
+
 #titanCNA results
 files = list.files(pattern="seg.txt")
 files = files[sapply(clusters$id, function(x){which(str_detect(files, x))})]
