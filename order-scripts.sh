@@ -57,6 +57,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pycl
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_003_make_citup_input.R
 
 #run through CITUP
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_004_setting_up_CITUP.sh
 
 #summarize results from pyclone

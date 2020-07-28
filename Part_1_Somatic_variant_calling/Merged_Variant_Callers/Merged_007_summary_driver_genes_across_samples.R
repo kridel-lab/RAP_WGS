@@ -182,7 +182,7 @@ dev.off()
 #look at shared genes only
 #are there examples of genes mutated in multiple ways across shared samples?
 drivers = as.data.table(filter(samples_per_mut, driver=="driver",
-!(symbol %in% convergent_cands), !(ExonicFunc.ensGene == "synonymous_SNV")))
+!(ExonicFunc.ensGene == "synonymous_SNV")))
 
 drivers$gene_mut = paste(drivers$symbol, drivers$mut_id)
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summary_exonic_splicing_nonsynon_only.pdf")
