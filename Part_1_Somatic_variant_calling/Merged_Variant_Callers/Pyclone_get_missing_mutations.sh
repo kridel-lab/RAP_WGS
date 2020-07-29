@@ -32,15 +32,22 @@ tum_loc=${MYVAR%/*}
 tum_name=${tum_loc%_files/*}
 
 #file with mutations that need to be identified from each sample (bed_file)
-muts=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed
+muts_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed
+muts_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed
 
 #sample BAM file
 bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 
 #output file to save
-out_put_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts.bed
+out_put_file_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_small.bed
+out_put_file_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_all.bed
 
-#get counts
+#get counts small list of variants
 bam-readcount -f human_g1k_v37_decoy.fasta \
 $bam_file \
--l $muts > $out_put_file
+-l $muts_small > $out_put_file_small
+
+#get counts full list of variants
+bam-readcount -f human_g1k_v37_decoy.fasta \
+$bam_file \
+-l $muts_all > $out_put_file_all

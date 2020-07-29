@@ -152,6 +152,11 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_")
 #REMOVE MUTATION WITH NMAJ OF 0
 #KEEP WES GENE MUTATIONS TO SIMPLIFY
 
+#run one version of pyclone with all mutations except for unique ones
+#and those with major copy number greater than 0
+pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+MajorCN > 0))
+
 #also remove noncoding mutations here, will make analysis easier
 pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 !(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
@@ -160,13 +165,18 @@ pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 #autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
 #pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
 
+length(unique(pyclone_full$mut_id)) #38605 mutations
 length(unique(pyclone_input$mut_id)) #1466 mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros
-t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
-muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
+
+#get input for bamreadcount
+get_bam_read = function(dat, name_analysis){
+
+t = filter(as.data.table(table(dat$mut_id)), (N==20))
+muts_all = as.data.table(filter(dat, mut_id %in% t$V1))
+muts_some = as.data.table(filter(dat, !(mut_id %in% t$V1)))
 
 #save muts_some so that can run bam readcount and extract counts in those mutations
 #across all samples
@@ -177,7 +187,12 @@ muts_some_bam_readcount$mut_id = muts_some_bam_readcount$POS
 muts_some_bam_readcount$CHROM = sapply(muts_some_bam_readcount$CHR, function(x){
 unlist(strsplit(x, "chr"))[2]
 })
-
+print(dim(muts_some_bam_readcount))
+file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/", name_analysis, "_pyclone_bam_readcount_input.bed", sep="")
 write.table(muts_some_bam_readcount,
-  "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed",
+  file,
   col.names=F, quote=F, row.names=F, sep="\t")
+}
+
+get_bam_read(pyclone_full, "all_muts") #14317 mutations
+get_bam_read(pyclone_input, "small_subset") #555 mutations 
