@@ -70,4 +70,20 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pycl
 
 
 #----Summary-Plots--------------------------------------------------------------
+
+#zoom in on DLBCL driver genes and how they are mutated
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_007_summary_driver_genes_across_samples.R
+
+
+#----Staudt-classifier----------------------------------------------------------
+
+#1. set up sample file
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/001_setting_up_sample_annotation_file.R
+
+#2. set up mutation file
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/002_setting_up_mutation_file.R
+
+#3. set up CNA file
+
+
+#DONE

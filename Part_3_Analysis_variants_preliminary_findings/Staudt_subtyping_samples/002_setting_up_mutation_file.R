@@ -9,7 +9,6 @@
 date = Sys.Date()
 
 options(stringsAsFactors=F)
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust",
@@ -31,14 +30,16 @@ lapply(packages, require, character.only = TRUE)
 #data
 #----------------------------------------------------------------------
 
+#Our mutations
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
+read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
+
 #sample annotation
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
 
 #structural variant annotation
 svs = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs/2019-12-16_all_SVs_samples.txt")
-
-#muts
-muts = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text/2019-11-27_READ_ONLY_ALL_MERGED_MUTS.txt")
 
 #entrez id conversion
 #gene annotations
@@ -53,9 +54,9 @@ genes = as.data.table(filter(genes, !(is.na(entrez))))
         #Synon(5'UTR or synonymous within 4kb of TSS), L265P(MYD88 gene mutation))
 #column4 - Location (mutation start position)
 
-dat = unique(muts[,c("Indiv", "Gene.ensGene", "POS", "Func.ensGene",
+dat = unique(read_only[,c("Indiv", "Gene.ensGene", "POS", "Func.ensGene",
 "ExonicFunc.ensGene",
-"AAChange.ensGene", "hg19.ensemblToGeneName.value")])
+"AAChange.ensGene")])
 
 #add entrez id
 colnames(dat)[2] = "ensgene"
