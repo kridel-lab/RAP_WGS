@@ -18,4 +18,4 @@ run_citup_qip.py 2020-07-29_rap_citup_input_freqs.txt \
 #less 2020-07-27_rap_citup_input_clusters.txt | head -100 > test_citup_input_clusters.txt
 
 #run_citup_qip.py test_citup_input_freqs.txt \
-t#est_citup_input_clusters.txt test.h5 --submit local
+#test_citup_input_clusters.txt test.h5 --submit local
