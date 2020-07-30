@@ -51,15 +51,6 @@ genes_sum=as.data.table(table(morin$Gene))
 genes_sum = as.data.table(filter(genes_sum, N > 5))
 colnames(genes_sum)=c("Gene", "num_samples_w_mut")
 
-#bam readcount values for mutations not found in all patients
-bamreadcount=list.files(pattern="missing")
-
-#file with missing variants
-miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_bam_readcount_input.bed")
-colnames(miss_vars) = c("chr", "start", "end",
-																		 "ref_allele", "alt_allele")
-write.table(miss_vars, "pyclone_bam_readcount_input.bed", quote=F, row.names=F, sep="\t")
-
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -80,78 +71,105 @@ get_bam_readcount = function(file_res){
 	return(output_t1reads_t2muts)
 }
 
-missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount)))
-missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
+#get files based on whether it was on all mutations or subset of mutations
+#bam readcount values for mutations not found in all patients
 
-#mutations that were only found in one sample
-unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
+get_reads = function(type_analysis){
 
-#get pyclone filtered data
-#also remove noncoding mutations here, will make analysis easier
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
+	#mutations that were only found in one sample
+	unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 
-#get list of mutations that are present in all
-t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
-muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1))) #536 mutations
+	if(type_analysis == "full"){
+		bamreadcount=list.files(pattern="_missing_muts_all")
+		pyclone_input=as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+		MajorCN > 0))
+		#file with missing variants
+		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed")
+		colnames(miss_vars) = c("chr", "start", "end",
+																			 "ref_allele", "alt_allele")
+	  write.table(miss_vars, "pyclone_bam_readcount_all_muts_input.bed", quote=F, row.names=F, sep="\t")
+	}
 
-#for mutations that are found in only some patients
-#extract mutation info for those mutations across all samples
+	if(type_analysis == "subset"){
+		bamreadcount=list.files(pattern="_missing_muts_small")
+		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+		!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
+		#file with missing variants
+		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed")
+		colnames(miss_vars) = c("chr", "start", "end",
+																			 "ref_allele", "alt_allele")
+	  write.table(miss_vars, "pyclone_bam_readcount_some_muts_input.bed", quote=F, row.names=F, sep="\t")
+	}
 
-get_record = function(mutation){
-  print(mutation)
-  mut_dat = as.data.table(filter(missing_mutations, id == mutation))
-	pyclone_dat_mut = as.data.table(filter(pyclone_input, mut_id == mutation))
-  #columns that we need to edit
-  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj",
-	#"hg19.ensemblToGeneName.value", "Func.ensGene", "id")
-  #which patients don't have
-	pats = unique(mut_dat$samplename)
-	pats_missing = unique(read_only$Indiv)[which(!(unique(read_only$id) %in% pyclone_dat_mut$id))]
+	missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount)))
+	missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
 
-    make_pat = function(pat){
-      pat_dat = filter(mut_dat, samplename == pat)
-			pat_dat$mut_id = mutation
-			pat_dat$id = read_only$id[which(read_only$Indiv == pat)[1]]
+	#get list of mutations that are present in all
+	t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
+	muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
+	muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
 
-				if(pat %in% pats_missing){
-						pat_dat$MajorCN=2
-      			pat_dat$MinorCN=0
-						pat_dat$source = "bamreadcount"
-						}
+	#for mutations that are found in only some patients
+	#extract mutation info for those mutations across all samples
 
-				if(!(pat %in% pats_missing)){
-					pat_dat$MajorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MajorCN
-					pat_dat$MinorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MinorCN
-					pat_dat$source = "mutation_called"
-				}
+	get_record = function(mutation){
+	  print(mutation)
+	  mut_dat = as.data.table(filter(missing_mutations, id == mutation))
+		pyclone_dat_mut = as.data.table(filter(pyclone_input, mut_id == mutation))
+	  #columns that we need to edit
+	  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj",
+		#"hg19.ensemblToGeneName.value", "Func.ensGene", "id")
+	  #which patients don't have
+		pats = unique(mut_dat$samplename)
+		pats_missing = unique(read_only$Indiv)[which(!(unique(read_only$id) %in% pyclone_dat_mut$id))]
 
-			pat_dat$Ref_counts=pat_dat$ref_count
-      pat_dat$alt_counts=pat_dat$alt_count
-			pat_dat$symbol = read_only$symbol[which(read_only$mut_id == mutation)[1]]
-			pat_dat$Func.ensGene = read_only$Func.ensGene[which(read_only$mut_id == mutation)[1]]
-      return(pat_dat)
-    }
+	    make_pat = function(pat){
+	      pat_dat = filter(mut_dat, samplename == pat)
+				pat_dat$mut_id = mutation
+				pat_dat$id = read_only$id[which(read_only$Indiv == pat)[1]]
 
-  all_pats = as.data.table(ldply(llply(pats, make_pat, .progress="text")))
-  return(all_pats)
+					if(pat %in% pats_missing){
+							pat_dat$MajorCN=2
+	      			pat_dat$MinorCN=0
+							pat_dat$source = "bamreadcount"
+							}
+
+					if(!(pat %in% pats_missing)){
+						pat_dat$MajorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MajorCN
+						pat_dat$MinorCN=filter(read_only, mut_id==mutation, Indiv == pat)$MinorCN
+						pat_dat$source = "mutation_called"
+					}
+
+				pat_dat$Ref_counts=pat_dat$ref_count
+	      pat_dat$alt_counts=pat_dat$alt_count
+				pat_dat$symbol = read_only$symbol[which(read_only$mut_id == mutation)[1]]
+				pat_dat$Func.ensGene = read_only$Func.ensGene[which(read_only$mut_id == mutation)[1]]
+	      return(pat_dat)
+	    }
+
+	  all_pats = as.data.table(ldply(llply(pats, make_pat, .progress="text")))
+	  return(all_pats)
+	}
+
+	all_muts = unique(muts_some$mut_id)
+	missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
+
+	#combine with mutation data for mutations that were called in all samples
+	#need the same columns
+	z = which(colnames(muts_all) %in% colnames(missing_records))
+	muts_all = muts_all[,..z]
+
+	z = which(colnames(missing_records) %in% colnames(muts_all))
+	missing_records = missing_records[,..z]
+
+	#now make them match wtih missing records columns so that can bind them together
+	cols  = colnames(missing_records)
+	muts_all = muts_all[,..cols]
+
+	all_records = rbind(muts_all, missing_records)
+	write.table(all_records, file=paste(date, type_analysis, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
+
 }
 
-all_muts = unique(muts_some$mut_id)
-missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
-
-#combine with mutation data for mutations that were called in all samples
-#need the same columns
-z = which(colnames(muts_all) %in% colnames(missing_records))
-muts_all = muts_all[,..z]
-
-z = which(colnames(missing_records) %in% colnames(muts_all))
-missing_records = missing_records[,..z]
-
-#now make them match wtih missing records columns so that can bind them together
-cols  = colnames(missing_records)
-muts_all = muts_all[,..cols]
-
-all_records = rbind(muts_all, missing_records)
-write.table(all_records, file=paste(date, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
+get_reads("full")
+get_reads("subset")

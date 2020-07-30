@@ -195,4 +195,4 @@ write.table(muts_some_bam_readcount,
 }
 
 get_bam_read(pyclone_full, "all_muts") #14317 mutations
-get_bam_read(pyclone_input, "small_subset") #555 mutations 
+get_bam_read(pyclone_input, "small_subset") #555 mutations
