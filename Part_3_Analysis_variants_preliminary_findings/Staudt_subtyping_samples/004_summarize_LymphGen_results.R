@@ -7,6 +7,7 @@
 #----------------------------------------------------------------------
 
 date = Sys.Date()
+options(scipen=999) #no scientific notation
 
 options(stringsAsFactors=F)
 
@@ -18,6 +19,7 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust",
               "ggExtra", "broom", "ggthemes")
 
 lapply(packages, require, character.only = TRUE)
+library("readxl")
 
 #----------------------------------------------------------------------
 #purpose
@@ -30,9 +32,51 @@ lapply(packages, require, character.only = TRUE)
 #data
 #----------------------------------------------------------------------
 
+#DLBCL driver genes from Reddy et al 2017
+reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+
+#samples id names
+samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+
+#DLBCL mutations from Morin Blood 2013
+morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
+genes_sum=as.data.table(table(morin$Gene))
+genes_sum = as.data.table(filter(genes_sum, N > 5))
+colnames(genes_sum)=c("Gene", "num_samples_w_mut")
+
 #Our mutations
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
+read_only$driver = ""
+read_only$driver[read_only$symbol %in% reddy$Gene] = "yes"
+read_only$driver[!(read_only$symbol %in% reddy$Gene)] = "no"
+
+table(read_only$driver, read_only$Func.ensGene)
+table(read_only$driver, read_only$ExonicFunc.ensGene)
+table(filter(read_only, biotype == "protein_coding")$driver, filter(read_only, biotype == "protein_coding")$Func.ensGene)
+
+#summarize mutations in driver genes vs other genes
+pcg_only = as.data.table(table(filter(read_only, biotype == "protein_coding")$driver))
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/009_DLBCL_driver_muts_vs_not.pdf")
+# Basic barplot
+p<-ggplot(data=pcg_only, aes(x=V1, y=N)) +
+  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations in DLBCL driver genes")+
+  xlab("DLBCL driver gene") + ylab("Number of mutations")
+print(p)
+dev.off()
+
+pcg_only_types = as.data.table(table(filter(read_only, biotype == "protein_coding")$driver, filter(read_only, biotype == "protein_coding")$Func.ensGene))
+pcg_only_types$V1 = factor(pcg_only_types$V1, levels = c("yes", "no"))
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/010_DLBCL_driver_muts_vs_not_function.pdf")
+# Basic barplot
+p<-ggplot(data=pcg_only_types, aes(x=V2, y=N, fill=V1)) +
+  geom_bar(stat="identity", position=position_dodge())+theme_minimal()+ggtitle("Number of mutations in DLBCL driver genes")+
+  xlab("Function") + ylab("Number of mutations")+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+  geom_text(aes(label=N), size=1)+
+    coord_flip()
+print(p)
+dev.off()
 
 #results files
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
@@ -42,3 +86,32 @@ res = fread("rap_wgs_Result.txt")
 
 #compare
 comp = fread("rap_wgs_Compare.txt")
+
+colnames(res)[1] = "Indiv"
+res = merge(res, samps, by="Indiv")
+
+#summarize confience for each subtype
+res_sum = melt(res, id.vars = "id", measure.vars=c("Confidence.BN2",
+"Confidence.EZB", "Confidence.MCD", "Confidence.N1",
+"Confidence.ST2", "Confidence.A53"))
+pdf("001_LymphGen_summary.pdf")
+# Basic barplot
+p<-ggplot(data=res_sum, aes(x=id, y=value, fill=variable)) +
+  geom_bar(stat="identity", position=position_dodge())+theme_minimal()+ggtitle("Confidence for each subtype (LymphGen)")+
+  xlab("Sample") + ylab("Confidence")+
+    coord_flip()
+print(p)
+dev.off()
+
+#summarize number of features associated with each subtype
+res_sum = melt(res, id.vars = "id", measure.vars=c("BN2.Feature.Count",
+"EZB.Feature.Count", "MCD.Feature.Count", "N1.Feature.Count",
+"ST2.Feature.Count", "A53.Feature.Count"))
+pdf("002_LymphGen_summary.pdf")
+# Basic barplot
+p<-ggplot(data=res_sum, aes(x=id, y=value, fill=variable)) +
+  geom_bar(stat="identity", position=position_dodge())+theme_minimal()+ggtitle("Number of features in each subtype (LymphGen)")+
+  xlab("Sample") + ylab("Number of features")+
+    coord_flip()
+print(p)
+dev.off()
