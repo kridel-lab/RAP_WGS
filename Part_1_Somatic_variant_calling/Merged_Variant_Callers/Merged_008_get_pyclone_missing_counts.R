@@ -167,8 +167,10 @@ get_reads = function(type_analysis){
 	muts_all = muts_all[,..cols]
 
 	all_records = rbind(muts_all, missing_records)
-	write.table(all_records, file=paste(date, type_analysis, "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
+	write.table(all_records, file=paste(date, type_analysis, "mutations", "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
+	print(length(unique(all_records$mut_id)))
+	print("done")
 }
 
 get_reads("full")
