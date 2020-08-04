@@ -3,7 +3,7 @@
 #SBATCH --mem=175440M
 #SBATCH -J pyclone_all
 #SBATCH -c 8
-#SBATCH -t 8-00:00 # Runtime in D-HH:MM
+#SBATCH -t 7-00:00 # Runtime in D-HH:MM
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 
