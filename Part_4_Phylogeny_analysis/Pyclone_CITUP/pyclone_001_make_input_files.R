@@ -42,6 +42,11 @@ make_input_pyclone = function(input_muts, type){
   t=t[order(V1)]
 
   #make sure mutations ordered in the same way in each sample specific file
+  #keep only mutations that are copy neutral in all samples
+  muts$tot_cn = muts$MajorCN + muts$MinorCN
+  muts_keep = as.data.table(filter(muts, tot_cn <= 4))
+  muts_sum = filter(as.data.table(table(muts_keep$mut_id)), N ==20)$V1
+  muts = as.data.table(filter(muts, mut_id %in% muts_sum))
 
   make_input = function(patient){
     pat_dat = as.data.table(filter(muts, id == patient))
@@ -55,6 +60,7 @@ make_input_pyclone = function(input_muts, type){
 
     colnames(pat_dat) = c("mutation_id", "ref_counts", "var_counts", "normal_cn", "minor_cn", "major_cn", "gene_name", "region", "id")
     print(tail(pat_dat))
+    print(dim(pat_dat))
     write.table(pat_dat, file=paste(pat_dat$id[1], type, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
   }
 

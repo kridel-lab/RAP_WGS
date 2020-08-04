@@ -7,7 +7,7 @@
 #SBATCH -J run_all_scripts
 
 #----navigate to main directory-------------------------------------------------
-/cluster/projects/kridelgroup/RAP_ANALYSIS
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 #----merge variants from strelka and mutect2------------------------------------
 
@@ -87,6 +87,6 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/003_setting_up_CNA_file.R
 
 #4. summarize results from Staudt classifier
-Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/003_setting_up_CNA_file.R
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/004_summarize_LymphGen_results.R
 
 #DONE

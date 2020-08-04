@@ -3,7 +3,7 @@
 #SBATCH --mem=175440M
 #SBATCH -J pyclone_all
 #SBATCH -c 8
-#SBATCH -t 5-00:00 # Runtime in D-HH:MM
+#SBATCH -t 10-00:00 # Runtime in D-HH:MM
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 
@@ -35,7 +35,7 @@ FT_Omentum_340885_all_muts_pyclone_input.tsv \
 FT_Shoulder\,\ NOS_340881_all_muts_pyclone_input.tsv \
 FT_Cervical\ lymph\ node_340867_all_muts_pyclone_input.tsv \
 FT_Axilla\,\ NOS_340852_all_muts_pyclone_input.tsv \
- --working_dir Pyclone_all_muts_July2020
+ --working_dir Pyclone_all_muts_Aug2020
 
-PyClone build_table --config_file Pyclone_all_muts_July2020/config.yaml --out_file Pyclone_all_muts_July2020_table_file.txt --table_type loci
-PyClone build_table --config_file Pyclone_all_muts_July2020/config.yaml --out_file Pyclone_all_muts_July2020_table_file_cluster.txt --table_type cluster
+PyClone build_table --config_file Pyclone_all_muts_Aug2020/config.yaml --out_file Pyclone_all_muts_Aug2020_table_file.txt --table_type loci
+PyClone build_table --config_file Pyclone_all_muts_Aug2020/config.yaml --out_file Pyclone_all_muts_Aug2020_table_file_cluster.txt --table_type cluster
