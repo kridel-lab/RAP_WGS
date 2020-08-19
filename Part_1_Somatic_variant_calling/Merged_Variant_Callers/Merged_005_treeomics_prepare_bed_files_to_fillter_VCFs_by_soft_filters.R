@@ -47,13 +47,7 @@ read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(lis
 #SEPERATE FILES INTO FINAL SETS BASED ON TOOL INPUT
 #----------------------------------------------------------------------
 
-#+++++ PCG mutations only +++++++++++++++++++++++++++++++++++++++++++++
-
-#2. TREEOMICS INPUT VCF FILES = remove mutations in noncoding genes
-#keep all copy number states
-treeomics_input = as.data.table(filter(read_only,
-!(ExonicFunc.ensGene %in% c("unknown", "."))))
-
+#1. DEFINE FUNCTION TO MAKE INPUT DATA
 #BED file for intersecting VCF files with this file
 #CHROM POS tab seperated
 #create one file for each patient sample - sample specific mutations to extract
@@ -70,9 +64,18 @@ get_pat_treeomics_muts = function(pat, dat, type){
   print("done")
 }
 
+#2. TREEOMICS INPUT VCF FILES = remove mutations in noncoding genes
+#keep all copy number states
+
+#+++++ PCG mutations only +++++++++++++++++++++++++++++++++++++++++++++
+
+treeomics_input = as.data.table(filter(read_only,
+!(ExonicFunc.ensGene %in% c("unknown", "."))))
+
 pats = unique(treeomics_input$Indiv)
 llply(pats, get_pat_treeomics_muts, treeomics_input, "pcgs_only")
 
 #+++++ ALL mutations +++++++++++++++++++++++++++++++++++++++++++++++++
 
+#same pats input as above = sample patients
 llply(pats, get_pat_treeomics_muts, read_only, "all_muts")
