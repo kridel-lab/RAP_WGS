@@ -46,7 +46,6 @@ list_df <- split(read_only, f = read_only$Sample)
 for(i in 1:length(list_df)){
   list_df[[i]] = as.data.frame(list_df[[i]])
   list_df[[i]]$Sample = NULL
-	list_df[[i]]$gt_AF = list_df[[i]]$gt_AF * 100
 }
 
 #save full dataset
