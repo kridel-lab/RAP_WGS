@@ -58,5 +58,5 @@ saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 #2) position
 #3) gene name.
 
-anno = unique(read_only[,c("CHROM", "POS", "symbol")])
-saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/annotation_file.rds")
+anno = unique(full[,c("CHROM", "POS", "symbol")])
+saveRDS(anno, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/annotation_file.rds")

@@ -60,7 +60,7 @@ annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 #run sciclone, one sample at a time
 sc = sciClone(vafs=snv_list[[index]], useSexChrs=FALSE,
          copyNumberCalls=cnas_list[[index]],
-         sampleNames=samples[index], minimumDepth=20, ann)
+         sampleNames=samples[index], minimumDepth=20, annotation=annotations)
 
 #save output
 #create output
