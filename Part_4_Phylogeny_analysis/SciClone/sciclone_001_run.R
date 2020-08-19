@@ -12,6 +12,10 @@ print(date)
 options(stringsAsFactors=F)
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone")
 
+args = commandArgs(trailingOnly = TRUE)
+index = args[1]
+print(index)
+
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table",
               "plyr",
@@ -44,10 +48,6 @@ cnas_list = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClon
 
 #3. sample names (use ids for now)
 samples = names(snv_list)
-
-args = commandArgs(trailingOnly = TRUE)
-index = args[1]
-print(index)
 
 #----------------------------------------------------------------------
 #analysis

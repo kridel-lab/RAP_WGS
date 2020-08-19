@@ -9,4 +9,5 @@
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone
 
 index=$1
+echo $index 
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_001_run.R $index
