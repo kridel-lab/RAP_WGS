@@ -33,6 +33,7 @@ lapply(packages, require, character.only = TRUE)
 #1. READ-ONLY FILE = FINAL MUTATIONS = KEEP THIS WAY UNLESS MAJOR CHANGE NEEDED
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
+full = read_only
 read_only = read_only[,c("Sample", "CHROM", "POS", "Ref_counts", "alt_counts", "gt_AF")]
 read_only = read_only[,c("Sample", "CHROM", "POS", "Ref_counts", "alt_counts", "gt_AF")]
 
@@ -50,3 +51,12 @@ for(i in 1:length(list_df)){
 
 #save full dataset
 saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_snvs_df.rds")
+
+#create annotation file
+#annotation:
+#1) chromosome
+#2) position
+#3) gene name.
+
+anno = unique(read_only[,c("CHROM", "POS", "symbol")])
+saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/annotation_file.rds")
