@@ -61,12 +61,23 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_004_setting_up_CITUP.sh
 
 #summarize results from pyclone
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_006_pyclone_summary.R
+
+#----SciClone------------------------------------------------------------------
+
+#generate input files
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_make_CNA_input_list.R
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_make_SNV_input_list.R
+
+#run on individual samples
+index=1 #from 1 to 20....
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_001_run.R $index
 
 
 #----Treeomics------------------------------------------------------------------
 
 
-#----PhyloWGS-------------------------------------------------------------------
+
 
 
 #----Summary-Plots--------------------------------------------------------------
