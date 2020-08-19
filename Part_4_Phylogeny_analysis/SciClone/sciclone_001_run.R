@@ -50,6 +50,9 @@ cnas_list = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClon
 #3. sample names (use ids for now)
 samples = names(snv_list)
 
+#4. annotation file
+annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/annotation_file.rds")
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -57,7 +60,7 @@ samples = names(snv_list)
 #run sciclone, one sample at a time
 sc = sciClone(vafs=snv_list[[index]], useSexChrs=FALSE,
          copyNumberCalls=cnas_list[[index]],
-         sampleNames=samples[index], minimumDepth=20)
+         sampleNames=samples[index], minimumDepth=20, ann)
 
 #save output
 #create output
