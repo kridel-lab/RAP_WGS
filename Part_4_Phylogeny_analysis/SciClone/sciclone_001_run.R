@@ -14,6 +14,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone")
 
 args = commandArgs(trailingOnly = TRUE)
 index = args[1]
+index = as.numeric(index)
 print(index)
 
 #load libraries
