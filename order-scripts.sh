@@ -60,8 +60,14 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyc
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_004_setting_up_CITUP.sh
 
+#get output from CITUP
+python /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_005_reading_CITUP_results_rap.py
+
 #summarize results from pyclone
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_006_pyclone_summary.R
+
+#run mapscape locally after results from citup have been transferred over
+Rscript /Users/kisaev/github/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_007_mapscape.R
 
 #----SciClone------------------------------------------------------------------
 

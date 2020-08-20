@@ -12,8 +12,8 @@ module load citup
 module load python3
 
 run_citup_qip.py 2020-08-20_rap_citup_input_freqs.txt \
-2020-08-20_rap_citup_input_clusters.txt p003_results.h5 --min_nodes 2 --max_nodes 5 \
---submit local --max_children_per_node 5
+2020-08-20_rap_citup_input_clusters.txt p003_results.h5 --submit local #--min_nodes 2 --max_nodes 5 \
+ #--max_children_per_node 5
 
 #usage: run_citup_iter.py [-h] [--tmpdir TMPDIR] [--pipelinedir PIPELINEDIR]
 #                         [--loglevel {CRITICAL,ERROR,WARNING,INFO,DEBUG}]
