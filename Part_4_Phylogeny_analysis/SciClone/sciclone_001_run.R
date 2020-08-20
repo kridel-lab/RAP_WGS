@@ -60,9 +60,9 @@ annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 #run sciclone, one sample at a time
 sc = sciClone(vafs=snv_list[[index]], useSexChrs=FALSE,
          copyNumberCalls=cnas_list[[index]],
-         sampleNames=samples[index], minimumDepth=20, annotation=annotations)
+         sampleNames=samples[index], minimumDepth=50, annotation=annotations)
 
 #save output
 #create output
 writeClusterTable(sc, paste(samples[index], "sciclone_output.txt", sep="_"))
-sc.plot1d(sc, paste(samples[index], "clusters_results.pdf", sep="_")
+sc.plot1d(sc, paste(samples[index], "clusters_results.pdf", sep="_"))

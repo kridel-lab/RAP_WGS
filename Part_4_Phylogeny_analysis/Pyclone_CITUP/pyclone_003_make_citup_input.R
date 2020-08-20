@@ -86,6 +86,9 @@ pyclone_file = as.data.table(filter(pyclone_file, mut_id %in% pyclone_file_merge
 muts = dcast(pyclone_file, cluster_id + mut_id ~ sample_id, value.var = "cellular_prevalence")
 clusters = muts[,c(1:2)]
 
+#save order of samples
+
+
 #mutation file
 muts_final = muts[,3:ncol(muts)]
 file = paste(date, "rap_citup_input_freqs.txt", sep="_")
