@@ -63,6 +63,9 @@ pyclone_file= fread(files)
 cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
 
 cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=2)
+#still end up with 24 clusters here
+#let's limit to the 10 clusters with the most mutations
+cluster=cluster[order(-N)][1:10,]
 
 #let's keep only the clusters with more than two mutations in them
 pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1)
@@ -76,9 +79,6 @@ pyclone_file_merged = merge(pyclone_file, mut_gene, by="mut_id")
 #now keep only the DLBCL ones
 z = which(pyclone_file_merged$symbol %in% reddy$Gene)
 pyclone_file_merged = pyclone_file_merged[z,]
-
-#only keep exonic mutations
-#pyclone_file_merged = as.data.table(filter(pyclone_file_merged, Func.ensGene == "exonic"))
 
 #filter original file
 pyclone_file = as.data.table(filter(pyclone_file, mut_id %in% pyclone_file_merged$mut_id))
