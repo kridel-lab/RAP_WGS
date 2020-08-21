@@ -99,5 +99,11 @@ for(i in 1:length(list_loh)){
   list_loh[[i]]$Sample = NULL
 }
 
-#save full dataset
+#save full dataset as list
 saveRDS(list_loh, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_loh_df.rds")
+
+#save full as dataset as one file
+loh$Sample = NULL
+loh = unique(loh)
+loh = as.data.frame(loh)
+saveRDS(loh, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/loh_full_df.rds")

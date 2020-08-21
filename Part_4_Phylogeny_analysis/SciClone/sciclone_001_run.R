@@ -53,12 +53,15 @@ samples = names(snv_list)
 #4. annotation file
 annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/annotation_file.rds")
 
+#5. loh regions
+loh = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_loh_df.rds")
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
 
 #run sciclone, one sample at a time
-sc = sciClone(vafs=snv_list[[index]], useSexChrs=FALSE,
+sc = sciClone(vafs=snv_list[[index]], useSexChrs=TRUE, regionsToExclude=loh[[index]] , 
          copyNumberCalls=cnas_list[[index]],
          sampleNames=samples[index], minimumDepth=50, annotation=annotations)
 
