@@ -66,7 +66,7 @@ all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
 #hemizygous deletion LOH (DLOH),
 #copy neutral LOH (NLOH),
 #amplified LOH (ALOH)
-z = which(all_cnas$TITAN_call %in% c("DLOH", "NLOH", "ALOH"))
+z = which(all_cnas$TITAN_call %in% c("NLOH"))
 loh = all_cnas[z,]
 all_cnas = all_cnas[-z,]
 
