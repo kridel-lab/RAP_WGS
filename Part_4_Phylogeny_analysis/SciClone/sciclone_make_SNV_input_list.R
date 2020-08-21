@@ -37,6 +37,11 @@ full = read_only
 read_only = read_only[,c("Sample", "CHROM", "POS", "Ref_counts", "alt_counts", "gt_AF")]
 read_only = read_only[,c("Sample", "CHROM", "POS", "Ref_counts", "alt_counts", "gt_AF")]
 
+#2. Mutation file produced using bam readcount
+
+
+
+
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone")
 
 #split dataframe into list by sample

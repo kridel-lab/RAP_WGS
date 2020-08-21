@@ -62,7 +62,15 @@ colnames(all_cnas)[1] = "barcode"
 all_cnas = merge(all_cnas, clusters, by = "barcode")
 all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
 
-#save for filtering SNVs
+#isolate LOH regions
+#hemizygous deletion LOH (DLOH),
+#copy neutral LOH (NLOH),
+#amplified LOH (ALOH)
+z = which(all_cnas$TITAN_call %in% c("DLOH", "NLOH", "ALOH"))
+loh = all_cnas[z,]
+all_cnas = all_cnas[-z,]
+
+#save
 all_cnas = all_cnas[,c("Sample", "CHROM", "Start", "End",
 "Copy_Number")]
 
@@ -78,3 +86,18 @@ for(i in 1:length(list_df)){
 
 #save full dataset
 saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_cnas_df.rds")
+
+#prepare list of regions to exclude = LOH
+# 1. chromosome, 2. window start position 3. window stop position;
+loh = unique(loh[,c("Sample", "CHROM", "Start", "End")])
+
+list_loh <- split(loh, f = loh$Sample)
+
+#for each element in list remove original sample column
+for(i in 1:length(list_loh)){
+  list_loh[[i]] = as.data.frame(list_loh[[i]])
+  list_loh[[i]]$Sample = NULL
+}
+
+#save full dataset
+saveRDS(list_loh, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_loh_df.rds")
