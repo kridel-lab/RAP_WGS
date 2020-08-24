@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -p veryhimem
-#SBATCH --mem=175440M
+#SBATCH -p long
+#SBATCH --mem=30720M
 #SBATCH -J pyclone_all
 #SBATCH -c 10
-#SBATCH -t 5-00:00 # Runtime in D-HH:MM
+#SBATCH -t 21-00:00 # Runtime in D-HH:MM
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 
