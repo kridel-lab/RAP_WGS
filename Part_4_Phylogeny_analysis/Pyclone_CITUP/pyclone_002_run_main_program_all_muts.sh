@@ -35,7 +35,7 @@ FT_Omentum_340885_all_muts_pyclone_input.tsv \
 FT_Shoulder\,\ NOS_340881_all_muts_pyclone_input.tsv \
 FT_Cervical\ lymph\ node_340867_all_muts_pyclone_input.tsv \
 FT_Axilla\,\ NOS_340852_all_muts_pyclone_input.tsv \
- --working_dir Pyclone_all_muts_Aug2020
+--init_method connected --num_iters 1000 --seed 123 --min_cluster_size 5 --working_dir Pyclone_all_muts_Sept2020
 
-PyClone build_table --config_file Pyclone_all_muts_Aug2020/config.yaml --out_file Pyclone_all_muts_Aug2020_table_file.txt --table_type loci
-PyClone build_table --config_file Pyclone_all_muts_Aug2020/config.yaml --out_file Pyclone_all_muts_Aug2020_table_file_cluster.txt --table_type cluster
+PyClone build_table --config_file Pyclone_all_muts_Sept2020/config.yaml --out_file Pyclone_all_muts_Sept2020_table_file.txt --table_type loci
+PyClone build_table --config_file Pyclone_all_muts_Sept2020/config.yaml --out_file Pyclone_all_muts_Sept2020_table_file_cluster.txt --table_type cluster

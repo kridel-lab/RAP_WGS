@@ -17,7 +17,8 @@ library("readxl")
 library(mapscape)
 
 date = Sys.Date()
-setwd("/Users/kisaev/UHN/kridel-lab - Documents/RAP_WGS/Analysis-Files/Pyclone")
+#cd /Users/kisaev/UHN/kridel-lab - Documents/
+setwd("RAP_WGS/Analysis-Files/Pyclone")
 
 #----------------------------------------------------------------------
 #purpose
@@ -58,7 +59,7 @@ img_ref = "pic1-68.png"
 #analysis
 #----------------------------------------------------------------------
 
-mapscape(clone, citup_ad, samps, img_ref, ncells=20)
+mapscape(clone, citup_ad, samps, img_ref)
 
 #mapscape(clonal_prev, tree_edges, sample_locations, img_ref,
 #       clone_colours = "NA", mutations = "NA", sample_ids = c("NA"),
