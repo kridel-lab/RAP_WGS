@@ -83,7 +83,19 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone
 #----Treeomics------------------------------------------------------------------
 
 
+#----Palimpsest-----------------------------------------------------------------
 
+#prepare samples
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_annot_input_Palimpsest.R
+
+#prepare CNAs
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_CNA_input_Palimpsest.R
+
+#prepare SNVs
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_SNV_input_Palimpsest.R
+
+#run palimpsest
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R
 
 
 #----Summary-Plots--------------------------------------------------------------
