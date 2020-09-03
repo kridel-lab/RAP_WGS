@@ -72,4 +72,4 @@ Tumor_Depth = DP, Normal_Depth = Ref_counts, Gene_Name = symbol, Driver = "") %>
 
 input$Driver[which(input$Gene_Name %in% reddy$Gene)] = input$Gene_Name[which(input$Gene_Name %in% reddy$Gene)]
 
-saveRDS(input, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/SNV_input_Palimpsest.rds")
+saveRDS(input, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/SNV_input_Palimpsest.rds")

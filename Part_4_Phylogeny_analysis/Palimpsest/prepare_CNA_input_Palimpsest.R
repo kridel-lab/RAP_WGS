@@ -79,4 +79,4 @@ all_cnas_palimpsest = all_cnas[,c("Sample", "CHROM", "Start", "End",
 "Copy_Number", "ploidy")]
 colnames(all_cnas_palimpsest) = c("Sample", "CHROM", "POS_START",
 "POS_END", "LogR", "Nmin", "Nmaj", "ntot", "Ploidy")
-write.table(all_cnas_palimpsest, file="copy_number_alteration_data_palimpsest_input.txt", quote=F, row.names=F, sep="\t")
+write.table(all_cnas_palimpsest, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/copy_number_alteration_data_palimpsest_input.txt", quote=F, row.names=F, sep="\t")
