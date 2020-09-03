@@ -6,13 +6,13 @@
 date = Sys.Date()
 
 #----------------------------------------------------------------------
-#load functions and libraries 
+#load functions and libraries
 #----------------------------------------------------------------------
 
 options(stringsAsFactors=F)
 
-#load libraries 
-packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr", 
+#load libraries
+packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
 	"ggrepel", "stringr", "maftools", "Palimpsest")
 lapply(packages, require, character.only = TRUE)
 
@@ -26,19 +26,19 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest")
 #be exported.
 
 #------------------------------------------------------------------
-# directory containing input files 
+# directory containing input files
 datadir <- "input"
 # directory to export results
 resdir <- "Results";if(!file.exists(resdir)) dir.create(resdir)
-#load input files 
-annotation = fread(paste(datadir, "/annotation_data_palimpsest_input.txt", sep=""))            
-cnas = fread(paste(datadir, "/copy_number_alteration_data_palimpsest_input.txt", sep=""))            
+#load input files
+annotation = fread(paste(datadir, "/annotation_data_palimpsest_input.txt", sep=""))
+cnas = fread(paste(datadir, "/copy_number_alteration_data_palimpsest_input.txt", sep=""))
 mut_data = readRDS(paste(datadir, "/SNV_input_Palimpsest.rds", sep=""))
-mut_data$Gene_Name = NA
-mut_data$Driver = NA
+#mut_data$Gene_Name = NA
+#mut_data$Driver = NA
 #------------------------------------------------------------------
 
-#set up genome 
+#set up genome
 
 #------------------------------------------------------------------
 library(BSgenome.Hsapiens.UCSC.hg19)
@@ -46,12 +46,6 @@ ref_genome <- BSgenome.Hsapiens.UCSC.hg19
 load("/cluster/home/kisaev/Palimpsest/data/ensgene_hg19.RData")
 load("/cluster/home/kisaev/Palimpsest/data/cytoband_hg19.RData")
 #------------------------------------------------------------------
-
-#Preprocessing and annotating input data
-#load("/cluster/home/kisaev/Palimpsest/RUNNING_PALIMPSEST_EXAMPLE/LiC1162/mut_data.RData")
-#load("/cluster/home/kisaev/Palimpsest/RUNNING_PALIMPSEST_EXAMPLE/LiC1162/cna_data.RData")
-#load("/cluster/home/kisaev/Palimpsest/RUNNING_PALIMPSEST_EXAMPLE/LiC1162/annot_data.RData")
-#load("/cluster/home/kisaev/Palimpsest/RUNNING_PALIMPSEST_EXAMPLE/LiC1162/sv_data.RData")
 
 #-------------------------------------------------------------------------------------------------
 # 1] De novo mutational signature analysis
@@ -156,8 +150,3 @@ chrTime_plot(vcf = vcf, point.mut.time = point.mut.time, resdir = resdir.)
 resdir. <- file.path(resdir,"Natural_history");if(!file.exists(resdir.)){dir.create(resdir.)}# Defining the results directory
 
 palimpsest_plotTumorHistories(vcf = vcf, sv.vcf = NULL, cna_data, point.mut.time, clonsig=signatures_exp_clonal$sig_props, subsig=signatures_exp_subclonal$sig_props, msigcol=mycol, resdir=resdir.)
-
-
-
-
-
