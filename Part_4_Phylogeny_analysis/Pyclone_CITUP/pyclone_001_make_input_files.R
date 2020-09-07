@@ -69,6 +69,6 @@ make_input_pyclone = function(input_muts, type){
 }
 
 #make input for all muts
-make_input_pyclone("2020-07-30_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-09-07_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-07-30_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-09-07_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
