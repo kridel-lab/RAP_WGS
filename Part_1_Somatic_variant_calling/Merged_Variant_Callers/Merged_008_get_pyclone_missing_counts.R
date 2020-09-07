@@ -93,7 +93,7 @@ get_reads = function(type_analysis){
 	if(type_analysis == "subset"){
 		bamreadcount=list.files(pattern="_missing_muts_small")
 		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-		!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
+		Copy_Number >=2, MajorCN > 0))
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed")
 		colnames(miss_vars) = c("chr", "start", "end",

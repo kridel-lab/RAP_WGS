@@ -12,21 +12,15 @@
 #----------------------------------------------------------------------
 
 date = Sys.Date()
-print(date)
-
 options(stringsAsFactors=F)
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table",
-              "plyr",
+              "plyr", "openxlsx", "readxl", "GenomicRanges",
               "ggrepel", "stringr", "maftools", "magrittr", "ggExtra", "broom")
 lapply(packages, require, character.only = TRUE)
-library(RColorBrewer)
-library(openxlsx)
-library(plotly)
-library(readxl)
-library(GenomicRanges)
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 
 #----------------------------------------------------------------------
 #purpose
@@ -59,7 +53,6 @@ ffpe = as.data.table(matrix(ncol=ncol(dna), nrow=3))
 colnames(ffpe) = colnames(dna)
 ffpe = as.data.frame(ffpe)
 
-#ffpe$Indiv = unique(muts$vcf_sample[which(!(muts$vcf_sample %in% dna$Indiv))])
 ffpe$Indiv = c("LY_RAP_0003_Dia_FoT_05", "LY_RAP_0003_Dia_FoT_01" ,"LY_RAP_0003_Dia_FoT_03")
 ffpe$barcode =c("15:S12966E", "15:S12966A", "15:S12966C")
 ffpe$Tissue_Site = c("left_breast", "right_neck_LN", "left_axilla_LN")
@@ -70,6 +63,9 @@ dna = rbind(dna, ffpe)
 dna$id = paste(dna$Specimen_Type, dna$Tissue_Site, dna$barcode, sep="_")
 
 muts = merge(muts, dna, by="Indiv", all=TRUE)
+
+#summary of depth for frozen versus ffpe samples
+muts %>% group_by(Specimen_Type) %>% dplyr::summarize(median=median(DP))
 
 #Mutation data from WGS Morin et al 2013
 #Table S3. All somatic SNVs identified from 40 genome pairs and 13 cell lines (XLSX, 918 KB)
@@ -155,18 +151,18 @@ write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_")
 #run one version of pyclone with all mutations except for unique ones
 #and those with major copy number greater than 0
 pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-MajorCN > 0))
+MajorCN > 0, Copy_Number >=2))
 
 #also remove noncoding mutations here, will make analysis easier
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic")), MajorCN > 0))
+pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), gt_AF >=0.15,  MajorCN > 0,
+!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
 
-#diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20)) #median alt count
-#autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32)) #median alt count
-#pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
+diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20, DP > 80)) #median alt count
+autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32, DP > 100)) #median alt count
+pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
 
-length(unique(pyclone_full$mut_id)) #38605 mutations
-length(unique(pyclone_input$mut_id)) #1466 mutations
+length(unique(pyclone_full$mut_id)) #38552 mutations
+length(unique(pyclone_input$mut_id)) #1356 mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros
