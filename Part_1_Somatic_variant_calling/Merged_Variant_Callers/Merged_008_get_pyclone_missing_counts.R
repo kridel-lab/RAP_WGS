@@ -15,12 +15,8 @@ source("/cluster/home/kisaev/scripts/bam_readcount_parseline.R")
 
 #load libraries
 packages <- c("dplyr", "ggplot2", "tidyr", "data.table", "plyr",
-	"stringr")
+	"stringr", "readxl", "GenomicRanges", "params", "readr")
 lapply(packages, require, character.only = TRUE)
-library("readxl")
-library(GenomicRanges)
-library(params)
-library(readr)
 
 #----------------------------------------------------------------------
 #purpose
@@ -92,8 +88,15 @@ get_reads = function(type_analysis){
 
 	if(type_analysis == "subset"){
 		bamreadcount=list.files(pattern="_missing_muts_small")
-		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-		Copy_Number >=2, MajorCN > 0))
+
+		#also remove noncoding mutations here, will make analysis easier
+		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), gt_AF >=0.15,  MajorCN > 0,
+		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
+
+		diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20, DP > 80)) #median alt count
+		autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32, DP > 100)) #median alt count
+		pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
+
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed")
 		colnames(miss_vars) = c("chr", "start", "end",
