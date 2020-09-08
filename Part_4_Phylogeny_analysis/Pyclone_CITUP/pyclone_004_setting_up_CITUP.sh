@@ -11,8 +11,8 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 module load citup
 module load python3
 
-run_citup_qip.py 2020-08-20_rap_citup_input_freqs.txt \
-2020-08-20_rap_citup_input_clusters.txt p003_results.h5 --submit local #--min_nodes 2 --max_nodes 5 \
+run_citup_qip.py 2020-09-08_rap_citup_input_freqs.txt \
+2020-09-08_rap_citup_input_clusters.txt p003_subset_results.h5 --submit local #--min_nodes 2 --max_nodes 5 \
  #--max_children_per_node 5
 
 #usage: run_citup_iter.py [-h] [--tmpdir TMPDIR] [--pipelinedir PIPELINEDIR]
