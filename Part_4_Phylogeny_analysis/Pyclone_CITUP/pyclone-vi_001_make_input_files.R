@@ -55,10 +55,10 @@ make_input_pyclone = function(input_muts, type){
 
   #make sure mutations ordered in the same way in each sample specific file
   #try analysis assuming mutations are copy neutral
-  muts$MajorCN=1
-  muts$MinorCN=1
-  muts$tot_cn = muts$MajorCN + muts$MinorCN
-  muts_keep = as.data.table(filter(muts, tot_cn <= 4))
+  #muts$MajorCN=1
+  #muts$MinorCN=1
+  #muts$tot_cn = muts$MajorCN + muts$MinorCN
+  #muts_keep = as.data.table(filter(muts, tot_cn <= 4))
   muts_sum = filter(as.data.table(table(muts_keep$mut_id)), N ==20)$V1
   muts = as.data.table(filter(muts, mut_id %in% muts_sum))
   muts = merge(muts, samps, by = "id")
@@ -78,6 +78,6 @@ make_input_pyclone = function(input_muts, type){
 }
 
 #make input for all muts
-make_input_pyclone("2020-09-07_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-09-11_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-09-07_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-09-11_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")

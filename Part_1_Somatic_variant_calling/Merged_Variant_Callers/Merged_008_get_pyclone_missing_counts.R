@@ -83,7 +83,7 @@ get_reads = function(type_analysis){
 
 	if(type_analysis == "full"){
 		bamreadcount=list.files(pattern="_missing_muts_all")
-		pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
 		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
 		#file with missing variants
@@ -95,6 +95,10 @@ get_reads = function(type_analysis){
 
 	if(type_analysis == "subset"){
 		bamreadcount=list.files(pattern="_missing_muts_small")
+
+		pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
+		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
 
 		pyclone_input = as.data.table(filter(pyclone_full,
 		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
