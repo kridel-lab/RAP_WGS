@@ -74,11 +74,18 @@ get_reads = function(type_analysis){
 
 	#mutations that were only found in one sample
 	unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
+	read_only$isdriver=""
+	read_only$isdriver[which(read_only$symbol %in% reddy$Gene)] = "yes"
+
+	#for clonal evolution analysis only keep founder mutations that are in DLBCL genes
+	founds_keep = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="yes")
+	founds_remove = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="")
 
 	if(type_analysis == "full"){
 		bamreadcount=list.files(pattern="_missing_muts_all")
-		pyclone_input=as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-		MajorCN > 0))
+		pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
+		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
+		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed")
 		colnames(miss_vars) = c("chr", "start", "end",
@@ -89,13 +96,9 @@ get_reads = function(type_analysis){
 	if(type_analysis == "subset"){
 		bamreadcount=list.files(pattern="_missing_muts_small")
 
-		#also remove noncoding mutations here, will make analysis easier
-		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), gt_AF >=0.15,  MajorCN > 0,
+		pyclone_input = as.data.table(filter(pyclone_full,
 		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
-
-		diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20, DP > 80)) #median alt count
-		autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32, DP > 100)) #median alt count
-		pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
+		length(unique(pyclone_input$mut_id)) #527 unique mutations
 
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed")
