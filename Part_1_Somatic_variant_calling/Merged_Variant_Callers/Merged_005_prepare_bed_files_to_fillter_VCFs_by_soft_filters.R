@@ -128,41 +128,36 @@ table(muts_wCNAs$Copy_Number)
 
 #1. READ-ONLY FILE = FINAL MUTATIONS = KEEP THIS WAY UNLESS MAJOR CHANGE NEEDED
 read_only = as.data.table(muts_wCNAs)
+read_only$tot_counts = read_only$Ref_counts+read_only$alt_counts
+
 write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
-#2. PHYLOWGS INPUT = REMOVE UNIQUE MUTATIONS
-founds = filter(as.data.table(table(read_only$mut_id)), N == 20)
-unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
-phylowgs_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-!(Func.ensGene %in% c("ncRNA_intronic", "intronic", "intergenic"))))
-phylowgs_input = unique(phylowgs_input[,c("CHROM", "POS")])
-#remove CHR
-phylowgs_input$CHROM = sapply(phylowgs_input$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
-
-#set.seed(100)
-#z = sample(dim(phylowgs_input)[1], 10000)
-#phylowgs_input = phylowgs_input[z,]
-write.table(phylowgs_input, file=paste(date, "PHYLOWGS_INPUT_MUTS.bed", sep="_"), quote=F, row.names=F, sep="\t")
-
-#3. PYCLONE = REMOVE UNIQUE MUTATIONS
+#2. PYCLONE = REMOVE UNIQUE MUTATIONS
 #REMOVE MUTATION WITH NMAJ OF 0
 #KEEP WES GENE MUTATIONS TO SIMPLIFY
+
+read_only$isdriver=""
+read_only$isdriver[which(read_only$symbol %in% reddy$Gene)] = "yes"
+
+#for clonal evolution analysis only keep founder mutations that are in DLBCL genes
+founds_keep = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="yes")
+founds_remove = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="")
+
+#filter out unique mutations those only in one sample for clonal evolution analysis
+unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
 
 #run one version of pyclone with all mutations except for unique ones
 #and those with major copy number greater than 0
 pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-MajorCN > 0, Copy_Number >=2))
+!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
+MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
 
-#also remove noncoding mutations here, will make analysis easier
-pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1), gt_AF >=0.15,  MajorCN > 0,
+length(unique(pyclone_full$mut_id)) #13013 unique mutations
+
+#create small subset for pyclone input for testing purposes
+pyclone_input = as.data.table(filter(pyclone_full,
 !(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
-
-diagnostic = as.data.table(filter(pyclone_input, Specimen_Type == "FFPE", alt_counts >=20, DP > 80)) #median alt count
-autopsy = as.data.table(filter(pyclone_input, Specimen_Type == "FT", alt_counts >=32, DP > 100)) #median alt count
-pyclone_input = rbind(diagnostic, autopsy) #1364 unique mutations...
-
-length(unique(pyclone_full$mut_id)) #38552 mutations
-length(unique(pyclone_input$mut_id)) #1356 mutations
+length(unique(pyclone_input$mut_id)) #527 unique mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros
@@ -190,5 +185,5 @@ write.table(muts_some_bam_readcount,
   col.names=F, quote=F, row.names=F, sep="\t")
 }
 
-get_bam_read(pyclone_full, "all_muts") #22940 mutations
-get_bam_read(pyclone_input, "small_subset") #1342 mutations
+get_bam_read(pyclone_full, "all_muts")
+get_bam_read(pyclone_input, "small_subset")

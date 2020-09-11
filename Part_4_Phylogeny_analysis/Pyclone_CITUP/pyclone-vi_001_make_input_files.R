@@ -54,7 +54,9 @@ make_input_pyclone = function(input_muts, type){
   t=t[order(V1)]
 
   #make sure mutations ordered in the same way in each sample specific file
-  #keep only mutations that are copy neutral in all samples
+  #try analysis assuming mutations are copy neutral
+  muts$MajorCN=1
+  muts$MinorCN=1
   muts$tot_cn = muts$MajorCN + muts$MinorCN
   muts_keep = as.data.table(filter(muts, tot_cn <= 4))
   muts_sum = filter(as.data.table(table(muts_keep$mut_id)), N ==20)$V1
@@ -63,6 +65,8 @@ make_input_pyclone = function(input_muts, type){
 
   #prepare matrix for pyclone vi input
   muts$normal_cn = 2
+  muts = as.data.table(filter(muts, mut_id %in% muts_sum))
+
   muts = muts %>% select(mut_id, id, Ref_counts, alt_counts, MajorCN, MinorCN, normal_cn, Purity)
   colnames(muts) = c("mutation_id", "sample_id", "ref_counts", "alt_counts", "major_cn", "minor_cn", "normal_cn", "tumour_content")
   print(table(muts$major_cn))
