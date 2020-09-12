@@ -59,7 +59,7 @@ make_input_pyclone = function(input_muts, type){
   #muts$MinorCN=1
   #muts$tot_cn = muts$MajorCN + muts$MinorCN
   #muts_keep = as.data.table(filter(muts, tot_cn <= 4))
-  muts_sum = filter(as.data.table(table(muts_keep$mut_id)), N ==20)$V1
+  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==20)$V1
   muts = as.data.table(filter(muts, mut_id %in% muts_sum))
   muts = merge(muts, samps, by = "id")
 
