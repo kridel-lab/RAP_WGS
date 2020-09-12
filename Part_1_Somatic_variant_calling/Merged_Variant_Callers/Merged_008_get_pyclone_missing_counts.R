@@ -46,7 +46,7 @@ reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/dat
 #----------------------------------------------------------------------
 
 #first combine all results from bamreadcount into one matrix
-get_bam_readcount = function(file_res){
+get_bam_readcount = function(file_res, type_analysis){
 
 	#samplename
 	samplename = unlist(strsplit(file_res, "_missing_muts"))[1]
@@ -54,8 +54,18 @@ get_bam_readcount = function(file_res){
 	#readcount output
 	x = file_res
 
+	#mut file
+	if(type_analysis == "full"){
+		muts_file="pyclone_bam_readcount_all_muts_input.bed"
+	}
+
+	if(type_analysis == "subset"){
+		muts_file="pyclone_bam_readcount_some_muts_input.bed"
+	}
+
 	#get output
-	output_t1reads_t2muts = as.data.table(bam_readcount.parse(x, samplename = samplename, "pyclone_bam_readcount_input.bed"))
+	output_t1reads_t2muts = as.data.table(bam_readcount.parse(x, samplename = samplename,
+		muts_file))
 
 	#save output
 	return(output_t1reads_t2muts)
@@ -68,8 +78,6 @@ get_reads = function(type_analysis){
 
 	#mutations that were only found in one sample
 	unique = filter(as.data.table(table(read_only$mut_id)), N == 1)
-	read_only$isdriver=""
-	read_only$isdriver[which(read_only$symbol %in% reddy$Gene)] = "yes"
 
 	#for clonal evolution analysis only keep founder mutations that are in DLBCL genes
 	founds_keep = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="yes")
@@ -80,7 +88,7 @@ get_reads = function(type_analysis){
 		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 		!(mut_id %in% founds_remove$V1), tot_counts >=60, gt_AF >=0.15,
 		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
-		length(unique(pyclone_input$mut_id)) #13013 unique mutations
+		length(unique(pyclone_input$mut_id)) #13345 unique mutations
 
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed")
@@ -107,7 +115,7 @@ get_reads = function(type_analysis){
 	  write.table(miss_vars, "pyclone_bam_readcount_some_muts_input.bed", quote=F, row.names=F, sep="\t")
 	}
 
-	missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount)))
+	missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount, type_analysis)))
 	missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
 
 	#get list of mutations that are present in all
