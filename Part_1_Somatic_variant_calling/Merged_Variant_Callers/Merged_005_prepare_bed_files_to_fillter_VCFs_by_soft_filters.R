@@ -130,14 +130,14 @@ table(muts_wCNAs$Copy_Number)
 read_only = as.data.table(muts_wCNAs)
 read_only$tot_counts = read_only$Ref_counts+read_only$alt_counts
 
-write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
-
 #2. PYCLONE = REMOVE UNIQUE MUTATIONS
 #REMOVE MUTATION WITH NMAJ OF 0
 #KEEP WES GENE MUTATIONS TO SIMPLIFY
 
 read_only$isdriver=""
-read_only$isdriver[which(read_only$symbol %in% reddy$Gene)] = "yes"
+read_only$isdriver[which((read_only$symbol %in% reddy$Gene) | (read_only$symbol %in% genes_sum$Gene))] = "yes"
+
+write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
 #for clonal evolution analysis only keep founder mutations that are in DLBCL genes
 founds_keep = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="yes")
@@ -152,12 +152,12 @@ pyclone_full = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
 !(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
 MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
 
-length(unique(pyclone_full$mut_id)) #13013 unique mutations
+length(unique(pyclone_full$mut_id)) #13345 unique mutations
 
 #create small subset for pyclone input for testing purposes
 pyclone_input = as.data.table(filter(pyclone_full,
 !(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
-length(unique(pyclone_input$mut_id)) #527 unique mutations
+length(unique(pyclone_input$mut_id)) #542 unique mutations
 
 #for mutations that are not present in all samples need to generate an entry for them
 #ideally need to get count of reads mapping there but for now just gonna put in zeros

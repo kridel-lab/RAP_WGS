@@ -41,12 +41,6 @@ samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_infor
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
 
-#DLBCL mutations from Morin Blood 2013
-morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
-genes_sum=as.data.table(table(morin$Gene))
-genes_sum = as.data.table(filter(genes_sum, N > 5))
-colnames(genes_sum)=c("Gene", "num_samples_w_mut")
-
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -84,8 +78,10 @@ get_reads = function(type_analysis){
 	if(type_analysis == "full"){
 		bamreadcount=list.files(pattern="_missing_muts_all")
 		pyclone_input = as.data.table(filter(read_only, !(mut_id %in% unique$V1),
-		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
+		!(mut_id %in% founds_remove$V1), tot_counts >=60, gt_AF >=0.15,
 		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
+		length(unique(pyclone_input$mut_id)) #13013 unique mutations
+
 		#file with missing variants
 		miss_vars = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed")
 		colnames(miss_vars) = c("chr", "start", "end",
