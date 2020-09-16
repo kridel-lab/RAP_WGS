@@ -59,6 +59,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pycl
 #run pyclone-vi all muts
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts.sh
 
+#run pyclone-vi all muts neutral assumption
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts_neut.sh
+
 #run subset of mutations
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_subset_muts.sh
 
