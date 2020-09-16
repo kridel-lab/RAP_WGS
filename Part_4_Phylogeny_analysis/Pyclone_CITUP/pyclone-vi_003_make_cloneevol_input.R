@@ -48,7 +48,7 @@ files_cluster = list.files(pattern="cluster.txt")
 files_cluster="Pyclone_subset_muts_Sept2020_table_file_cluster.txt"
 
 #results from pyclone-vi
-vi=fread("rap_wgs_subset_muts.tsv")
+vi=fread("rap_wgs_all_muts.tsv")
 
 #----------------------------------------------------------------------
 #analysis
@@ -190,6 +190,8 @@ order.by.total.vaf = TRUE)
 
 dev.off()
 
+summ_dlbcl = unique(filter(dat, is.driver == TRUE) %>% select(symbol, cluster))
+
 pdf('flow.pdf', width=20, height=10, useDingbats=FALSE, title='')
 plot.cluster.flow(dat, vaf.col.names = colnames(dat)[4:23],
   colors = col_vector)
@@ -198,13 +200,13 @@ dev.off()
 #infer clonal evolution tree
 y = infer.clonal.models(variants = dat,
   cluster.col.name ='cluster',
-vaf.col.names = colnames(dat)[5:6],
-cancer.initiation.model='monoclonal',
-#subclonal.test ='bootstrap',
-subclonal.test = 'none',
-num.boots = 1,
+vaf.col.names = colnames(dat)[4:23],
+cancer.initiation.model='polyclonal',
+#subclonal.test ='none',
+subclonal.test = 'bootstrap',
+num.boots = 50,
 #ignore.clusters=c(6,8),
-founding.cluster = 9,
+founding.cluster = c(2,8),
 #score.model.by = 'metap',
 cluster.center ='mean', min.cluster.vaf = 0.01,
           sum.p = 0.01,
