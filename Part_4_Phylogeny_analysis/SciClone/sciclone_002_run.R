@@ -53,24 +53,15 @@ annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 #analysis
 #----------------------------------------------------------------------
 
-#run sciclone, one sample at a time
-sc = sciClone(vafs=snv_list, useSexChrs=FALSE,
-         copyNumberCalls=cnas_list,
-         sampleNames=samples, minimumDepth=50, annotation=annotations)
+#------------------------------------
+#clustering using all samples:
+sc = sciClone(vafs=snv_list,
+    copyNumberCalls=cnas_list,annotation=annotations,
+    sampleNames=samples, maximumClusters=50, copyNumberMargins=0.75, minimumDepth=20)
 
 #------------------------------------
-#2d clustering using two samples:
-sc = sciClone(vafs=snv_list[4:5],
-    copyNumberCalls=cnas_list[4:5],
-    sampleNames=samples[c(4,5)], minimumDepth=50)
 
 #create output
-writeClusterTable(sc, "clusters2")
-sc.plot1d(sc,"clusters2.1d.pdf")
-sc.plot2d(sc,"clusters2.2d.pdf")
-
-
-#save output
-#create output
-writeClusterTable(sc, paste(samples[index], "sciclone_output.txt", sep="_"))
-sc.plot1d(sc, paste(samples[index], "clusters_results.pdf", sep="_"))
+writeClusterTable(sc, "clusters_all")
+#sc.plot1d(sc,"clusters2.1d.pdf")
+#sc.plot2d(sc,"clusters2.2d.pdf")
