@@ -94,7 +94,8 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone
 index=1 #from 1 to 20....
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_001_run.R $index
 
-#run on all samples 
+#run on all samples
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_002_job_submit.sh
 
 #----Treeomics------------------------------------------------------------------
 

@@ -61,13 +61,28 @@ loh$CHROM=sapply(loh$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
 
 #------------------------------------
 #clustering using all samples:
-sc = sciClone(vafs=snv_list,
-    copyNumberCalls=cnas_list,annotation=annotations,regionsToExclude=loh,
-    sampleNames=samples, maximumClusters=10, copyNumberMargins=0.75, minimumDepth=50)
+pairs_done = c("0")
+
+for(i in 1:20){
+  for(j in 1:20){
+      if(!(i==j)){
+      print(i)
+      print(j)
+      if(!(paste(i,j,sep="_")) %in% pairs_done){
+      sc = sciClone(vafs=snv_list[i:j],
+       copyNumberCalls=cnas_list[i:j],annotation=annotations,regionsToExclude=loh,
+        sampleNames=samples[i:j], maximumClusters=10, copyNumberMargins=0.75, minimumDepth=50)
+        #create output
+       writeClusterTable(sc, paste(samples[4:5], collapse="_"))
+        p = paste(samples[4:5], collapse="_")
+        sc.plot2d(sc, paste(p, ".pdf", sep=""))
+        pairs_done = c(pairs_done, paste(i,j,sep="_"))
+        pairs_done = c(pairs_done, paste(j,i,sep="_"))
+  }
+}
+}
+}
+
+print("done")
 
 #------------------------------------
-
-#create output
-writeClusterTable(sc, "clusters_all")
-#sc.plot1d(sc,"clusters2.1d.pdf")
-#sc.plot2d(sc,"clusters2.2d.pdf")

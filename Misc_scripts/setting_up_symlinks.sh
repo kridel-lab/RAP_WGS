@@ -12,18 +12,16 @@
 	cd RAP_ANALYSIS
 
 	#RAP = 1 control sample from March 2019
-	ln -s /cluster/projects/kridelgroup/RAP/BAK8973/LY_RAP_0003_Ctl_FzG_01_files/ /cluster/projects/kridelgroup/RAP_ANALYSIS/
+	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/RAP/BAK8973/LY_RAP_0003_Ctl_FzG_01_files/ /cluster/projects/kridelgroup/RAP_ANALYSIS/
 
-	#VO18AHH = 6 samples 
+	#VO18AHH = 6 samples
 	#/cluster/projects/kridelgroup/VO18AHH/BAK8973_topup_analysis
-	ln -s /cluster/projects/kridelgroup/VO18AHH/BAK8973_topup_analysis/* /cluster/projects/kridelgroup/RAP_ANALYSIS
+	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/VO18AHH/BAK8973_topup_analysis/* /cluster/projects/kridelgroup/RAP_ANALYSIS
 
-	#IA6CWXM = 14 samples 
+	#IA6CWXM = 14 samples
 	#/cluster/projects/kridelgroup/IA6CWXM/BAK10122
-
-	ln -s /cluster/projects/kridelgroup/IA6CWXM/BAK10122/* /cluster/projects/kridelgroup/RAP_ANALYSIS
+	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/IA6CWXM/BAK10122/* /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 	tree
 
-	#21 files total 
-	
+	#21 files total
