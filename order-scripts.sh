@@ -97,6 +97,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone
 #run on all samples
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_002_job_submit.sh
 
+#run pairwise sciclone comparing each sample to another sample 2D
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_003_job_submit.sh
+
 #----Treeomics------------------------------------------------------------------
 
 
