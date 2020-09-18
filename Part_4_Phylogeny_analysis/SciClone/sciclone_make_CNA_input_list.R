@@ -41,24 +41,34 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/op
 samples = fread("cna_vcf_sample_conversion.csv")
 colnames(samples) = c("barcode", "Sample")
 
+samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+colnames(samps)[2] = "Sample"
+
 #optimal clusters
 clusters = fread("optimalClusterSolution.txt")
 clusters= merge(samples, clusters, by = "barcode")
+clusters = merge(clusters, samps, by="Sample")
 
 #save sample cluster and purity info and upload to files
-cna_save = clusters[,c("Sample", "numClust", "cellPrev",
+cna_save = clusters[,c("id.y", "numClust", "cellPrev",
 "purity", "norm", "ploidy")]
+colnames(cna_save)[1] = "Sample"
+
+#sample order for SNVs
+samps_order = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/snvs_sciclone_list_sample_order.rds")
 
 write.table(cna_save, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/TitanCNA_summary.txt",
 quote=F, row.names=F, sep=";")
 
 #titanCNA results
+colnames(clusters)[4] = "id"
 files = list.files(pattern="seg.txt")
 files = files[sapply(clusters$id, function(x){which(str_detect(files, x))})]
 
 #read in data files
 all_cnas = as.data.table(ldply(llply(files, function(x){fread(x)})))
 colnames(all_cnas)[1] = "barcode"
+colnames(clusters)[2] = "barcode"
 all_cnas = merge(all_cnas, clusters, by = "barcode")
 all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
 
@@ -71,8 +81,12 @@ loh = all_cnas[z,]
 all_cnas = all_cnas[-z,]
 
 #save
-all_cnas = all_cnas[,c("Sample", "CHROM", "Start", "End",
+all_cnas = all_cnas[,c("id.y", "Chromosome", "Start", "End",
 "Copy_Number")]
+colnames(all_cnas)[1] = "Sample"
+
+#make sure order is the same as for snvs
+all_cnas = all_cnas[order(Sample)]
 
 #split dataframe into list by sample
 #save order of samples - will need to keep order same for other sciclone input
@@ -89,7 +103,7 @@ saveRDS(list_df, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 
 #prepare list of regions to exclude = LOH
 # 1. chromosome, 2. window start position 3. window stop position;
-loh = unique(loh[,c("Sample", "CHROM", "Start", "End")])
+loh = unique(loh[,c("Sample", "Chromosome", "Start", "End")])
 
 list_loh <- split(loh, f = loh$Sample)
 

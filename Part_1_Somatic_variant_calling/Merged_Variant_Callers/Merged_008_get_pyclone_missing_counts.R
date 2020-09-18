@@ -41,6 +41,9 @@ samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_infor
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
 
+#save sample id versus sample name clean
+
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------

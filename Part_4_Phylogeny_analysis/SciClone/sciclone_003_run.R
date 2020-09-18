@@ -53,7 +53,7 @@ annotations = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciCl
 loh = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/SciClone/list_loh_df.rds")
 loh = unique(as.data.table(ldply(loh)))
 loh = unique(loh[,-1])
-loh$CHROM=sapply(loh$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
+#loh$CHROM=sapply(loh$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
 
 #----------------------------------------------------------------------
 #analysis
@@ -69,13 +69,23 @@ for(i in 1:20){
       print(i)
       print(j)
       if(!(paste(i,j,sep="_")) %in% pairs_done){
+
       sc = sciClone(vafs=snv_list[i:j],
-       copyNumberCalls=cnas_list[i:j],annotation=annotations,regionsToExclude=loh,
-        sampleNames=samples[i:j], maximumClusters=10, copyNumberMargins=0.75, minimumDepth=50)
+       #copyNumberCalls=cnas_list[i:j],
+       annotation=annotations,
+       #regionsToExclude=loh,
+        sampleNames=samples[i:j], maximumClusters=10,
+        #copyNumberMargins=0.95,
+        minimumDepth=30)
         #create output
-       writeClusterTable(sc, paste(samples[4:5], collapse="_"))
-        p = paste(samples[4:5], collapse="_")
+        p = paste(samples[i:j], collapse="_")
+
+        #res file
+        writeClusterTable(sc, paste(p, "sciclone_table.txt", sep=""))
+
+        #plot
         sc.plot2d(sc, paste(p, ".pdf", sep=""))
+
         pairs_done = c(pairs_done, paste(i,j,sep="_"))
         pairs_done = c(pairs_done, paste(j,i,sep="_"))
   }
