@@ -48,7 +48,7 @@ files_cluster = list.files(pattern="cluster.txt")
 files_cluster="Pyclone_subset_muts_Sept2020_table_file_cluster.txt"
 
 #results from pyclone-vi
-vi=fread("rap_wgs_all_muts.tsv")
+vi=fread("rap_wgs_all_muts_neut.tsv")
 
 #----------------------------------------------------------------------
 #analysis
@@ -62,12 +62,12 @@ mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "E
 pyclone_file=vi
 
 #remove clusters with low cluster_assignment_prob
-pyclone_remove = unique(as.data.table(filter(pyclone_file, cluster_assignment_prob < 0.5, is.na(cellular_prevalence_std)))$cluster_id)
+pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
 
 #how many mutations in each cluster?
 cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
 
-cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=2)
+cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=400)
 
 #let's keep only the clusters with more than five mutations in them
 pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1, !(cluster_id %in% pyclone_remove))
@@ -120,6 +120,15 @@ pdf("heatmap_clusters_summary.pdf", width=10, height=10)
 pheatmap(summaries_vafs_fixed, cutree_cols=3)
 dev.off()
 
+#for each cluster and sample get mean cell prev
+mean_cp_clusters = as.data.table(pyclone_file_merged %>% group_by(sample_id, cluster_id) %>%
+dplyr::summarize(mean_cp=mean(cellular_prevalence)))
+mean_cp_clusters$cluster_id = factor(mean_cp_clusters$cluster_id)
+mean_cp_clusters$sample_name = sapply(mean_cp_clusters$sample_id,
+function(x){unlist(strsplit(x, "_subset_muts_pyclone_input"))[1]})
+mean_cp_clusters = mean_cp_clusters[order(-mean_cp)]
+mean_cp_clusters$cluster_id = factor(mean_cp_clusters$cluster_id, levels=unique(mean_cp_clusters$cluster_id))
+
 input = dcast(pyclone_file_merged, mut_id + symbol + cluster_id ~ sample,
   value.var = "vaf_fixed")
 input$is.driver = ""
@@ -144,6 +153,7 @@ input$is.driver[-z] = FALSE
 #4      4810        2325        2041    4366 47.54 44.45
 
 input$cluster_id = as.numeric(input$cluster_id)
+input = as.data.table(input)
 input = input[order(cluster_id)]
 clusts = as.data.frame(unique(input$cluster_id)) ; colnames(clusts)="cluster_id"
 clusts$cluster = 1:nrow(clusts)
@@ -159,12 +169,14 @@ qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 
 dat$is.driver = as.logical(dat$is.driver)
+#keep only one founding clone
+#z = which(dat$cluster %in% c(1,7))
+#dat = dat[-z,]
 
 pdf('box.pdf', width = 9, height = 20, useDingbats = FALSE, title='')
 
 pp <-plot.variant.clusters(dat,
   cluster.col.name ='cluster',
-show.cluster.size = TRUE,
 cluster.size.text.color ='blue',
 vaf.col.names = colnames(dat)[4:23],
 vaf.limits = 75,
@@ -197,41 +209,56 @@ plot.cluster.flow(dat, vaf.col.names = colnames(dat)[4:23],
   colors = col_vector)
 dev.off()
 
+#change cluster 1 so it's not 100 cell prevalence
+#z = which(dat$cluster==1)
+#dat$FFPE_right_neck_LN[z] = 98
+
+
+#to make tree need to have founding clone be labelled 1
+#so remove the first cluster since ignoring it anyways
+z = which(dat$cluster==1)
+dat=dat[-z,]
+z = which(dat$cluster==6)
+dat$cluster[z] = 1
+#z = which(dat$cluster==11)
+#dat$cluster[z] = 10
+
 #infer clonal evolution tree
 y = infer.clonal.models(variants = dat,
   cluster.col.name ='cluster',
 vaf.col.names = colnames(dat)[4:23],
-cancer.initiation.model='polyclonal',
+cancer.initiation.model='monoclonal',
 #subclonal.test ='none',
 subclonal.test = 'bootstrap',
-num.boots = 50,
-#ignore.clusters=c(6,8),
-founding.cluster = c(2,8),
-#score.model.by = 'metap',
+subclonal.test.model ='non-parametric',
+num.boots = 1000,
+#ignore.clusters =c(7,6),
+ignore.clusters=c(3),
+#founding.cluster = c(12),
+score.model.by = 'metap',
 cluster.center ='mean', min.cluster.vaf = 0.01,
-          sum.p = 0.01,
-          seeding.aware.tree.pruning=FALSE,
-          alpha = 0.001,
+          sum.p = 0.05,
+          alpha = 0.05, founding.cluster = 1,
 clone.colors = col_vector)
 
-y <-transfer.events.to.consensus.trees(y,dat[dat$is.driver,],
-  cluster.col.name ='cluster',event.col.name ='symbol')
+#y <-transfer.events.to.consensus.trees(y,dat[dat$is.driver,],
+#  cluster.col.name ='cluster',event.col.name ='symbol')
 
 y <-convert.consensus.tree.clone.to.branch(y, branch.scale ='sqrt')
 
 pdf('trees.pdf', width = 3, height = 5, useDingbats = FALSE)
-plot.all.trees.clone.as.branch(y, branch.width = 0.5,node.size = 1,
-  node.label.size = 0.5)
+plot.all.trees.clone.as.branch(y)
 dev.off()
 
 plot.clonal.models(y,
   # box plot parameters
-  box.plot = TRUE,fancy.boxplot = TRUE,
-  fancy.variant.boxplot.highlight ='is.driver',
-  fancy.variant.boxplot.highlight.shape = 21,
-  fancy.variant.boxplot.highlight.fill.color ='red',
+  box.plot = TRUE,
+  #fancy.boxplot = TRUE,
+  #fancy.variant.boxplot.highlight ='is.driver',
+  #fancy.variant.boxplot.highlight.shape = 21,
+  #fancy.variant.boxplot.highlight.fill.color ='red',
   fancy.variant.boxplot.highlight.color ='black',
-  fancy.variant.boxplot.highlight.note.col.name ='symbol',
+  #fancy.variant.boxplot.highlight.note.col.name ='symbol',
   fancy.variant.boxplot.highlight.note.color ='blue',
   fancy.variant.boxplot.highlight.note.size = 1,
 fancy.variant.boxplot.jitter.alpha = 1, fancy.variant.boxplot.jitter.center.color ='grey50',
@@ -258,9 +285,28 @@ scale.monoclonal.cell.frac = TRUE,show.score = FALSE,cell.frac.ci = TRUE,
 disable.cell.frac = FALSE,
 # output figure parameters
 out.dir ='output',out.format ='pdf',overwrite.output = TRUE,
-width = 20,height = 8,
-# vector of width scales for each panel from left to right
-panel.widths =c(3,4,2,4,2))
+width = 35,height = 30)
+
+#mut info
+mut_info = merge(mut_gene, dat, by=c("mut_id", "symbol"))
+library(openxlsx)
+write.xlsx(mut_info, 'Pyclone-VI-clonevol-results.xlsx')
+
+#save input data required for mapscape
+#adjacency matrix
+#make manually for now
+
+#cp values mean per cluster
+mean_cps = melt(dat, id.vars = c("cluster", "cluster_id", "mut_id", "symbol", "is.driver")) %>%
+select(cluster,variable, value)
+
+mean_cps = as.data.table(mean_cps %>% group_by(variable, cluster) %>%
+dplyr::summarize(mean_cp=mean(value)))
+
+#convert back from VAF to CCF
+mean_cps$mean_cp = mean_cps$mean * 2 / 100
+colnames(mean_cps) = c("sample_id" ,"clone_id", "clonal_prev")
+write.table(mean_cps, file=paste(date, "_clonevol_output_for_mapscape.txt", sep=""), quote=F, row.names=F, sep="\t")
 
 #-----
 #DONE-

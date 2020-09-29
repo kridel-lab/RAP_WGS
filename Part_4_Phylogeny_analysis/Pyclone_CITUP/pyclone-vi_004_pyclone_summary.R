@@ -56,6 +56,8 @@ files ="Pyclone_subset_muts_Sept2020_table_file.txt"
 files_cluster = list.files(pattern="cluster.txt")
 files_cluster="Pyclone_subset_muts_Sept2020_table_file_cluster.txt"
 
+vi=fread("rap_wgs_all_muts_neut.tsv")
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -64,25 +66,33 @@ files_cluster="Pyclone_subset_muts_Sept2020_table_file_cluster.txt"
 mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "ExonicFunc.ensGene",
 "AAChange.ensGene", "cosmic68")])
 
+pyclone_file = vi
+
 #read in main pyclone table result
-pyclone_file= fread(files)
+#pyclone_file= fread(files)
+pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
 
-#how many mutations in each cluster? keep only those with at least 5
+#how many mutations in each cluster?
 cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
+
 cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=5)
-pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1)
+
+#let's keep only the clusters with more than five mutations in them
+pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1, !(cluster_id %in% pyclone_remove))
 colnames(pyclone_file)[1] = "mut_id"
-#merge with mutation info
 pyclone_file_merged = merge(pyclone_file, mut_gene, by="mut_id")
+pyclone_file_merged = pyclone_file_merged[order(-cellular_prevalence)]
 
-#for each cluster and sample get mean cell prev
-mean_cp_clusters = as.data.table(pyclone_file_merged %>% group_by(sample_id, cluster_id) %>%
-dplyr::summarize(mean_cp=mean(cellular_prevalence)))
-mean_cp_clusters$cluster_id = factor(mean_cp_clusters$cluster_id)
-mean_cp_clusters$sample_name = sapply(mean_cp_clusters$sample_id,
-function(x){unlist(strsplit(x, "_subset_muts_pyclone_input"))[1]})
+  #for each cluster and sample get mean cell prev
+  mean_cp_clusters = as.data.table(pyclone_file_merged %>% group_by(sample_id, cluster_id) %>%
+  dplyr::summarize(mean_cp=mean(cellular_prevalence)))
+  mean_cp_clusters$cluster_id = factor(mean_cp_clusters$cluster_id)
+  mean_cp_clusters$sample_name = sapply(mean_cp_clusters$sample_id,
+  function(x){unlist(strsplit(x, "_subset_muts_pyclone_input"))[1]})
+mean_cp_clusters = mean_cp_clusters[order(-mean_cp)]
+mean_cp_clusters$cluster_id = factor(mean_cp_clusters$cluster_id, levels=unique(mean_cp_clusters$cluster_id))
 
-pdf("summary_short_list_pyclone_cell_prev.pdf", width=15)
+pdf("summary_short_list_pyclone_cell_prev.pdf", width=10, height=6)
 
 p = ggplot(mean_cp_clusters, aes(x=cluster_id, y=mean_cp, group=sample_name)) +
   geom_line(aes(color=sample_name))+
@@ -90,55 +100,15 @@ p = ggplot(mean_cp_clusters, aes(x=cluster_id, y=mean_cp, group=sample_name)) +
 p = p + theme_minimal()
 p = p + theme(legend.position="bottom")+ theme(legend.text=element_text(size=4))
 print(p)
+dev.off()
 
 #geom tile
+pdf("summary_short_list_pyclone_cell_prev_tiles.pdf", width=9, height=6)
 g = ggplot(mean_cp_clusters, aes(x=cluster_id, y=sample_name)) +
 geom_tile(aes(fill=mean_cp,width=0.75, height=0.75),size=0.55, colour = "black")+
 scale_fill_gradient(low = "grey", high = "purple", na.value = 'white')
 print(g)
-
 dev.off()
-
-#add mutation info
-melted_muts$variable = as.character(melted_muts$variable)
-melted_muts$id = sapply(melted_muts$variable,
-function(x){unlist(strsplit(x, "_pyclone_input"))[1]})
-colnames(melted_muts)[1] = "mut_id"
-
-muts_info = as.data.table(unique(read_only[,c("mut_id",
-"symbol", "ExonicFunc.ensGene", "Func.ensGene", "AAChange.ensGene")]))
-
-melted_muts = merge(melted_muts, muts_info, by=c("mut_id"))
-
-#plot for each pair of samples cell prev for each mutation
-get_prev_plot = function(sample, samples_all){
-  #remaining samples to compare to
-  samples_all = samples_all[which(!(samples_all == sample))]
-  for(i in 1:length(samples_all)){
-    samp = samples_all[i]
-    z = which(colnames(muts) %in% c(samp, sample, "cluster_id"))
-    dat = muts[,..z]
-    xlab = colnames(dat)[2]
-    ylab = colnames(dat)[3]
-    colnames(dat)[2:3]=c("sample1", "sample2")
-    dat$cluster_id = as.factor(dat$cluster_id)
-    #make plot
-    sp <- ggplot(dat, aes(x=sample1, y=sample2, color=cluster_id)) +
-    geom_point() + theme_classic() +
-     geom_hline(yintercept=0.5, linetype="dashed", color = "grey")+
-      geom_vline(xintercept=0.5, linetype="dashed", color = "grey")
-    sp = sp + geom_density_2d() +xlab(xlab) + ylab(ylab)
-    print(sp)
-  }
-  print("done sample")
-}
-
-samples = colnames(muts)[3:ncol(muts)]
-pdf(paste(date, "pyclone_cell_prev_across_samples.pdf", sep="_"))
-llply(samples, get_prev_plot, samples)
-dev.off()
-
-
 
 #-----
 #DONE-

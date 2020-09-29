@@ -83,7 +83,7 @@ print(p)
 dev.off()
 
 #summarize number of mutations per sample
-muts_per_sample = as.data.table(table(read_only$Indiv))
+muts_per_sample = as.data.table(table(read_only$id))
 muts_per_sample = muts_per_sample[order(-N)]
 muts_per_sample$V1 = factor(muts_per_sample$V1, levels=muts_per_sample$V1)
 colnames(muts_per_sample) = c("Sample", "num_of_muts")
@@ -92,7 +92,8 @@ pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pd
 # Basic barplot
 p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts)) +
   geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations per sample")+
-	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Sample")+
+	ylab("Number of mutations")
 print(p)
 dev.off()
 
