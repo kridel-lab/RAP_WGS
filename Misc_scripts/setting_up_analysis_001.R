@@ -1,8 +1,5 @@
 #----------------------------------------------------------------------
-#setting_up_analysis_001.R
-#karin isaev
-#started June 07, 2019
-#last update June 21st, 2019
+#summarize pipeline stats as provided by sickkids
 #----------------------------------------------------------------------
 
 #----------------------------------------------------------------------
@@ -13,14 +10,9 @@ options(stringsAsFactors=F)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS")
 
-#this source code is the function annovarToMaf.R from maftools
-#https://github.com/PoisonAlien/maftools/blob/master/R/annovarToMaf.R
-#added minor changes and saved locally for my own use
-source("/cluster/home/kisaev/scripts/annovar_to_maf.R")
-
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
-	"ggrepel", "stringr", "maftools", "biomaRt")
+	"ggrepel", "stringr", "maftools", "biomaRt", "openxlsx")
 lapply(packages, require, character.only = TRUE)
 
 date = Sys.Date()
@@ -36,13 +28,6 @@ date = Sys.Date()
 #----------------------------------------------------------------------
 
 folders = list.files()[which(str_detect(list.files(), "files"))]
-
-#args = commandArgs(trailingOnly = TRUE)
-#index = as.integer(args[1])
-
-#gene annotations
-genes = unique(fread("/cluster/projects/kridelgroup/paired_cns/ucsc_table_browser_gene_IDs.txt"))
-colnames(genes)[2] = "Gene.ensGene"
 
 #----------------------------------------------------------------------
 #analysis
@@ -61,8 +46,10 @@ read_dat = function(folder){
 all_dnaseq_stats = llply(folders, read_dat)
 all_dnaseq_stats = ldply(all_dnaseq_stats)
 
-file = paste(date, "summary_dnaseq_pipeline_stats_RAP.txt", sep="_")
+file = paste(date, "summary_dnaseq_pipeline_stats_RAP_WGS_samples.txt", sep="_")
 write.table(all_dnaseq_stats, file=file, quote=F, row.names=F, sep="\t")
+file = paste(date, "summary_dnaseq_pipeline_stats_RAP_WGS_samples.xlsx", sep="_")
+write.xlsx(all_dnaseq_stats, file)
 
 #2. summarize mutations for each sample
 

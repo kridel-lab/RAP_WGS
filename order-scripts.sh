@@ -9,6 +9,14 @@
 #----navigate to main directory-------------------------------------------------
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
+#collect all sample BAM files into file
+#ls */*/*recal.cram* > all_bam_files_raw.txt #with some manual clean up to only include tumour cram files
+
+#----run strelka----------------------------------------------------------------
+
+
+
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #get list of mutations called by both tools

@@ -8,8 +8,12 @@
 	#6 samples from recent June sequencing upload in TCAG (June 6 2019)
 	#14 samples from most recent June sequencing upload in TCGA (June 18 2019)
 
-	mkdir RAP_ANALYSIS
+	#mkdir RAP_ANALYSIS
 	cd RAP_ANALYSIS
+
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	#patient 003
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	#RAP = 1 control sample from March 2019
 	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/RAP/BAK8973/LY_RAP_0003_Ctl_FzG_01_files/ /cluster/projects/kridelgroup/RAP_ANALYSIS/
@@ -21,6 +25,20 @@
 	#IA6CWXM = 14 samples
 	#/cluster/projects/kridelgroup/IA6CWXM/BAK10122
 	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/IA6CWXM/BAK10122/* /cluster/projects/kridelgroup/RAP_ANALYSIS
+
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	#patient 001
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	#4 samples
+	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/8SI3BOP/BAK15005/LY_RAP_0001* /cluster/projects/kridelgroup/RAP_ANALYSIS
+
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	#patient 002
+	#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	#5 samples
+	ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/RAW_DATA/8SI3BOP/BAK15005/LY_RAP_0002* /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 	tree
 
