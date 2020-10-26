@@ -26,7 +26,14 @@ MYVAR=${MYVAR##*/}
 tum_name=${MYVAR%.sorted.dup.recal.cram*}
 patient_name=${MYVAR%_*_*_*}
 control_file=$(ls -d ${patient_name}_Ctl*)
-control_file=$(ls $control_file/gatk/*.cram)
+str="LY_RAP_0003"
+
+if [ "$patient_name" == "$str" ]; then
+  control_file=$(ls $control_file/gatk/*.bam)
+else
+  control_file=$(ls $control_file/gatk/*.cram)
+fi
+
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 mkdir /cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_WORKDIR/MANTA_WORKDIR_${tum_name}
