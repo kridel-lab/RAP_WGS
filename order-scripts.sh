@@ -12,7 +12,18 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 #collect all sample BAM files into file
 #ls */*/*recal.cram* > all_bam_files_raw.txt #with some manual clean up to only include tumour cram files
 
+#collect all control samples
+less all_control_samples.txt | wc -l
+
 #----run manta------------------------------------------------------------------
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
+
+#----run strelka----------------------------------------------------------------
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
+
+#----run mutect2----------------------------------------------------------------
+
+#1. first split normal samples by chromosomes
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
 #----merge variants from strelka and mutect2------------------------------------

@@ -6,7 +6,7 @@
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J strelka
 #SBATCH -c 8
-#SBATCH --array=0-19 # job array index
+#SBATCH --array=0-26 # job array index because 27 total tumour samples
 
 module load strelka/2.9.10
 module load python
