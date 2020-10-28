@@ -19,7 +19,7 @@ less all_control_samples.txt | wc -l
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
 #----run strelka----------------------------------------------------------------
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
 
 #----run mutect2----------------------------------------------------------------
 
