@@ -48,4 +48,4 @@ ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
 --runDir ${STRELKA_ANALYSIS_PATH}
 
 #After succesfful configuration run the following:
-${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py -j 20 -m local
+${STRELKA_ANALYSIS_PATH}/bin/configureStrelkaSomaticWorkflow.py -j 20 -m local
