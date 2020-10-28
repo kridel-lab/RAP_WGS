@@ -17,25 +17,35 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 #MANTA
 STRELKA_INSTALL_PATH=/cluster/tools/software/centos7/strelka/2.9.10
 
-names=($(cat tum_samples_input_STRELKA_MANTA.txt))
+names=($(cat all_bam_files_raw.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
 MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
-
 tum_loc=${MYVAR%/*}
-tum_name=${MYVAR##*/}
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.sorted.dup.recal.cram*}
+patient_name=${MYVAR%_*_*_*}
+control_file=$(ls -d ${patient_name}_Ctl*)
+str="LY_RAP_0003"
 
-mkdir STRELKA_WORKDIR_$tum_name
-STRELKA_ANALYSIS_PATH=/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR_$tum_name
+if [ "$patient_name" == "$str" ]; then
+  control_file=$(ls $control_file/gatk/*.bam)
+else
+  control_file=$(ls $control_file/gatk/*.cram)
+fi
 
-MANTA_ANALYSIS_PATH=/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_WORKDIR_$tum_loc/$tum_name
+fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
+
+mkdir /cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/STRELKA_WORKDIR_${tum_name}
+STRELKA_ANALYSIS_PATH=/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/STRELKA_WORKDIR_${tum_name}
+MANTA_ANALYSIS_PATH=/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_WORKDIR/MANTA_WORKDIR_${tum_name}
 
 ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
---normalBam /cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam \
+--normalBam $control_file \
 --tumorBam ${names[${SLURM_ARRAY_TASK_ID}]} \
---referenceFasta /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
+--referenceFasta $fasta \
 --indelCandidates ${MANTA_ANALYSIS_PATH}/results/variants/candidateSmallIndels.vcf.gz \
 --runDir ${STRELKA_ANALYSIS_PATH}
 
 #After succesfful configuration run the following:
-/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR_$tum_name/runWorkflow.py -j 20 -m local
+${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py -j 20 -m local

@@ -24,7 +24,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 #----run mutect2----------------------------------------------------------------
 
 #1. first split normal samples by chromosomes
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits_normal.sh
 
 #----merge variants from strelka and mutect2------------------------------------
 
