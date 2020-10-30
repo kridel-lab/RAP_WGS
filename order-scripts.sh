@@ -21,10 +21,15 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 #----run strelka----------------------------------------------------------------
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
 
+
+
 #----run mutect2----------------------------------------------------------------
 
 #1. first split normal samples by chromosomes
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits_normal.sh
+
+#2. split bam files by chromosomes
+#first make sure there is enough space
 
 #----merge variants from strelka and mutect2------------------------------------
 

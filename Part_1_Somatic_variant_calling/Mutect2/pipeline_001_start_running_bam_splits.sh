@@ -17,24 +17,29 @@ module load python
 module load gatk
 module load annovar
 
-# get file name
-#find -L . -name "*.cram" > jobs
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
-names=($(cat jobs))
+names=($(cat all_bam_files_raw.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
-tum=($(samtools view -H ${names[${SLURM_ARRAY_TASK_ID}]} | grep '^@RG' | sed "s/.*SM:\([^\t]*\).*/\1/g" | uniq))
-#echo "${tum}"
-export tum
+names=($(cat all_control_samples.txt))
+echo ${names[${SLURM_ARRAY_TASK_ID}]}
+MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
+tum_loc=${MYVAR%/*}
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.sorted.dup.recal*}
+patient_name=${MYVAR%_*_*_*}
+output=/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_WORKDIR/CHR_split/
+
+fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 #for i in {1..22} {X,Y,MT}; do echo "* "$i; mkdir -p chr/chr${i}; samtools view -bS <( samtools view -h ${names[${SLURM_ARRAY_TASK_ID}]} $i ) > chr/chr${i}/${tum}.out.${i}.bam; done
-filename=`echo ${tum}` 
+filename=`echo ${tum}`
 
 for chrom in `seq 1 22` X Y
 
-do 
-	samtools view -T human_g1k_v37_decoy.fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} ${chrom} > chr/${filename}_${chrom}.cram 
-	samtools index chr/${filename}_${chrom}.cram 
+do
+	samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} ${chrom} > ${output}/${patient_name}_${chrom}.bam
+	samtools index ${output}/${patient_name}_${chrom}.bam
 
 done
-
