@@ -23,9 +23,58 @@ library(ref_genome, character.only = TRUE)
 library(NMF)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(biomaRt)
-#library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-#txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-#library(BSgenome.Hsapiens.UCSC.hg19)
+library(GenomicRanges)
+
+#regulatory <- useEnsembl(biomart="regulation",
+#                          dataset="hsapiens_regulatory_feature",
+#                          GRCh = 37)
+
+## Download the regulatory CTCF binding sites and convert them to
+## a GRanges object.
+#CTCF <- getBM(attributes = c('chromosome_name',
+#                             'chromosome_start',
+#                             'chromosome_end',
+#                             'feature_type_name'),
+#              filters = "regulatory_feature_type_name",
+#              values = "CTCF Binding Site",
+#              mart = regulatory)
+
+#CTCF_g <- reduce(GRanges(CTCF$chromosome_name,
+#                 IRanges(CTCF$chromosome_start,
+#                 CTCF$chromosome_end)))
+
+#saveRDS(CTCF_g, file="CTCF_g_biomart.rds") #"/cluster/home/kisaev"
+CTCF_g = readRDS("/cluster/home/kisaev/CTCF_g_biomart.rds")
+
+## Download the promoter regions and convert them to a GRanges object.
+#promoter = getBM(attributes = c('chromosome_name', 'chromosome_start',
+#                                 'chromosome_end', 'feature_type_name'),
+#                  filters = "regulatory_feature_type_name",
+#                  values = "Promoter",
+#                  mart = regulatory)
+
+#promoter_g = reduce(GRanges(promoter$chromosome_name,
+#                     IRanges(promoter$chromosome_start,
+#                             promoter$chromosome_end)))
+#saveRDS(promoter_g, file="promoter_g_biomart.rds") #"/cluster/home/kisaev"
+promoter_g = readRDS("/cluster/home/kisaev/promoter_g_biomart.rds")
+
+## Download the promoter flanking regions and convert them to a GRanges object.
+#flanking = getBM(attributes = c('chromosome_name',
+#                                 'chromosome_start',
+#                                 'chromosome_end',
+#                                 'feature_type_name'),
+#                  filters = "regulatory_feature_type_name",
+#                  values = "Promoter Flanking Region",
+#                  mart = regulatory)
+
+#flanking_g = reduce(GRanges(
+#                        flanking$chromosome_name,
+#                        IRanges(flanking$chromosome_start,
+#                        flanking$chromosome_end)))
+
+#saveRDS(flanking_g, file="flanking_g_biomart.rds") #"/cluster/home/kisaev"
+flanking_g = readRDS("/cluster/home/kisaev/flanking_g_biomart.rds")
 
 #----------------------------------------------------------------------
 #purpose
@@ -63,70 +112,46 @@ get_patient_muts = function(pat){
 
 		mut_mat <- mut_matrix(vcf_list = grl, ref_genome = ref_genome)
 		head(mut_mat)
-		p2=plot_96_profile(mut_mat)
-
-		mut_mat_ext_context <- mut_matrix(grl, ref_genome, extension = 2)
-		p3 = plot_profile_heatmap(mut_mat_ext_context, by = sample_names)
-		p4 = plot_river(mut_mat_ext_context)
-
+		p2 = plot_96_profile(mut_mat,condensed=T)
 		print(p2)
-		print(p3)
-		print(p4)
 
 		#Cosmic signatures
 		#To do this you first need to read in some already existing signatures.
 		#Here we will use signatures from COSMIC (v3.1) (Alexandrov et al. 2020).
 		signatures = get_known_signatures()
 		fit_res <- fit_to_signatures(mut_mat, signatures)
-
-		p5 = plot_contribution(fit_res$contribution,
-  	coord_flip = FALSE,
-  	mode = "relative")
-
-		p6 = plot_original_vs_reconstructed(mut_mat, fit_res$reconstructed,
-                               y_intercept = 0.95)
-
 		strict_refit <- fit_to_signatures_strict(mut_mat, signatures, max_delta = 0.004)
 		fit_res_strict <- strict_refit$fit_res
-		p7 = plot_contribution(fit_res_strict$contribution,
-		  coord_flip = FALSE,
+		p3 = plot_contribution(fit_res_strict$contribution,
+		  coord_flip = TRUE,
 		  mode = "relative")
 
 		merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.8)
 
 		strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
 		fit_res_strict <- strict_refit$fit_res
-		p8 = plot_contribution(fit_res_strict$contribution,
-			coord_flip = FALSE,
+		p4 = plot_contribution(fit_res_strict$contribution,
+			coord_flip = TRUE,
 			mode = "relative")
 
-		print(p5)
-		print(p6)
-		print(p7)
-		print(p8)
+		print(p3)
+		print(p4)
 
 		contri_boots <- fit_to_signatures_bootstrapped(mut_mat,
 	  merged_signatures,
 	  n_boots = 100,
 	  method = "strict")
 
-		p9 = plot_bootstrapped_contribution(contri_boots)
-
-		p10 = plot_bootstrapped_contribution(contri_boots,
+		p5 = plot_bootstrapped_contribution(contri_boots,
 		                               mode = "relative",
 		                               plot_type = "dotplot")
 
-		cos_sim_samples_signatures <- cos_sim_matrix(mut_mat, signatures)
-		p11 = plot_cosine_heatmap(cos_sim_samples_signatures,
-		                    cluster_rows = TRUE, cluster_cols = TRUE)
+		cos_sim_samples_signatures <- cos_sim_matrix(mut_mat, merged_signatures)
+		p6 = plot_cosine_heatmap(cos_sim_samples_signatures,
+		                    cluster_rows = TRUE, cluster_cols = TRUE, method="ward.D2")
 
-		cos_sim_samples <- cos_sim_matrix(mut_mat, mut_mat)
-		p12 = plot_cosine_heatmap(cos_sim_samples, cluster_rows = TRUE, cluster_cols = TRUE)
-
-		print(p9)
-		print(p10)
-		print(p11)
-		print(p12)
+		print(p5)
+		print(p6)
 
 		#strand bias analysis
 		#For the mutations within genes it can be determined whether the
@@ -137,7 +162,7 @@ get_patient_muts = function(pat){
 		head(strand, 10)
 
 		mut_mat_s <- mut_matrix_stranded(grl, ref_genome, genes_hg19)
-		p13 = plot_192_profile(mut_mat_s)
+		p7 = plot_192_profile(mut_mat_s)
 
 		strand_counts <- strand_occurrences(mut_mat_s, by = sample_names)
 		head(strand_counts)
@@ -147,23 +172,23 @@ get_patient_muts = function(pat){
 		strand_bias <- strand_bias_test(strand_counts)
 		head(strand_bias)
 
-		p14 <- plot_strand(strand_counts, mode = "relative")
+		p8 <- plot_strand(strand_counts, mode = "relative")
 
 		#Plot the effect size (log2(untranscribed/transcribed) of the strand bias.
 		#Asteriks indicate significant strand bias. Here we use p-values to plot asterisks.
 		#By default fdr is used.
-		p15 <- plot_strand_bias(strand_bias, sig_type = "p")
+		p9 <- plot_strand_bias(strand_bias, sig_type = "p")
 
 		#genomic distribution
 		chromosomes <- seqnames(get(ref_genome))[1:22]
-		for(i in 1:length(sample_names)){
-			print(i)
-			# Make a rainfall plot
-			p = plot_rainfall(grl[[i]],
-  		title = names(grl[i]),
-  		chromosomes = chromosomes, cex = 1, ylim = 1e+09)
-			print(p)
-		}
+
+		print(p7)
+		print(p8)
+		print(p9)
+
+		regions <- GRangesList(promoter_g, flanking_g, CTCF_g)
+		names(regions) <- c("Promoter", "Promoter flanking", "CTCF")
+		seqlevelsStyle(regions) <- "UCSC"
 
 	dev.off()
 

@@ -24,8 +24,11 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
 #select variants that pass filters
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka.sh
-#annotate variants
+#quick summary
 
+#mutationmapper
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/strelka_filtering_summary_mutationampper.R
 
 #----run mutect2----------------------------------------------------------------
 

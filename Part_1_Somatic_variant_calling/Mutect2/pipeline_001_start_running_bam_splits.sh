@@ -30,13 +30,6 @@ tum_name=${MYVAR%.sorted.dup.recal.cram*}
 patient_name=${MYVAR%_*_*_*}
 control_file=$(ls -d ${patient_name}_Ctl*)
 
-str="LY_RAP_0003"
-
-if [ "$patient_name" == "$str" ]; then
-  control_file=$(ls $control_file/gatk/*.bam)
-else
-  control_file=$(ls $control_file/gatk/*.cram)
-fi
 output=/cluster/projects/burst2/CHR_split/
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
@@ -45,7 +38,7 @@ fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from
 for chrom in `seq 1 22` X Y
 
 do
-	samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} ${chrom} > ${output}/${patient_name}_${chrom}.bam
-	samtools index ${output}/${patient_name}_${chrom}.bam
+	samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} ${chrom} > ${output}/${tum_name}_${chrom}.bam
+	samtools index ${output}/${tum_name}_${chrom}.bam
 
 done
