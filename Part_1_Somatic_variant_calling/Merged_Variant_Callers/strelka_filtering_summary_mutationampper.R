@@ -21,6 +21,8 @@ library(BSgenome)
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
 library(NMF)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(biomaRt)
 #library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 #txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 #library(BSgenome.Hsapiens.UCSC.hg19)
@@ -53,103 +55,118 @@ get_patient_muts = function(pat){
 
 	pdf(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/", pat, "_strelka_mutation_mapper_summary.pdf", sep=""), width=15)
 
-	if(pat=="LY_RAP_0003"){
-		p4 <- plot_spectrum(type_occurrences, by = sample_type, CT = TRUE, legend = TRUE)
-		print(p4)
+		p1 <- plot_spectrum(type_occurrences, CT = TRUE, legend = TRUE)
+		print(p1)
+
+		#96 mutational profile
+		#First you should make a 96 trinucleodide mutation count matrix.
+
+		mut_mat <- mut_matrix(vcf_list = grl, ref_genome = ref_genome)
+		head(mut_mat)
+		p2=plot_96_profile(mut_mat)
 
 		mut_mat_ext_context <- mut_matrix(grl, ref_genome, extension = 2)
-		p1 = plot_profile_heatmap(mut_mat_ext_context, by = sample_type)
-		p2 = plot_river(mut_mat_ext_context, by = sample_type)
+		p3 = plot_profile_heatmap(mut_mat_ext_context, by = sample_names)
+		p4 = plot_river(mut_mat_ext_context)
 
-	}#if 003
-
-	if(!(pat == "LY_RAP_0003")){
-
-		p4 <- plot_spectrum(type_occurrences, CT = TRUE, legend = TRUE)
+		print(p2)
+		print(p3)
 		print(p4)
 
-		mut_mat_ext_context <- mut_matrix(grl, ref_genome, extension = 2)
-		p1 = plot_profile_heatmap(mut_mat_ext_context, by = sample_names)
-		p2 = plot_river(mut_mat_ext_context)
+		#Cosmic signatures
+		#To do this you first need to read in some already existing signatures.
+		#Here we will use signatures from COSMIC (v3.1) (Alexandrov et al. 2020).
+		signatures = get_known_signatures()
+		fit_res <- fit_to_signatures(mut_mat, signatures)
 
-		#NMF de novo signatures
-		mut_mat_ext_context <- mut_mat_ext_context + 0.0001
+		p5 = plot_contribution(fit_res$contribution,
+  	coord_flip = FALSE,
+  	mode = "relative")
 
-	}#if not 003
+		p6 = plot_original_vs_reconstructed(mut_mat, fit_res$reconstructed,
+                               y_intercept = 0.95)
+
+		strict_refit <- fit_to_signatures_strict(mut_mat, signatures, max_delta = 0.004)
+		fit_res_strict <- strict_refit$fit_res
+		p7 = plot_contribution(fit_res_strict$contribution,
+		  coord_flip = FALSE,
+		  mode = "relative")
+
+		merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.8)
+
+		strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
+		fit_res_strict <- strict_refit$fit_res
+		p8 = plot_contribution(fit_res_strict$contribution,
+			coord_flip = FALSE,
+			mode = "relative")
+
+		print(p5)
+		print(p6)
+		print(p7)
+		print(p8)
+
+		contri_boots <- fit_to_signatures_bootstrapped(mut_mat,
+	  merged_signatures,
+	  n_boots = 100,
+	  method = "strict")
+
+		p9 = plot_bootstrapped_contribution(contri_boots)
+
+		p10 = plot_bootstrapped_contribution(contri_boots,
+		                               mode = "relative",
+		                               plot_type = "dotplot")
+
+		cos_sim_samples_signatures <- cos_sim_matrix(mut_mat, signatures)
+		p11 = plot_cosine_heatmap(cos_sim_samples_signatures,
+		                    cluster_rows = TRUE, cluster_cols = TRUE)
+
+		cos_sim_samples <- cos_sim_matrix(mut_mat, mut_mat)
+		p12 = plot_cosine_heatmap(cos_sim_samples, cluster_rows = TRUE, cluster_cols = TRUE)
+
+		print(p9)
+		print(p10)
+		print(p11)
+		print(p12)
+
+		#strand bias analysis
+		#For the mutations within genes it can be determined whether the
+		#mutation is on the transcribed or non-transcribed strand, which
+		#can be used to evaluate the involvement of transcription-coupled repair.
+		genes_hg19 <- genes(TxDb.Hsapiens.UCSC.hg19.knownGene)
+		strand <- mut_strand(grl[[1]], genes_hg19)
+		head(strand, 10)
+
+		mut_mat_s <- mut_matrix_stranded(grl, ref_genome, genes_hg19)
+		p13 = plot_192_profile(mut_mat_s)
+
+		strand_counts <- strand_occurrences(mut_mat_s, by = sample_names)
+		head(strand_counts)
+
+		#Next, you can use these counts to perform a Poisson test for strand asymmetry.
+		#Multiple testing correction is also performed.
+		strand_bias <- strand_bias_test(strand_counts)
+		head(strand_bias)
+
+		p14 <- plot_strand(strand_counts, mode = "relative")
+
+		#Plot the effect size (log2(untranscribed/transcribed) of the strand bias.
+		#Asteriks indicate significant strand bias. Here we use p-values to plot asterisks.
+		#By default fdr is used.
+		p15 <- plot_strand_bias(strand_bias, sig_type = "p")
+
+		#genomic distribution
+		chromosomes <- seqnames(get(ref_genome))[1:22]
+		for(i in 1:length(sample_names)){
+			print(i)
+			# Make a rainfall plot
+			p = plot_rainfall(grl[[i]],
+  		title = names(grl[i]),
+  		chromosomes = chromosomes, cex = 1, ylim = 1e+09)
+			print(p)
+		}
 
 	dev.off()
 
 }#end function
 
-
-
-
-
-
-
-
-
-
-
-
-
-clean_up_001 = function(paired_vcf){
-
-  mutations_T1 =read.vcfR(paired_vcf)
-  mutations_T1 = vcfR2tidy(mutations_T1)
-  meta = as.data.table(mutations_T1$meta)
-
-  vcf = as.data.table(mutations_T1$fix)
-  chr_conv = unique(vcf[,c("ChromKey", "CHROM")])
-
-  gt = as.data.table(mutations_T1$gt)
-  gt = merge(gt, chr_conv, by="ChromKey")
-
-  gt$mut_id = paste(gt$CHROM, gt$POS, sep="_")
-  vcf$mut_id = paste(vcf$CHROM, vcf$POS, sep="_")
-
-  #1. keep only the ones that passed default hard filter
-  vcf = as.data.table(filter(vcf, FILTER=="PASS"))
-  print(paste("number of variants that passed filtering=", dim(vcf)[1]))
-
-  #2. filter by coverage
-  #try 60X
-  vcf = as.data.table(filter(vcf, DP >=60))
-  print(paste("number of variants that passed coverage=", dim(vcf)[1]))
-
-  #3. combine vcf and gt info
-  cols = colnames(gt)[which(colnames(gt) %in% colnames(vcf))]
-  gt = merge(gt, vcf, by= cols)
-
-	#4. only tumour remove normal records
-	gt = as.data.table(filter(gt, Indiv == "TUMOR"))
-
-	gt$CHROM = as.numeric(gt$CHROM)
-  gt = as.data.table(filter(gt, (CHROM %in% c(1:22))))
-
-  #5. remove variants from chromosome X and Y
-  gt = as.data.table(filter(gt, !(CHROM %in% c("X", "Y"))))
-  print(paste("number of variants that passed X Y=", dim(gt)[1]))
-
-	#6. save file
-  gt$pat = unlist(strsplit(paired_vcf, "_strelka"))[1]
-  print("done")
-
-	return(gt)
-}
-
-all_sampls = as.data.table(ldply(llply(paired, clean_up_001, .progress="text")))
-all_sampls = as.data.table(filter(all_sampls, SomaticEVS >=17))
-all_sampls = all_sampls[order(pat)]
-all_sampls$pat = factor(all_sampls$pat, levels=unique(all_sampls$pat))
-
-#brief barplot
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/strelka_mutations_summary.pdf")
-
-# Basic barplot
-ggplot(all_sampls, aes(x=factor(pat)))+
-  geom_bar(stat="count", width=0.7, fill="steelblue")+
-  theme_minimal()+
-	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-
-dev.off()
+llply(patient, get_patient_muts, .progress="text")
