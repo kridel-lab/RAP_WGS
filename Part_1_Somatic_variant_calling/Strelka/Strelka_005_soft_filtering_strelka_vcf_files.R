@@ -11,7 +11,8 @@
 options(stringsAsFactors=F)
 
 #setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/chr/vcfs_final/vcfs_annovar_annotated")
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_RESULTS/strelka_filtered")
+#setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_RESULTS/strelka_filtered")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered")
 
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",

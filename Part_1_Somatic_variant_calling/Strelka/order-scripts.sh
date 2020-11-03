@@ -33,8 +33,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits_normal.sh
 
 #2. split bam files by chromosomes
-#requested temp dirctory for running mutect2
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits.sh
+#first make sure there is enough space
 
 #----merge variants from strelka and mutect2------------------------------------
 
