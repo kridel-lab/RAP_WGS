@@ -40,7 +40,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits.sh
 
 #3. run mutect2 mutation calling on individual chr based bam files
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_running_mutect2.sh
 
 #----merge variants from strelka and mutect2------------------------------------
 
