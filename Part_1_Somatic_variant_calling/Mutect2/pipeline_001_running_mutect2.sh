@@ -39,6 +39,23 @@ export tum
 chr=($(echo ${names[${SLURM_ARRAY_TASK_ID}]} | awk -F'[_.]' '{print $8}'))
 echo "${chr}"
 
+fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
+
+MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
+tum_loc=${MYVAR%/*}
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.sorted.dup.recal.cram*}
+patient_name=${MYVAR%_*_*_*}
+control_file=$(ls -d ${patient_name}_Ctl*)
+str="LY_RAP_0003"
+
+if [ "$patient_name" == "$str" ]; then
+  control_file=$(ls $control_file/gatk/*.bam)
+else
+  control_file=$(ls $control_file/gatk/*.cram)
+fi
+
+
 gatk Mutect2 \
 -R /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
 -I "${names[${SLURM_ARRAY_TASK_ID}]}" \
@@ -47,4 +64,3 @@ gatk Mutect2 \
 -tumor "${tum}" \
 -O ${names[${SLURM_ARRAY_TASK_ID}]}.vcf.gz \
 --germline-resource /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz
-
