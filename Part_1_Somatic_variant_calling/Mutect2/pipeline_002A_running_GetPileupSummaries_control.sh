@@ -33,7 +33,7 @@ export tum
 MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
 patient_name=${tum%_*_*_*}
 chr=${MYVAR%.*}
-chr="${test##*_}"
+chr="${chr##*_}"
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 output=/cluster/projects/burst2/MUTECT2_pileup
