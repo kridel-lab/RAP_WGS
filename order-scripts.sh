@@ -16,6 +16,8 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 less all_control_samples.txt | wc -l
 
 #----run manta------------------------------------------------------------------
+
+#call SVs and indels
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
 #----run strelka----------------------------------------------------------------
@@ -68,7 +70,11 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 
 #----CNVkit---------------------------------------------------------------------
 
+#save control germline files as BAM files for all three samples in temp folder
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_pre_001_make_bam_files_for_control_samples.sh
 
+#run WGS CNVkit mode on each tumour sample with appropriate control sample
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_001.sh
 
 #----Pyclone--------------------------------------------------------------------
 

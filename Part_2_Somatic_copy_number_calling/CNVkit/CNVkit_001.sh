@@ -4,7 +4,7 @@
 #SBATCH -p himem
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
-#SBATCH -J strelka
+#SBATCH -J cnvkit
 #SBATCH -c 8
 #SBATCH --array=0-26 # job array index because 27 total tumour samples
 
@@ -26,21 +26,15 @@ tum_loc=${MYVAR%/*}
 MYVAR=${MYVAR##*/}
 tum_name=${MYVAR%.sorted.dup.recal.cram*}
 patient_name=${MYVAR%_*_*_*}
-control_file=$(ls -d ${patient_name}_Ctl*)
-str="LY_RAP_0003"
-
-if [ "$patient_name" == "$str" ]; then
-  control_file=$(ls $control_file/gatk/*.bam)
-else
-  control_file=$(ls $control_file/gatk/*.cram)
-fi
+control_file=/cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/${patient_name}.bam
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
-output=/cluster/projects/burst2/CNVkit_WORKDIR
+mkdir /cluster/projects/burst2/CNVkit_WORKDIR/${tum_name}
+output=/cluster/projects/burst2/CNVkit_WORKDIR/${tum_name}
 
 samtools view -b  -T $fasta -o ${output}/${tum_name}.bam ${names[${SLURM_ARRAY_TASK_ID}]}
 
 cd $output
-cnvkit.py batch ${output}/${tum_name}.bam -n /cluster/projects/kridelgroup/RAP_ANALYSIS/${control_file} \
+cnvkit.py batch ${output}/${tum_name}.bam -n ${control_file} \
         -m wgs -f $fasta --target-avg-size 1000 -p 10
