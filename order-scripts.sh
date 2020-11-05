@@ -44,6 +44,12 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 #3. run mutect2 mutation calling on individual chr based bam files
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_running_mutect2.sh
 
+#4. run getpileup on tumour samples
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_002A_running_GetPileupSummaries.sh
+
+#5. run getpileup on normal samples
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_002A_running_GetPileupSummaries_control.sh
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #get list of mutations called by both tools

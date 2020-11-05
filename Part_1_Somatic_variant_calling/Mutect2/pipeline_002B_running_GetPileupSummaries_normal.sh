@@ -23,13 +23,13 @@ module load annovar
 #this is part 2 of the best protocols GATK steps for identifying SNVs and INDELS
 #https://software.broadinstitute.org/gatk/best-practices/workflow?id=11146
 
-#Summarizes counts of reads that support reference, alternate and 
+#Summarizes counts of reads that support reference, alternate and
 #other alleles for given sites. Results can be used with CalculateContamination.
 
 #using chromosome specific bam files
 
 # get file name
-#find -L . -name "*.bam.bai" > mutect_jobs 
+#find -L . -name "*.bam.bai" > mutect_jobs
 #sed 's/.bai//' mutect_jobs > mutect_jobs_clean
 
 names=($(cat mutect_jobs_clean))
@@ -48,5 +48,3 @@ gatk GetPileupSummaries \
 -L "${chr}" \
 -O ${names[${SLURM_ARRAY_TASK_ID}]}.pileups.table \
 -V af-only-gnomad.raw.sites.b37.vcf.gz
-
-
