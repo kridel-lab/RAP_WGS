@@ -66,6 +66,10 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 #between our gene mutations and several gene panels
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_004_additional_soft_filters_applied.R
 
+#----CNVkit---------------------------------------------------------------------
+
+
+
 #----Pyclone--------------------------------------------------------------------
 
 #prepare mutations for bamreadcount
