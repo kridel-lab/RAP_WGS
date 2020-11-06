@@ -40,6 +40,7 @@ fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from
 output=/cluster/projects/burst2/MUTECT2_contamination
 
 gatk FilterMutectCalls \
+    -R $fasta \
     -V /cluster/projects/burst2/MUTECT2_raw_VCFs/${tum}_${chr}.vcf.gz \
     --contamination-table ${output}/${tum}_${chr}_contamination.table \
     -O /cluster/projects/burst2/MUTECT2_filtered_VCFs/${tum}_${chr}.vcf.gz
