@@ -1,16 +1,16 @@
-#navigate to main directory
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+### navigate to main directory
+<code>cd /cluster/projects/kridelgroup/RAP_ANALYSIS</code>
 
-#collect all sample BAM files into file
-#ls */*/*recal.cram* > all_bam_files_raw.txt #with some manual clean up to only include tumour cram files
+### collect all sample BAM files into file
+#<code>ls */*/*recal.cram* > all_bam_files_raw.txt</code> #with some manual clean up to only include tumour cram files
 
-#collect all control samples
-less all_control_samples.txt | wc -l
+### collect all control samples
+<code>less all_control_samples.txt | wc -l</code>
 
-#----run manta------------------------------------------------------------------
+### run manta
 
-#1. call SVs and indels
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
+#### 1. call SVs and indels
+<code>sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh</code>
 
 #----run strelka----------------------------------------------------------------
 
