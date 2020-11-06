@@ -30,6 +30,10 @@ fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from
 filtered=/cluster/projects/burst2/MUTECT2_final_VCFs
 selected=/cluster/projects/burst2/MUTECT2_selected_VCFs
 
+#make index for VCF file
+gatk IndexFeatureFile \
+   --input ${filtered}/${tum_name}.filtered.vcf.gz
+
 gatk SelectVariants \
    -R $fasta \
    -V ${filtered}/${tum_name}.filtered.vcf.gz \
