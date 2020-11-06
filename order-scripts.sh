@@ -54,7 +54,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_003A_running_CalculateContamination.sh
 
 #7. run filter variant calls
-
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_004A_FilterVariants.sh
 
 #----merge variants from strelka and mutect2------------------------------------
 
