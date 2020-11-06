@@ -13,6 +13,7 @@ module load python
 module load manta/1.6.0
 module load CNVkit
 module load samtools
+module load vt
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
