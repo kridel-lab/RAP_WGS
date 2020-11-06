@@ -30,5 +30,5 @@ file_name=/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Ctl_FzG_07_file
 
 samtools view -b  -T $fasta -o ${output}/${tum_name}.bam ${file_name}
 
-tum_name=LY_RAP_003
+tum_name=LY_RAP_0003
 scp /cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam ${output}/${tum_name}.bam

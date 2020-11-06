@@ -50,6 +50,12 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 #5. run getpileup on normal samples
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_002A_running_GetPileupSummaries_control.sh
 
+#6. get contamination tables
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_003A_running_CalculateContamination.sh
+
+#7. run filter variant calls
+
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #get list of mutations called by both tools
