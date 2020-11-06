@@ -56,6 +56,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 #7. run filter variant calls
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_004A_FilterVariants.sh
 
+#8. run gather VCFs from across chromosomes
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_005A_running_gatherVCFs.sh
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #get list of mutations called by both tools
