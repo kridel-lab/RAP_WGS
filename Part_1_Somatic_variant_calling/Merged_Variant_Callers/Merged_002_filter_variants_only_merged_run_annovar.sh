@@ -4,7 +4,7 @@
 #SBATCH --mem=30000M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
-#SBATCH --array=0-19 # job array index
+#SBATCH --array=0-26 # job array index
 
 #how did we get here?
 #mutect2 was run with basic filters
@@ -28,17 +28,21 @@ module load tabix
 #pwd
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
-#pwd
-names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/patient_ids.txt))
+names=($(cat all_bam_files_raw.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
-pat=${names[${SLURM_ARRAY_TASK_ID}]}
 
-vcf_file=MUTECT2_RESULTS/mutect2_filtered/${pat}_mutect2_selectvariants.vcf.gz.normalized.vcf.gz
-variant_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/_${pat}_merged_mutations.bed
+MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
+tum_loc=${MYVAR%/*}
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.sorted.dup.recal.cram*}
+patient_name=${MYVAR%_*_*_*}
 
-tabix -fhB $vcf_file $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants.vcf
+vcf_file=/cluster/projects/burst2/MUTECT2_selected_VCFs/${tum_name}.selected.normalized.vcf.gz
+variant_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/_${tum_name}_merged_mutations.bed
+
+tabix -fhB $vcf_file $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
 
 #RUN ANNOVAR
-anno_input=merged_MUTECT2_STRELKA/merged_variants_vcfs/${pat}_merged_variants.vcf
+anno_input=merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
 
-table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb --protocol ensGene,gnomad211_genome,cosmic68,avsnp142 --operation g,f,f,f --outfile /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcfs_annovar_annotated/${pat}_annovar.vcf.gz --vcfinput
+table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb --protocol ensGene,gnomad211_genome,cosmic68,avsnp142 --operation g,f,f,f --outfile /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcfs_annovar_annotated/${tum_name}_annovar.vcf.gz --vcfinput

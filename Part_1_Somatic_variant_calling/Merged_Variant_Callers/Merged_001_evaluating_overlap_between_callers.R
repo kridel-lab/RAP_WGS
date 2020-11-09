@@ -32,10 +32,10 @@ lapply(packages, require, character.only = TRUE)
 #to which additional soft filters were applied
 #note these VCF files were normalized after each tool was run
 
-strelka = list.files("STRELKA_RESULTS/strelka_filtered/vcf_to_bed")
-mutect2 = list.files("MUTECT2_RESULTS/mutect2_filtered/vcf_to_bed")
+strelka = list.files("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered", pattern="filtered_strelka_calls")
+mutect2 = list.files("/cluster/projects/burst2/MUTECT2_selected_VCFs", pattern="filtered_mutect2_calls.bed")
 
-summary = as.data.frame(matrix(ncol=4, nrow=20)) ; colnames(summary) = c("patient", "unique_mutect2", "unique_strelka", "unique_common")
+summary = as.data.frame(matrix(ncol=4, nrow=27)) ; colnames(summary) = c("patient", "unique_mutect2", "unique_strelka", "unique_common")
 
 for(i in 1:length(strelka)){
   s_f = strelka[i]
@@ -48,8 +48,8 @@ for(i in 1:length(strelka)){
 
   if(m_f_pat == s_f_pat){
     #read in each file
-    s_f = fread(paste("STRELKA_RESULTS/strelka_filtered/vcf_to_bed", s_f, sep="/"))
-    m_f = fread(paste("MUTECT2_RESULTS/mutect2_filtered/vcf_to_bed", m_f, sep="/"))
+    s_f = fread(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered", s_f, sep="/"))
+    m_f = fread(paste("/cluster/projects/burst2/MUTECT2_selected_VCFs", m_f, sep="/"))
     both = merge(s_f, m_f, by = c("ChromKey", "CHROM", "POS", "mut_id", "REF", "ALT"))
     #save merged summary stats
     summary[i,] = c(pat, length(unique(m_f$mut_id)), length(unique(s_f$mut_id)), length(unique(both$mut_id)))

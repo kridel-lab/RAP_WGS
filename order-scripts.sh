@@ -22,15 +22,18 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 
 #----run strelka----------------------------------------------------------------
 
-#call variants
+#1. call variants
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
-#select variants that pass filters
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka.sh
-#quick summary
 
-#mutationmapper
+#2. select variants that pass filters
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka.sh
+
+#3. #mutationmapper
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/strelka_filtering_summary_mutationampper.R
+
+#4. prepare bed files to merge with Mutect2
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files.R
 
 #----run mutect2----------------------------------------------------------------
 
@@ -61,6 +64,10 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 
 #9. select variants from combined VCF files to only include variants that passed
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_006_SelectVariants_post_mutect2.sh
+
+#10. soft filtering of mutect2 variants in R before merging with strelka
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_007_soft_filtering_mutect2_filtered_variants.R
 
 #----merge variants from strelka and mutect2------------------------------------
 
