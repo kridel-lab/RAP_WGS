@@ -40,7 +40,7 @@ patient_name=${MYVAR%_*_*_*}
 vcf_file=/cluster/projects/burst2/MUTECT2_selected_VCFs/${tum_name}.selected.normalized.vcf.gz
 variant_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/_${tum_name}_merged_mutations.bed
 
-tabix -fhB $vcf_file $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
+tabix -fB ${vcf_file} $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
 
 #RUN ANNOVAR
 anno_input=merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
