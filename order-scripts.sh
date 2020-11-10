@@ -71,25 +71,22 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipe
 
 #----merge variants from strelka and mutect2------------------------------------
 
-#get list of mutations called by both tools
+#1. get list of mutations called by both tools
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_001_evaluating_overlap_between_callers.R
 
-#use original mutect2 VCF files and keep only the mutations found by both callers
-Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_002_filter_variants_only_merged_run_annovar.sh
-
-#use original mutect2 VCF files and keep only the mutations found by both callers
-#annotate this filtered VCF file using annovar
+#2. use original mutect2 VCF files and keep only the mutations found by both callers
+#run annovar
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_002_filter_variants_only_merged_run_annovar.sh
 
-#remove extra AF column from VCF files otherwise won't load properly into R
+#3. remove extra AF column from VCF files otherwise won't load properly into R
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003B_remove_extra_AF_column.sh
 
-#run annovar annotated VCF files through soft filtering
+#4. run annovar annotated VCF files through soft filtering
 #vcfR functions don't work in 3.5.0
 module load R/3.6.1
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003_processing_merged_annovar.R
 
-#some additional soft filtering and also the script that looks at overlaps
+#5. some additional soft filtering and also the script that looks at overlaps
 #between our gene mutations and several gene panels
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_004_additional_soft_filters_applied.R
 

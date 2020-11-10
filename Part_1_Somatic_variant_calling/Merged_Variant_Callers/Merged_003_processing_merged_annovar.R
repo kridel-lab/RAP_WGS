@@ -31,6 +31,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 #----------------------------------------------------------------------
 
 paired = list.files(pattern="no_info_AF")
+paired = list.files(pattern="hg19_multianno.vcf")
 
 #gene annotations
 genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))

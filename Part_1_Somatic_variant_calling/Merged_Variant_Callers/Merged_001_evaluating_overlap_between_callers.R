@@ -55,7 +55,8 @@ for(i in 1:length(strelka)){
     summary[i,] = c(pat, length(unique(m_f$mut_id)), length(unique(s_f$mut_id)), length(unique(both$mut_id)))
     #write merged summary mutation file
     both = both[,c("CHROM", "POS")]
-    write.table(both, file=paste("merged_MUTECT2_STRELKA/", pat, "merged_mutations.bed", sep="_"), quote=F, row.names=F, sep="\t")
+    both$end = both$POS
+    write.table(both, file=paste("merged_MUTECT2_STRELKA/", pat, "merged_mutations.bed", sep="_"), quote=F, col.names=F, row.names=F, sep="\t")
     print(summary)
   }
 }

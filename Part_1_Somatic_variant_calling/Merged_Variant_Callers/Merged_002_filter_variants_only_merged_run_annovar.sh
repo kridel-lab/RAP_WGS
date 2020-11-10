@@ -40,9 +40,9 @@ patient_name=${MYVAR%_*_*_*}
 vcf_file=/cluster/projects/burst2/MUTECT2_selected_VCFs/${tum_name}.selected.normalized.vcf.gz
 variant_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/_${tum_name}_merged_mutations.bed
 
-tabix -fB ${vcf_file} $variant_file > merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
+intersectBed -a ${vcf_file} -b $variant_file -header > merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
 
 #RUN ANNOVAR
 anno_input=merged_MUTECT2_STRELKA/merged_variants_vcfs/${tum_name}_merged_variants.vcf
 
-table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb --protocol ensGene,gnomad211_genome,cosmic68,avsnp142 --operation g,f,f,f --outfile /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcfs_annovar_annotated/${tum_name}_annovar.vcf.gz --vcfinput
+table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb --protocol ensGene,gnomad211_genome,cosmic68,avsnp142 --operation g,f,f,f --outfile /cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcfs_annovar_annotated/${tum_name}_annovar.vcf --vcfinput
