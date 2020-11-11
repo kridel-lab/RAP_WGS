@@ -31,13 +31,14 @@ library(GenomicRanges)
 #----------------------------------------------------------------------
 
 #CNAs annotated by gene that they overlap (no SNVs)
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
-cnas_all = fread(list.files(pattern="all_CNAs_protein_coding_samples.txt")[length(list.files(pattern="all_CNAs_protein_coding_samples.txt"))])
+#setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+#cnas_all = fread(list.files(pattern="all_CNAs_protein_coding_samples.txt")[length(list.files(pattern="all_CNAs_protein_coding_samples.txt"))])
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 
 #sample info
-samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+#samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
 
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))

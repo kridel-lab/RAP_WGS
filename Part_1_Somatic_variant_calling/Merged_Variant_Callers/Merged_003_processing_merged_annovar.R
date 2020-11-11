@@ -31,7 +31,6 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 #----------------------------------------------------------------------
 
 paired = list.files(pattern="no_info_AF")
-paired = list.files(pattern="hg19_multianno.vcf")
 
 #gene annotations
 genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))
@@ -61,9 +60,16 @@ clean_up_001 = function(paired_vcf){
   print(paste("number of variants that passed filtering=", dim(vcf)[1]))
 
   #2. filter by coverage
-  #try 60X
-  vcf = as.data.table(filter(vcf, DP >=60))
-  print(paste("number of variants that passed coverage=", dim(vcf)[1]))
+  #try 60X for all tumour samples except for ffpe diagnostic ones
+	if(str_detect(paired_vcf, "Dia_")){
+		vcf = as.data.table(filter(vcf, DP >=30))
+	  print(paste("number of variants that passed coverage=", dim(vcf)[1]))
+	}
+
+	if(!(str_detect(paired_vcf, "Dia_"))){
+		vcf = as.data.table(filter(vcf, DP >=60))
+	 print(paste("number of variants that passed coverage=", dim(vcf)[1]))
+	}
 
   #3. combine vcf and gt info
   cols = colnames(gt)[which(colnames(gt) %in% colnames(vcf))]

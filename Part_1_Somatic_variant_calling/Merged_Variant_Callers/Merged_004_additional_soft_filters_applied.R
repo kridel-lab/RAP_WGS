@@ -34,7 +34,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 files = list.files(pattern="vcf_file_filtered.bed")
 
 #sample info
-samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
 
 #dlbcl panel
 panel = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/CCG.Lymphoma.DNA.targets.GRCh37.v1.0.annotation.xlsx"))
@@ -66,12 +66,11 @@ write.table(all_muts_cords, file="all_muts_pre_blacklist_filter.bed", quote=F, r
 
 blacklist_muts = fread("all_muts_post_blacklist_filter.bed")
 colnames(blacklist_muts)[1:4] = c("CHROM", "POS", "POS_end", "mut_id")
-z = which(blacklist_muts$mut_id %in% all_muts$mut_id) #643 mutations
-z = which(all_muts$mut_id %in% blacklist_muts$mut_id) #6482 entries mutations
-all_muts = all_muts[-z,]
+z = which(blacklist_muts$mut_id %in% all_muts$mut_id) #4110 mutations
+z = which(all_muts$mut_id %in% blacklist_muts$mut_id) #16402 entries mutations
+all_muts = all_muts[-z,] #remove mutations in blacklisted regions
 
 #other filters to apply to these variants?
-
 #split into num ref and alt allele counts
 all_muts = all_muts %>% separate(gt_AD, c("Ref_counts", "alt_counts"))
 all_muts$Ref_counts = as.numeric(all_muts$Ref_counts)
@@ -94,18 +93,20 @@ all_muts$RPA = NULL
 all_muts$RU = NULL
 all_muts$STR = NULL
 all_muts$ALLELE_END = NULL
-length(unique(all_muts$mut_id)) #67156
+length(unique(all_muts$mut_id)) #448,293
 
 #TLOD - min 10 - confidence score for variant being really somatic
 all_muts = as.data.table(filter(all_muts, TLOD > 10))
-length(unique(all_muts$mut_id)) #64966
+length(unique(all_muts$mut_id)) #443,978 across three patients
 
 #min counts for alternative reads
 all_muts = as.data.table(filter(all_muts, alt_counts > 5))
-length(unique(all_muts$mut_id)) #64265
+length(unique(all_muts$mut_id)) #443,523
 
 #save file so far --> download locally and plot summary stats for various variable
 saveRDS(all_muts, file=paste(date, "all_muts_merged_mut_calls.rds", sep="_")) #this file is used for downstream exploratory analysis
+
+colnames(samps)[which(colnames(samps)=="LY_RAP_ID")] = "Indiv"
 
 #save clean version just columns that are important
 clean = all_muts[,c("Indiv", "CHROM", "POS", "mut_id",
