@@ -1,4 +1,4 @@
-qqsamples:
+samples:
   tumor_sample_1: LY_RAP_0003_Aut_FzT_01_files/gatk/LY_RAP_0003_Aut_FzT_01.sorted.dup.recal.cram.bam
   normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
 
@@ -9,7 +9,7 @@ qqsamples:
   normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
 
   tumor_sample_4: LY_RAP_0003_Aut_FzT_04_files/gatk/LY_RAP_0003_Aut_FzT_04.sorted.dup.recal.cram.bam
-  normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam  
+  normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
 
   tumor_sample_5: LY_RAP_0003_Aut_FzT_05_files/gatk/LY_RAP_0003_Aut_FzT_05.sorted.dup.recal.cram.bam
   normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
@@ -59,6 +59,27 @@ qqsamples:
   tumor_sample_20: LY_RAP_0003_Dia_FoT_05_files/gatk/LY_RAP_0003_Dia_FoT_05.sorted.dup.recal.cram.bam
   normal_sample_1: LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam
 
+  tumor_sample_21: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0001_Aut_FzT_02/LY_RAP_0001_Aut_FzT_02.bam
+  normal_sample_2: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0001.bam
+
+  tumor_sample_22: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0001_Aut_FzT_08/LY_RAP_0001_Aut_FzT_08.bam
+  normal_sample_2: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0001.bam
+
+  tumor_sample_23: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0001_Aut_FzT_05/LY_RAP_0001_Aut_FzT_05.bam
+  normal_sample_2: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0001.bam
+
+  tumor_sample_24: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0002_Aut_FzT_02/LY_RAP_0002_Aut_FzT_02.bam
+  normal_sample_3: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0002.bam
+
+  tumor_sample_25: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0002_Aut_FzT_03/LY_RAP_0002_Aut_FzT_03.bam
+  normal_sample_3: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0002.bam
+
+  tumor_sample_26: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0002_Aut_FzT_14/LY_RAP_0002_Aut_FzT_14.bam
+  normal_sample_3: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0002.bam
+
+  tumor_sample_27: /cluster/projects/burst2/CNVkit_WORKDIR/LY_RAP_0002_Aut_FzT_15/LY_RAP_0002_Aut_FzT_15.bam
+  normal_sample_3: /cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/LY_RAP_0002.bam
+
 pairings:
   tumor_sample_1:  normal_sample_1
   tumor_sample_2:  normal_sample_1
@@ -80,9 +101,10 @@ pairings:
   tumor_sample_18:  normal_sample_1
   tumor_sample_19:  normal_sample_1
   tumor_sample_20:  normal_sample_1
-
-
-
-
-
-
+  tumor_sample_21:  normal_sample_2
+  tumor_sample_22:  normal_sample_2
+  tumor_sample_23:  normal_sample_2
+  tumor_sample_24:  normal_sample_3
+  tumor_sample_25:  normal_sample_3
+  tumor_sample_26:  normal_sample_3
+  tumor_sample_27:  normal_sample_3

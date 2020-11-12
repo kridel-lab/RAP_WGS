@@ -98,6 +98,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CN
 #run WGS CNVkit mode on each tumour sample with appropriate control sample
 sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_001.sh
 
+#run PureCN to get ploidy and purity estimates
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_002_PureCN.sh
+
 #----Pyclone--------------------------------------------------------------------
 
 #prepare mutations for bamreadcount

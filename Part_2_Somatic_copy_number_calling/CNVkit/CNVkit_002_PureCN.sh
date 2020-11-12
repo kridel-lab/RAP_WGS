@@ -54,5 +54,4 @@ Rscript $PURECN/PureCN.R --out $OUT  \
            --segfile $OUT/${SAMPLEID}.seg \
            --vcf ${vcf_file} \
            --genome hg19 \
-           --funsegmentation Hclust \
            --force --postoptimize --seed 123
