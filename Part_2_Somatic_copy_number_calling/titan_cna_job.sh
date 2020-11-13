@@ -12,7 +12,7 @@ module load R/3.6.1
 
 ###-------PART 1---------------------------------------------------------------------------------------
 cluster=/cluster/home/kisaev/TitanCNA/scripts/snakemake/config/cluster_slurm.yaml
-icho=/cluster/home/kisaev/TitanCNA/scripts/snakemake/ichorCNA.snakefile
+#icho=/cluster/home/kisaev/TitanCNA/scripts/snakemake/ichorCNA.snakefile
 #snakemake -s $icho --cluster-config $cluster --cluster "sbatch -p himem --mem=51440M -t 5-00:00" -j 50
 
 #done! after finished running, comment out "icho" and snakemake command above and run the icho and
