@@ -90,6 +90,11 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 #between our gene mutations and several gene panels
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_004_additional_soft_filters_applied.R
 
+#----TitanCNA-------------------------------------------------------------------
+
+#run first run of TitanCNA
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/titan_cna_job.sh
+
 #----CNVkit---------------------------------------------------------------------
 
 #save control germline files as BAM files for all three samples in temp folder
