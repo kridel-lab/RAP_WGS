@@ -41,7 +41,7 @@ library(GenomicRanges)
 #----------------------------------------------------------------------
 
 #1. READ-ONLY FILE = FINAL MUTATIONS = KEEP THIS WAY UNLESS MAJOR CHANGE NEEDED
-read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
+read_only = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds"))])
 
 #----------------------------------------------------------------------
 #SEPERATE FILES INTO FINAL SETS BASED ON TOOL INPUT
@@ -70,12 +70,15 @@ get_pat_treeomics_muts = function(pat, dat, type){
 #+++++ PCG mutations only +++++++++++++++++++++++++++++++++++++++++++++
 
 treeomics_input = as.data.table(filter(read_only,
-!(ExonicFunc.ensGene %in% c("unknown", "."))))
+!(ExonicFunc.ensGene %in% c("."))))
 
 pats = unique(treeomics_input$Indiv)
 llply(pats, get_pat_treeomics_muts, treeomics_input, "pcgs_only")
 
 #+++++ ALL mutations +++++++++++++++++++++++++++++++++++++++++++++++++
 
+treeomics_input = as.data.table(filter(read_only,
+!(Func.ensGene %in% c("intronic"))))
+
 #same pats input as above = sample patients
-llply(pats, get_pat_treeomics_muts, read_only, "all_muts")
+llply(pats, get_pat_treeomics_muts, treeomics_input, "all_muts")

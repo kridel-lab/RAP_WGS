@@ -5,7 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
-#SBATCH --array=0-19 # job array index
+#SBATCH --array=0-26 # job array index
 
 #this follow the script
 #RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters.R
@@ -27,7 +27,7 @@ echo ${names[${SLURM_ARRAY_TASK_ID}]}
 pat=${names[${SLURM_ARRAY_TASK_ID}]}
 
 #use MUTECT2 VCF file since its format is more appropriate for Treeomics
-vcf_file=MUTECT2_RESULTS/mutect2_filtered/${pat}_mutect2_selectvariants.vcf.gz.normalized.vcf.gz
+vcf_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_selected_VCFs/${pat}.selected.normalized.vcf.gz
 
 #variants specific to each patient found here:
 variant_file_all_muts=ANALYSIS/Treeomics/input_dat/${pat}_treeomics_input_all_muts_.bed

@@ -38,34 +38,38 @@ muts = readRDS(list.files(pattern="mut_calls.rds")[length(list.files(pattern="mu
 #blacklist mutations were already removed
 #TLOD filter and minimum # of alternative alleles was also filtered
 table(muts$Indiv)
+unique(muts$Indiv)
 
 #2. Sample summary
-dna = fread("RAP_DNA.txt") ; dna=dna[,1:3] ; colnames(dna)[2] = "barcode"; dna$barcode = as.numeric(dna$barcode)
-biops = fread("RAP_FFbiopsies_extracted.txt" ); biops = biops[,1:6] ; colnames(biops)[4] = "barcode"
-dna = merge(dna, biops, by="barcode")
-colnames(dna)[2] = "Indiv"
-colnames(dna)[7] = "Tissue_Site"
-colnames(dna)[8] = "Specimen_Type"
-dna$Specimen_Type = "FT"
+#dna = fread("RAP_DNA.txt") ; dna=dna[,1:3] ; colnames(dna)[2] = "barcode"; dna$barcode = as.numeric(dna$barcode)
+#biops = fread("RAP_FFbiopsies_extracted.txt" ); biops = biops[,1:6] ; colnames(biops)[4] = "barcode"
+#dna = merge(dna, biops, by="barcode")
+#colnames(dna)[2] = "Indiv"
+#colnames(dna)[7] = "Tissue_Site"
+#colnames(dna)[8] = "Specimen_Type"
+#dna$Specimen_Type = "FT"
 
-dna = as.data.table(filter(dna, Indiv %in% muts$Indiv))
-ffpe = as.data.table(matrix(ncol=ncol(dna), nrow=3))
-colnames(ffpe) = colnames(dna)
-ffpe = as.data.frame(ffpe)
+#dna = as.data.table(filter(dna, Indiv %in% muts$Indiv))
+#ffpe = as.data.table(matrix(ncol=ncol(dna), nrow=3))
+#colnames(ffpe) = colnames(dna)
+#ffpe = as.data.frame(ffpe)
 
-ffpe$Indiv = c("LY_RAP_0003_Dia_FoT_05", "LY_RAP_0003_Dia_FoT_01" ,"LY_RAP_0003_Dia_FoT_03")
-ffpe$barcode =c("15:S12966E", "15:S12966A", "15:S12966C")
-ffpe$Tissue_Site = c("left_breast", "right_neck_LN", "left_axilla_LN")
-ffpe$Specimen_Type = "FFPE"
-ffpe$DNA = "DNA"
-ffpe$STUDY_PATIENT_ID = "LY_RAP_0003"
-dna = rbind(dna, ffpe)
-dna$id = paste(dna$Specimen_Type, dna$Tissue_Site, dna$barcode, sep="_")
+#ffpe$Indiv = c("LY_RAP_0003_Dia_FoT_05", "LY_RAP_0003_Dia_FoT_01" ,"LY_RAP_0003_Dia_FoT_03")
+#ffpe$barcode =c("15:S12966E", "15:S12966A", "15:S12966C")
+#ffpe$Tissue_Site = c("left_breast", "right_neck_LN", "left_axilla_LN")
+#ffpe$Specimen_Type = "FFPE"
+#ffpe$DNA = "DNA"
+#ffpe$STUDY_PATIENT_ID = "LY_RAP_0003"
+#dna = rbind(dna, ffpe)
+#dna$id = paste(dna$Specimen_Type, dna$Tissue_Site, dna$barcode, sep="_")
 
-muts = merge(muts, dna, by="Indiv", all=TRUE)
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Indiv"
+z = which(samps$Indiv %in% muts$Indiv)
+samps = samps[z,]
 
-#summary of depth for frozen versus ffpe samples
-muts %>% group_by(Specimen_Type) %>% dplyr::summarize(median=median(DP))
+muts = merge(muts, samps, by="Indiv", all=TRUE)
+unique(muts$Indiv)
 
 #Mutation data from WGS Morin et al 2013
 #Table S3. All somatic SNVs identified from 40 genome pairs and 13 cell lines (XLSX, 918 KB)
@@ -137,9 +141,16 @@ read_only$tot_counts = read_only$Ref_counts+read_only$alt_counts
 read_only$isdriver=""
 read_only$isdriver[which((read_only$symbol %in% reddy$Gene) | (read_only$symbol %in% genes_sum$Gene))] = "yes"
 
-write.table(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
+saveRDS(read_only, file=paste(date, "READ_ONLY_ALL_MERGED_MUTS.rds", sep="_"))
 
 #for clonal evolution analysis only keep founder mutations that are in DLBCL genes
+
+get_pyclone_input = function(patient){
+
+#in progress
+
+}
+
 founds_keep = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="yes")
 founds_remove = filter(as.data.table(table(read_only$mut_id, read_only$isdriver)), N == 20, V2=="")
 

@@ -20,7 +20,8 @@ lapply(packages, require, character.only = TRUE)
 #purpose
 #----------------------------------------------------------------------
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+#setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClusterSolution")
 
 #output from TitanCNA, combine all samples into one dataframe
 #use optimalClusterSolution.txt file to identify optimal cluster for each sample
@@ -43,19 +44,24 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/op
 #----------------------------------------------------------------------
 
 #sample conversion
-samples = fread("cna_vcf_sample_conversion.csv")
+samples = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/cna_vcf_sample_conversion.csv")
 colnames(samples) = c("barcode", "Sample")
 
 #optimal clusters
-clusters = fread("optimalClusterSolution.txt")
+clusters = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClusterSolution.txt")
 clusters= merge(samples, clusters, by = "barcode")
+
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Sample"
+
+clusters = merge(clusters, samps, by="Sample")
 
 #save sample cluster and purity info and upload to files
 cna_save = clusters[,c("Sample", "numClust", "cellPrev",
-"purity", "norm", "ploidy")]
+"purity", "norm", "ploidy", "Tissue_Site", "Specimen_Type")]
 
 write.table(cna_save, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/TitanCNA_summary.txt",
-quote=F, row.names=F, sep=";")
+quote=F, row.names=F, sep="}")
 
 #titanCNA results
 files = list.files(pattern="seg.txt")
