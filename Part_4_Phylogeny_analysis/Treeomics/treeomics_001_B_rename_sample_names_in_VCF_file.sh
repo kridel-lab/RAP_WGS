@@ -5,10 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
-#SBATCH --array=0-19 # job array index
-
-#this follow the script
-#RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters.R
+#SBATCH --array=0-26 # job array index
 
 module load java/8  #8
 module load samtools
@@ -21,7 +18,9 @@ module load tabix
 #first go into VCF files associated with protein coding genes only
 
 #++++ PCG only mutations +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/treeomics/src/input/mutect2_strelka_pcgs_only
+#ls *.vcf > /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_vcf_files
 
 #pwd
 names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_vcf_files))
