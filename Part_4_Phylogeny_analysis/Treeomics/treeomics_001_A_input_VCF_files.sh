@@ -25,6 +25,7 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/patient_ids.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 pat=${names[${SLURM_ARRAY_TASK_ID}]}
+echo ${pat}
 
 #use MUTECT2 VCF file since its format is more appropriate for Treeomics
 vcf_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_selected_VCFs/${pat}.selected.normalized.vcf.gz
@@ -41,11 +42,15 @@ variant_file_pcgs_only=ANALYSIS/Treeomics/input_dat/${pat}_treeomics_input_pcgs_
 #less variants to analyze and hopefully
 
 #first ALL MUTATIONS
-tabix -fhB $vcf_file $variant_file_all_muts > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
+#tabix -fhB $vcf_file $variant_file_all_muts > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
+
+intersectBed -a ${vcf_file} -b ${variant_file_all_muts} -header > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
 bcftools view -s $pat treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input_just_tumour.vcf
 rm treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
 
 #first ONLY PCGs
 tabix -fhB $vcf_file $variant_file_pcgs_only > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
+
+intersectBed -a ${vcf_file} -b ${variant_file_pcgs_only} -header > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
 bcftools view -s $pat treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input_just_tumour.vcf
 rm  treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf

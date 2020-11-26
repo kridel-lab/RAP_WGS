@@ -55,12 +55,13 @@ read_only = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(l
 get_pat_treeomics_muts = function(pat, dat, type){
   print(dim(dat))
   pat_dat = as.data.table(filter(dat, Indiv == pat))
-  pat_input = unique(pat_dat[,c("CHROM", "POS")])
+  pat_dat$POS_end=pat_dat$POS
+  pat_input = unique(pat_dat[,c("CHROM", "POS", "POS_end")])
   pat_input$CHROM = sapply(pat_input$CHROM, function(x){unlist(strsplit(x, "chr"))[2]})
   file_name = paste(pat, "treeomics_input", type, ".bed", sep="_")
   write.table(pat_input, file=paste(
     "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/input_dat/",
-  file_name, sep=""), quote=F, row.names=F, sep="\t")
+  file_name, sep=""), quote=F, col.names=F, row.names=F, sep="\t")
   print("done")
 }
 

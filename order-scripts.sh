@@ -175,6 +175,8 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_
 
 #----Treeomics------------------------------------------------------------------
 
+#clean up VCF first for each sample to only inlcude mutations that want to include in analysis
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_001_A_input_VCF_files.sh
 
 #----Palimpsest-----------------------------------------------------------------
 
