@@ -175,7 +175,10 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_
 
 #----Treeomics------------------------------------------------------------------
 
-#clean up VCF first for each sample to only inlcude mutations that want to include in analysis
+#1. make patient specific bed files from which to pull mutations in vcf files for treeomics
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_treeomics_prepare_bed_files_to_fillter_VCFs_by_soft_filters.R
+
+#2. clean up VCF first for each sample to only inlcude mutations that want to include in analysis
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_001_A_input_VCF_files.sh
 
 #----Palimpsest-----------------------------------------------------------------

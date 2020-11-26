@@ -49,7 +49,7 @@ bcftools view -s $pat treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect
 rm treeomics/src/input/mutect2_strelka_all_muts/${pat}_mutect2_treeomics_input.vcf
 
 #first ONLY PCGs
-tabix -fhB $vcf_file $variant_file_pcgs_only > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
+#tabix -fhB $vcf_file $variant_file_pcgs_only > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
 
 intersectBed -a ${vcf_file} -b ${variant_file_pcgs_only} -header > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf
 bcftools view -s $pat treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input.vcf > treeomics/src/input/mutect2_strelka_pcgs_only/${pat}_mutect2_treeomics_input_just_tumour.vcf
