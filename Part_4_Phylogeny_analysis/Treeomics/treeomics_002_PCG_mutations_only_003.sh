@@ -37,9 +37,8 @@ echo $pat
 
 #RUN
 python treeomics -d input/mutect2_strelka_pcgs_only/${pat} \
--l 50 \
 --driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp/${pat}
+-u -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp/${pat}
 
 #--include `cat treeomics_samples_include.txt` \
 #--purities `cat treeomics_samples_purities.txt` \
