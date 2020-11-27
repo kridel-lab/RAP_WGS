@@ -184,6 +184,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomic
 #3. change VCF file names in treeomics input to sample origin / organ
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_001_B_rename_sample_names_in_VCF_file.sh
 
+#4. test run on small subset of protein coding genes
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only_003.sh
+
 #----Palimpsest-----------------------------------------------------------------
 
 #prepare samples
