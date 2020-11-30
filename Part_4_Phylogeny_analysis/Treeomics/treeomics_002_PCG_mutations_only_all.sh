@@ -36,9 +36,9 @@ echo $pat
 #awk -F"\t" '{print $3}' purities_no_cols.txt > treeomics_samples_purities.txt
 
 #RUN
-python treeomics -d input/mutect2_strelka_pcgs_only/${pat} \
+python treeomics -d input/mutect2_strelka_all_muts/${pat} \
 --driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp/${pat}
+-o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS/${pat}
 
 #--include `cat treeomics_samples_include.txt` \
 #--purities `cat treeomics_samples_purities.txt` \
