@@ -5,7 +5,7 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
-#SBATCH --array=0-19 # job array index
+#SBATCH --array=0-26 # job array index
 
 #mutations were filtered to include only those to be analyzed in pyclone
 #some of those mutations are not present across all patients
@@ -24,16 +24,27 @@ module load bam-readcount
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 #pwd
-names=($(cat tum_samples_input_STRELKA_MANTA.txt))
+names=($(cat all_bam_files_raw.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
-MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
 
+MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
 tum_loc=${MYVAR%/*}
-tum_name=${tum_loc%_files/*}
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.sorted.dup.recal.cram*}
+patient_name=${MYVAR%_*_*_*}
+control_file=$(ls -d ${patient_name}_Ctl*)
+str="LY_RAP_0003"
+
+if [ "$patient_name" == "$str" ]; then
+  control_file=$(ls $control_file/gatk/*.bam)
+else
+  control_file=$(ls $control_file/gatk/*.cram)
+fi
+fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 #file with mutations that need to be identified from each sample (bed_file)
-muts_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/small_subset_pyclone_bam_readcount_input.bed
-muts_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_pyclone_bam_readcount_input.bed
+muts_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_small_subset_${patient_name}_pyclone_bam_readcount_input.bed
+muts_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_full_${patient_name}_pyclone_bam_readcount_input.bed
 
 #sample BAM file
 bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
@@ -42,12 +53,17 @@ bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 out_put_file_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_small.bed
 out_put_file_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_all.bed
 
+samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} > ${tum_name}.bam
+samtools index ${tum_name}.bam
+
 #get counts small list of variants
-bam-readcount -f human_g1k_v37_decoy.fasta \
-$bam_file \
+bam-readcount -f $fasta \
+${tum_name}.bam \
 -l $muts_small > $out_put_file_small
 
 #get counts full list of variants
-bam-readcount -f human_g1k_v37_decoy.fasta \
-$bam_file \
+bam-readcount -f $fasta \
+ ${tum_name}.bam \
 -l $muts_all > $out_put_file_all
+
+rm ${tum_name}.bam
