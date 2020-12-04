@@ -19,7 +19,7 @@ module load gatk
 module load annovar
 
 #pwd
-#/cluster/projects/burst2
+cd /cluster/projects/burst2
 #ls */*.bam > all_chrs_bams.txt
 
 #pwd
