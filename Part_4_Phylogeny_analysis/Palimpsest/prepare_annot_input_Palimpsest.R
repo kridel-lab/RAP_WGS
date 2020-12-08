@@ -20,7 +20,7 @@ lapply(packages, require, character.only = TRUE)
 #purpose
 #----------------------------------------------------------------------
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS")
 
 #output from TitanCNA, combine all samples into one dataframe
 #use optimalClusterSolution.txt file to identify optimal cluster for each sample
@@ -43,13 +43,19 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/op
 #----------------------------------------------------------------------
 
 #sample conversion
-samples = fread("cna_vcf_sample_conversion.csv")
+samples = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/cna_vcf_sample_conversion.csv")
 colnames(samples) = c("barcode", "Sample")
 
 #optimal clusters
-clusters = fread("optimalClusterSolution.txt")
+clusters = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClusterSolution.txt")
 clusters= merge(samples, clusters, by = "barcode")
+
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Sample"
+
+clusters = merge(clusters, samps, by="Sample")
 clusters$Gender = "M"
+
 clusters = clusters[,c("Sample", "Gender", "purity")]
 colnames(clusters)[3] = "Purity"
 
