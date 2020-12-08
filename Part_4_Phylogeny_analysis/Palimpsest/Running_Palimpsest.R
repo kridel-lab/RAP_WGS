@@ -31,7 +31,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest")
 args = commandArgs(trailingOnly = TRUE) #patient ID
 index = args[1]
 print(index)
-index="LY_RAP_0001"
+#index="LY_RAP_0001"
 samp=index
 
 #We first define the directory containing input data and the directory where result files should
