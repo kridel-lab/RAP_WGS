@@ -37,6 +37,7 @@ patient_name=${tum%_*_*_*}
 normal_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_WORKDIR/CHR_split/${patient_name}_${chr}.bam
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
+mkdir MUTECT2_pileup
 output=/cluster/projects/burst2/MUTECT2_pileup
 
 gatk GetPileupSummaries \
