@@ -70,7 +70,7 @@ load("/cluster/home/kisaev/Palimpsest/data/cytoband_hg19.RData")
 
 mut_data = as.data.frame(mut_data)
 #vcf <- preprocessInput_snv(input_data = mut_data,ensgene=ensgene,reference_genome = ref_genome)
-vcf <- annotate_VCF(vcf = mut_data, ref_genome = BSgenome.Hsapiens.UCSC.hg19)
+vcf <- annotate_VCF(vcf = mut_data, ref_genome = BSgenome.Hsapiens.UCSC.hg19, add_ID_cats = FALSE, add_DBS_cats=FALSE)
 SBS_input <- palimpsest_input(vcf = vcf, Type = "SBS")
 
 #-------------------------------------------------------------------------------------------------

@@ -199,8 +199,10 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepar
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_SNV_input_Palimpsest.R
 
 #run palimpsest
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R
-
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0001
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0002
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0003
 
 #----Summary-Plots--------------------------------------------------------------
 
