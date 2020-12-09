@@ -20,6 +20,7 @@ module load annovar
 
 #pwd
 cd /cluster/projects/burst2
+mkdir MUTECT2_contamination
 #ls */*.bam > all_chrs_bams.txt
 
 #pwd
