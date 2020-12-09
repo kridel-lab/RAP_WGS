@@ -28,12 +28,18 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 #2. select variants that pass filters
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka.sh
 
-#3. #mutationmapper
+#3. select variants that pass filters (indels)
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka_indels.sh
+
+#4. #mutationmapper
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/strelka_filtering_summary_mutationampper.R
 
-#4. prepare bed files to merge with Mutect2
+#5. prepare bed files to merge with Mutect2
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files.R
+
+#6. prepare bed files to merge with Mutect2 (indels)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files_indels.R
 
 #----run mutect2----------------------------------------------------------------
 
