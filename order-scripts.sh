@@ -65,7 +65,10 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 #9. select variants from combined VCF files to only include variants that passed
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_006_SelectVariants_post_mutect2.sh
 
-#10. soft filtering of mutect2 variants in R before merging with strelka
+#10. select variants from combined VCF files to only include variants that passed
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_006B_SelectVariants_post_mutect2_save_INDELS.sh
+
+#11. soft filtering of mutect2 variants in R before merging with strelka
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_007_soft_filtering_mutect2_filtered_variants.R
 
