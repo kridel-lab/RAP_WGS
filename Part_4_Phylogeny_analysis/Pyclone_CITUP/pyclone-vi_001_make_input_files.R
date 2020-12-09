@@ -48,17 +48,25 @@ z = which(samps$Indiv %in% purity$Indiv)
 samps = samps[z,]
 samps = samps %>% select(STUDY_PATIENT_ID, Indiv)
 samps = merge(samps, purity, by = "Indiv")
+colnames(samps)[1] = "samplename"
 
 #save sample id versus sample name clean
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #2. SNV/CNA input data for pyclone
 
-make_input_pyclone = function(input_muts, type, patient){
+make_input_pyclone = function(input_muts, type){
   muts = fread(input_muts) #get most recent mutation file
   pats = unique(muts$id)
   t = as.data.table(table(muts$mut_id))
   t=t[order(V1)]
+  patient = unlist(strsplit(input_muts, "_mutations_PYCLONE_INPUT_MUTS.txt"))
+
+  if(type == "all_muts"){
+  patient = unlist(strsplit(patient, "full_"))[2]}
+
+  if(type == "subset_muts"){
+  patient = unlist(strsplit(patient, "subset_"))[2]}
 
   #make sure mutations ordered in the same way in each sample specific file
   #try analysis assuming mutations are copy neutral
@@ -66,25 +74,43 @@ make_input_pyclone = function(input_muts, type, patient){
   #muts$MinorCN=1
   #muts$tot_cn = muts$MajorCN + muts$MinorCN
   #muts_keep = as.data.table(filter(muts, tot_cn <= 4))
-  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==20)$V1
+  if(patient == "LY_RAP_0001"){
+  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==3)$V1}
+  if(patient == "LY_RAP_0002"){
+  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==4)$V1}
+  if(patient == "LY_RAP_0003"){
+  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==20)$V1}
+
   muts = as.data.table(filter(muts, mut_id %in% muts_sum))
-  muts = merge(muts, samps, by = "id")
+  muts = merge(muts, samps, by = "samplename")
 
   #prepare matrix for pyclone vi input
   muts$normal_cn = 2
   muts = as.data.table(filter(muts, mut_id %in% muts_sum))
 
-  muts = muts %>% select(mut_id, id, Ref_counts, alt_counts, MajorCN, MinorCN, normal_cn, Purity)
+  muts = muts %>% select(mut_id, samplename, Ref_counts, alt_counts, MajorCN, MinorCN, normal_cn, Purity)
   colnames(muts) = c("mutation_id", "sample_id", "ref_counts", "alt_counts", "major_cn", "minor_cn", "normal_cn", "tumour_content")
   print(table(muts$major_cn))
+  muts$major_cn[is.na(muts$major_cn)] = 2
+  muts$minor_cn[is.na(muts$minor_cn)] = 0
 
   print(tail(muts))
   print(dim(muts))
-  write.table(muts, file=paste("all_samples_pyclonevi", type, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
-
+  write.table(muts, file=paste("all_samples_pyclonevi", type, patient, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
+  print("done!")
 }
 
 #make input for all muts
-make_input_pyclone("2020-09-13_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts", "LY_RAP_0001")
+make_input_pyclone("2020-12-08_full_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-09-13_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts", "LY_RAP_0001")
+make_input_pyclone("2020-12-08_subset_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+
+#make input for all muts
+make_input_pyclone("2020-12-08_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+#make input for some muts
+make_input_pyclone("2020-12-08_subset_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+
+#make input for all muts
+make_input_pyclone("2020-12-08_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+#make input for some muts
+make_input_pyclone("2020-12-08_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
