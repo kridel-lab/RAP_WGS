@@ -41,13 +41,20 @@ purity=fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/inp
 colnames(purity)[1] = "Indiv"
 purity$Gender = NULL
 
-samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
-samps = samps %>% select(id, Indiv)
+#sample info
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Indiv"
+z = which(samps$Indiv %in% purity$Indiv)
+samps = samps[z,]
+samps = samps %>% select(STUDY_PATIENT_ID, Indiv)
 samps = merge(samps, purity, by = "Indiv")
+
+#save sample id versus sample name clean
+patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #2. SNV/CNA input data for pyclone
 
-make_input_pyclone = function(input_muts, type){
+make_input_pyclone = function(input_muts, type, patient){
   muts = fread(input_muts) #get most recent mutation file
   pats = unique(muts$id)
   t = as.data.table(table(muts$mut_id))
@@ -78,6 +85,6 @@ make_input_pyclone = function(input_muts, type){
 }
 
 #make input for all muts
-make_input_pyclone("2020-09-13_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-09-13_full_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts", "LY_RAP_0001")
 #make input for some muts
-make_input_pyclone("2020-09-13_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-09-13_subset_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts", "LY_RAP_0001")

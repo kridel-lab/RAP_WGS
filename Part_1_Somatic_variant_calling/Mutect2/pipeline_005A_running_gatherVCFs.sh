@@ -28,6 +28,7 @@ patient_name=${MYVAR%_*_*_*}
 control_file=/cluster/projects/burst2/CNVkit_WORKDIR/Normal_Samples/${patient_name}.bam
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
+mkdir MUTECT2_final_VCFs
 output=/cluster/projects/burst2/MUTECT2_final_VCFs
 filtered=/cluster/projects/burst2/MUTECT2_filtered_VCFs
 
