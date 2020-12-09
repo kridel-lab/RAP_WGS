@@ -23,7 +23,7 @@ lapply(packages, require, character.only = TRUE)
 #data
 #----------------------------------------------------------------------
 
-vcf_files = list.files(pattern=".vcf.gz.normalized.vcf.gz")
+vcf_files = list.files(pattern="indels.vcf.gz.normalized.vcf.gz")
 
 #----------------------------------------------------------------------
 #analysis
@@ -64,7 +64,7 @@ clean_up_001 = function(vcf){
   gt = as.data.table(filter(gt, (CHROM %in% c(1:22))))
 
   #5. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
-  file = paste(pat, "filtered_strelka_calls.bed", sep="_")
+  file = paste(pat, "filtered_strelka_calls_indels.bed", sep="_")
 	gt$patient = pat
 	table(gt$CHROM)
   write.table(gt, file, quote=F, row.names=F, sep="\t", col.names=T)
