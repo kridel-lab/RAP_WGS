@@ -86,9 +86,16 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipe
 #1. get list of mutations called by both tools
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_001_evaluating_overlap_between_callers.R
 
-#2. use original mutect2 VCF files and keep only the mutations found by both callers
+#2. get list of mutations called by both tools (indels)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_001_evaluating_overlap_between_callers_indels.R
+
+#3. use original mutect2 VCF files and keep only the mutations found by both callers
 #run annovar
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_002_filter_variants_only_merged_run_annovar.sh
+
+#4. use original mutect2 VCF files and keep only the mutations found by both callers (indels)
+#run annovar
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_002_filter_variants_only_merged_run_annovar_indels.sh
 
 #3. remove extra AF column from VCF files otherwise won't load properly into R
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003B_remove_extra_AF_column.sh
