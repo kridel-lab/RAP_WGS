@@ -72,6 +72,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_007_soft_filtering_mutect2_filtered_variants.R
 
+#12. soft filtering of mutect2 variants in R before merging with strelka (indels)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_007_soft_filtering_mutect2_filtered_variants_indels.R
+
 #----merge variants from strelka and mutect2------------------------------------
 
 #1. get list of mutations called by both tools
