@@ -102,12 +102,12 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varian
 
 #6. run annovar annotated VCF files through soft filtering
 #vcfR functions don't work in 3.5.0
-module load R/3.6.1
+module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003_processing_merged_annovar.R
 
 #7. run annovar annotated VCF files through soft filtering
 #vcfR functions don't work in 3.5.0
-module load R/3.6.1
+module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003_processing_merged_annovar_indels.R
 
 #8. some additional soft filtering and also the script that looks at overlaps
