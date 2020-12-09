@@ -97,15 +97,20 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varian
 #run annovar
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_002_filter_variants_only_merged_run_annovar_indels.sh
 
-#3. remove extra AF column from VCF files otherwise won't load properly into R
+#5. remove extra AF column from VCF files otherwise won't load properly into R
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003B_remove_extra_AF_column.sh
 
-#4. run annovar annotated VCF files through soft filtering
+#6. run annovar annotated VCF files through soft filtering
 #vcfR functions don't work in 3.5.0
 module load R/3.6.1
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003_processing_merged_annovar.R
 
-#5. some additional soft filtering and also the script that looks at overlaps
+#7. run annovar annotated VCF files through soft filtering
+#vcfR functions don't work in 3.5.0
+module load R/3.6.1
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_003_processing_merged_annovar_indels.R
+
+#8. some additional soft filtering and also the script that looks at overlaps
 #between our gene mutations and several gene panels
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_004_additional_soft_filters_applied.R
 

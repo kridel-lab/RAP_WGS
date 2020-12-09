@@ -31,6 +31,8 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 #----------------------------------------------------------------------
 
 paired = list.files(pattern="no_info_AF")
+z = which(str_detect(paired, ".indels."))
+paired = paired[z]
 
 #gene annotations
 genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))
@@ -108,7 +110,7 @@ clean_up_001 = function(paired_vcf){
 
   #11. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
   pat = gt$Indiv[1]
-  file = paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text/", pat, "_final_vcf_file_filtered.bed", collapse="_", sep="")
+  file = paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text/", pat, "_final_vcf_file_filtered_indels.bed", collapse="_", sep="")
   write.table(gt, file, quote=F, row.names=F, sep="\t", col.names=T)
   print("done")
 }
