@@ -38,6 +38,7 @@ normal_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_WORKDIR/CHR_split
 
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 output=/cluster/projects/burst2/MUTECT2_contamination
+mkdir MUTECT2_filtered_VCFs
 
 gatk FilterMutectCalls \
     -R $fasta \
