@@ -150,7 +150,7 @@ get_pyclone_input = function(patient){
 
   print(patient)
 
-  if(patient == "LY_RAP_0001"){
+    if(patient == "LY_RAP_0001"){
     read_only_pat = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient))
     pat_founds_keep = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 3, V2=="yes")
     pat_founds_remove = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 3, V2=="")
@@ -176,7 +176,7 @@ get_pyclone_input = function(patient){
   #and those with major copy number greater than 0
   pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
   !(mut_id %in% pat_founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
-  MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
+  MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
 
   print(patient)
   print(length(unique(pyclone_full$mut_id)))
