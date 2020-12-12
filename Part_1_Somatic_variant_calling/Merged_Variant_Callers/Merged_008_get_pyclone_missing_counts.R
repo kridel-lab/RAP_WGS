@@ -119,7 +119,7 @@ get_reads = function(patient, type_analysis){
 
 		pyclone_input = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
 		!(mut_id %in% founds_remove$V1), tot_counts >=60, gt_AF >=0.15,
-		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
+		MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
 		print(length(unique(pyclone_input$mut_id)))
 
 		#file with missing variants
@@ -136,7 +136,7 @@ get_reads = function(patient, type_analysis){
 
 		pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
 		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
-		MajorCN > 0, Copy_Number >=2, Copy_Number <=4))
+		MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
 
 		pyclone_input = as.data.table(filter(pyclone_full,
 		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
