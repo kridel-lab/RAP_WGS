@@ -175,8 +175,8 @@ get_pyclone_input = function(patient){
   #run one version of pyclone with all mutations except for unique ones
   #and those with major copy number greater than 0
   pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-  !(mut_id %in% pat_founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
-  MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
+  !(mut_id %in% pat_founds_remove$V1),
+  MajorCN > 0, Copy_Number >=2))
 
   print(patient)
   print(length(unique(pyclone_full$mut_id)))

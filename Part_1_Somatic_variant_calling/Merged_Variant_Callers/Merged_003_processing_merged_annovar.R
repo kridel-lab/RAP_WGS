@@ -31,6 +31,9 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 #----------------------------------------------------------------------
 
 paired = list.files(pattern="no_info_AF")
+z = which(str_detect(paired, "indel"))
+paired = paired[-z]
+print(length(paired))
 
 #gene annotations
 genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))
