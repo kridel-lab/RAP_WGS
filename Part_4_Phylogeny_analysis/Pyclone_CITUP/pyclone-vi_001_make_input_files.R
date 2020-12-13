@@ -57,7 +57,7 @@ patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 make_input_pyclone = function(input_muts, type){
   muts = fread(input_muts) #get most recent mutation file
-  pats = unique(muts$id)
+  pats = unique(muts$samplename)
   t = as.data.table(table(muts$mut_id))
   t=t[order(V1)]
   patient = unlist(strsplit(input_muts, "_mutations_PYCLONE_INPUT_MUTS.txt"))
@@ -101,16 +101,16 @@ make_input_pyclone = function(input_muts, type){
 }
 
 #make input for all muts
-make_input_pyclone("2020-12-08_full_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-12-13_full_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-12-08_subset_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-12-13_subset_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
 
 #make input for all muts
-make_input_pyclone("2020-12-08_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-12-13_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-12-08_subset_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-12-13_subset_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
 
 #make input for all muts
-make_input_pyclone("2020-12-08_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2020-12-13_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-make_input_pyclone("2020-12-08_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2020-12-13_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")

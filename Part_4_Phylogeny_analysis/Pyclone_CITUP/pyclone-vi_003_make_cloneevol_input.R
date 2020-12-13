@@ -74,18 +74,24 @@ mut_gene = unique(mut_gene[,c("mut_id", "symbol", "biotype", "Func.ensGene", "Ex
 #pyclone_file= fread(files)
 pyclone_file=vi
 
-#remove clusters with low cluster_assignment_prob
-#pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
-
 #how many mutations in each cluster?
 cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
 
 if(patient == "LY_RAP_0001"){
-cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=10)}
+cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=10)
+pyclone_remove=c()}
+
 if(patient == "LY_RAP_0002"){
-cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=500)}
+cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=500)
+#remove clusters with low cluster_assignment_prob
+pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
+}
+
 if(patient == "LY_RAP_0003"){
-cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=400)}
+cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=400)
+#remove clusters with low cluster_assignment_prob
+pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
+}
 
 pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1, !(cluster_id %in% pyclone_remove))
 colnames(pyclone_file)[1] = "mut_id"
@@ -250,20 +256,20 @@ dev.off()
 if(patient == "LY_RAP_0001"){
 z = which(dat$cluster==1)
 dat$cluster[z] = 8
-z = which(dat$cluster==5)
+z = which(dat$cluster==7)
 dat$cluster[z] = 1
 z = which(dat$cluster==8)
-dat$cluster[z] = 5
-z = which(dat$cluster==3)
-dat$cluster[z] = 2
-z = which(dat$cluster==4)
-dat$cluster[z] = 3
-z = which(dat$cluster==5)
-dat$cluster[z] = 4
-z = which(dat$cluster==6)
-dat$cluster[z] = 5
-z = which(dat$cluster==7)
-dat$cluster[z] = 6
+dat$cluster[z] = 7
+#z = which(dat$cluster==3)
+#dat$cluster[z] = 2
+#z = which(dat$cluster==4)
+#dat$cluster[z] = 3
+#z = which(dat$cluster==5)
+#dat$cluster[z] = 4
+#z = which(dat$cluster==6)
+#dat$cluster[z] = 5
+#z = which(dat$cluster==7)
+#dat$cluster[z] = 6
 }
 
 #z = which(dat$cluster==11)
@@ -278,9 +284,9 @@ cancer.initiation.model='monoclonal',
 subclonal.test = 'bootstrap',
 subclonal.test.model ='non-parametric',
 num.boots = 1000,
-ignore.clusters=c(6,3, 4),
+ignore.clusters=c(2,7),
 #score.model.by = 'metap',
-cluster.center ='mean', min.cluster.vaf = 0.01,
+cluster.center ='mean', min.cluster.vaf = 0,
           sum.p = 0.05,
           alpha = 0.05, founding.cluster = 1,
 clone.colors = col_vector)
