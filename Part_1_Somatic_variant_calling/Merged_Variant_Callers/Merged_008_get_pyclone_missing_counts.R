@@ -18,6 +18,12 @@ packages <- c("dplyr", "ggplot2", "tidyr", "data.table", "plyr",
 	"stringr", "readxl", "GenomicRanges", "params", "readr")
 lapply(packages, require, character.only = TRUE)
 
+args = commandArgs(trailingOnly = TRUE) #patient ID
+index = args[1]
+print(index)
+patient = index
+print(patient)
+
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
@@ -47,9 +53,68 @@ reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/dat
 #save sample id versus sample name clean
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
+#Copy number data
+cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_TITAN.rds")
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
+
+get_major_cn = function(patient, mut){
+  print(patient)
+  cnas_pat = as.data.table(filter(cnas, Sample == patient))
+	snvs = filter(read_only, mut_id == mut)[1,]
+	#just save coordiantes of mutations
+	snvs = snvs[,c("CHROM", "POS")]
+
+  #make granges objects
+  snvs_gr = GRanges(
+    seqnames = snvs$CHROM,
+    ranges = IRanges(snvs$POS, end = snvs$POS),
+    strand = rep("*", length(snvs$POS)),
+    score = 1:length(snvs$POS))
+
+  cnas_gr = GRanges(
+    seqnames = cnas_pat$CHROM,
+    ranges = IRanges(cnas_pat$Start, end = cnas_pat$End),
+    strand = rep("*", length(cnas_pat$Start)),
+    logR = cnas_pat$LogR)
+
+  #intersect them
+  #Then subset the original objects with the negative indices of the overlaps:
+  hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
+  hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
+  major_cn = hits_overlap$MajorCN[1]
+  return(major_cn)
+}
+
+get_minor_cn = function(patient, mut){
+  print(patient)
+  cnas_pat = as.data.table(filter(cnas, Sample == patient))
+	snvs = filter(read_only, mut_id == mut)[1,]
+	#just save coordiantes of mutations
+	snvs = snvs[,c("CHROM", "POS")]
+
+  #make granges objects
+  snvs_gr = GRanges(
+    seqnames = snvs$CHROM,
+    ranges = IRanges(snvs$POS, end = snvs$POS),
+    strand = rep("*", length(snvs$POS)),
+    score = 1:length(snvs$POS))
+
+  cnas_gr = GRanges(
+    seqnames = cnas_pat$CHROM,
+    ranges = IRanges(cnas_pat$Start, end = cnas_pat$End),
+    strand = rep("*", length(cnas_pat$Start)),
+    logR = cnas_pat$LogR)
+
+  #intersect them
+  #Then subset the original objects with the negative indices of the overlaps:
+  hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
+  hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
+  minor_cn = hits_overlap$MinorCN[1]
+  return(minor_cn)
+}
 
 #first combine all results from bamreadcount into one matrix
 get_bam_readcount = function(file_res, type_analysis){
@@ -118,8 +183,8 @@ get_reads = function(patient, type_analysis){
 		bamreadcount = bamreadcount[z]
 
 		pyclone_input = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-		!(mut_id %in% founds_remove$V1), tot_counts >=60, gt_AF >=0.15,
-		MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
+		!(mut_id %in% founds_remove$V1),
+		MajorCN > 0, Copy_Number >=2))
 		print(length(unique(pyclone_input$mut_id)))
 
 		#file with missing variants
@@ -135,8 +200,8 @@ get_reads = function(patient, type_analysis){
 		bamreadcount = bamreadcount[z]
 
 		pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-		!(mut_id %in% founds_remove$V1), tot_counts >=60,gt_AF >=0.15,
-		MajorCN > 0, Copy_Number >=2, Copy_Number <=8))
+		!(mut_id %in% founds_remove$V1),
+		MajorCN > 0, Copy_Number >=2))
 
 		pyclone_input = as.data.table(filter(pyclone_full,
 		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
@@ -176,12 +241,8 @@ get_reads = function(patient, type_analysis){
 	  print(mutation)
 	  mut_dat = as.data.table(filter(missing_mutations, id == mutation))
 		pyclone_dat_mut = as.data.table(filter(pyclone_input, mut_id == mutation))
-	  #columns that we need to edit
-	  #c("mut_id", "Ref_counts", "alt_counts", "normal_cn", "Nmin", "Nmaj",
-		#"hg19.ensemblToGeneName.value", "Func.ensGene", "id")
-	  #which patients don't have
 		pats = unique(mut_dat$samplename)
-		pats_missing = unique(read_only_pat$Indiv)[which(!(unique(read_only_pat$id) %in% pyclone_dat_mut$id))]
+		pats_missing = pats[which(!(pats %in% read_only_pat$Indiv[which(read_only_pat$mut_id %in% mutation)]))]
 
 	    make_pat = function(pat){
 	      pat_dat = filter(mut_dat, samplename == pat)
@@ -189,8 +250,8 @@ get_reads = function(patient, type_analysis){
 				pat_dat$id = read_only_pat$id[which(read_only_pat$Indiv == pat)[1]]
 
 					if(pat %in% pats_missing){
-							pat_dat$MajorCN=2
-	      			pat_dat$MinorCN=0
+							pat_dat$MajorCN=get_major_cn(pat, mutation)
+	      			pat_dat$MinorCN=get_minor_cn(pat, mutation)
 							pat_dat$source = "bamreadcount"
 							}
 
@@ -242,4 +303,5 @@ get_full_missing_data = function(patient){
 }
 
 #run analysis
-llply(patients, get_full_missing_data)
+#llply(patients, get_full_missing_data)
+get_full_missing_data(patient)

@@ -32,9 +32,6 @@ library(GenomicRanges)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
 
-samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
-colnames(samps)[4] ="Indiv"
-
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
 
@@ -45,10 +42,18 @@ genes_sum = as.data.table(filter(genes_sum, N > 5))
 colnames(genes_sum)=c("Gene", "num_samples_w_mut")
 
 #Our mutations
-#muts = fread(list.files(pattern="all_SNVs_samples.txt")[length(list.files(pattern="all_SNVs_samples.txt"))])
-#read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
-read_only = readRDS("2020-11-11_all_muts_merged_mut_calls.rds")
-read_only = merge(read_only, samps, by = "Indiv")
+read_only_snvs = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds"))])
+read_only_indels = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS_INDELS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS_INDELS.rds"))])
+read_only_snvs$mut_type = "SNV"
+read_only_indels$mut_type = "INDEL"
+
+read_only = rbind(read_only_snvs, read_only_indels)
+
+#sample info
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Indiv"
+z = which(samps$Indiv %in% read_only$Indiv)
+samps = samps[z,]
 
 #----------------------------------------------------------------------
 #analysis
@@ -56,7 +61,7 @@ read_only = merge(read_only, samps, by = "Indiv")
 
 #mut-gene summary table for downstream use
 mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "ExonicFunc.ensGene",
-"AAChange.ensGene", "cosmic68")])
+"AAChange.ensGene", "cosmic68", "mut_type")])
 
 #1. how many patient samples is each mutation found in?
 samples_per_mut = as.data.table(table(read_only$mut_id, read_only$STUDY_PATIENT_ID))
@@ -92,27 +97,47 @@ barplot = as.data.table(table(samples_per_mut$num_of_samples_with_mut, samples_p
 barplot = as.data.table(filter(barplot, N >0))
 colnames(barplot) = c("num_of_samples_with_mut", "patient", "num_of_muts")
 barplot$num_of_samples_with_mut = factor(barplot$num_of_samples_with_mut, levels=unique(barplot$num_of_samples_with_mut))
+barplot$patient[barplot$patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
+barplot$patient[barplot$patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
+barplot$patient[barplot$patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
+barplot$patient = factor(barplot$patient, levels=c("MCL blastoid stage IV",
+"PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/001_samples_per_mutation.pdf")
 # Basic barplot
 p<-ggplot(data=barplot, aes(x=num_of_samples_with_mut, y=num_of_muts, fill=patient)) +
-  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of samples with a given mutation") +
-	xlab("Number of samples with mutation") + ylab("Number of mutations")
+  geom_bar(stat="identity")+theme_minimal() + #+ggtitle("Number of samples with a given mutation") +
+	xlab("Number of samples with mutation") + ylab("Number of mutations")+
+	facet_grid(. ~ patient, scales="free", space='free')+
+	theme(
+  strip.background = element_blank(),
+  strip.text.x = element_blank(), legend.position="bottom",
+	legend.text = element_text(size=6)
+)
 print(p)
 dev.off()
 
 #summarize number of mutations per sample
-muts_per_sample = as.data.table(table(read_only$Indiv))
+muts_per_sample = as.data.table(table(read_only$STUDY_PATIENT_ID,read_only$Tissue_Site))
+muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
 muts_per_sample = muts_per_sample[order(-N)]
-muts_per_sample$V1 = factor(muts_per_sample$V1, levels=muts_per_sample$V1)
-colnames(muts_per_sample) = c("Sample", "num_of_muts")
+muts_per_sample$V1 = factor(muts_per_sample$V1, levels=unique(muts_per_sample$V1))
+muts_per_sample$V2 = factor(muts_per_sample$V2, levels=unique(muts_per_sample$V2))
+
+colnames(muts_per_sample) = c("Patient", "Sample", "num_of_muts")
+muts_per_sample$patient[muts_per_sample$patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
+muts_per_sample$patient[muts_per_sample$patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
+muts_per_sample$patient[muts_per_sample$patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
+muts_per_sample$patient = factor(muts_per_sample$patient, levels=c("MCL blastoid stage IV",
+"PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pdf")
 # Basic barplot
-p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts)) +
+p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts, fill=patient)) +
   geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations per sample")+
-	theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Sample")+
-	ylab("Number of mutations")
+	theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) + xlab("Sample")+
+	ylab("Number of mutations")+
+	facet_grid(. ~ Patient, scales="free", space='free')
 print(p)
 dev.off()
 
