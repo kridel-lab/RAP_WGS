@@ -40,6 +40,7 @@ lapply(packages, require, character.only = TRUE)
 purity=fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/annotation_data_palimpsest_input.txt")
 colnames(purity)[1] = "Indiv"
 purity$Gender = NULL
+purity$Purity = 0.85
 
 #sample info
 samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
