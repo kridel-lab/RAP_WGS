@@ -50,7 +50,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 #results from pyclone-vi
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
-patient = "LY_RAP_0002" #test
+#patient = "LY_RAP_0002" #test
 
 #----------------------------------------------------------------------
 #analysis
