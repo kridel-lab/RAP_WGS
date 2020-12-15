@@ -34,6 +34,19 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+reddy$type = "DLBCL"
+
+#PMBCL genes
+pmbcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/PMBCL_genes.xlsx"))
+pmbcl$type = "PMBCL"
+pmbcl = unique(pmbcl)
+
+#MCL genes
+mcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/MCL_genes.xlsx"))
+mcl$type = "MCL"
+mcl = unique(mcl)
+
+all_drivers = rbind(reddy, pmbcl, mcl)
 
 #DLBCL mutations from Morin Blood 2013
 morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
@@ -54,6 +67,12 @@ samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_
 colnames(samps)[4] ="Indiv"
 z = which(samps$Indiv %in% read_only$Indiv)
 samps = samps[z,]
+samps[18,2] = "Kidney, NOS 2"
+
+read_only$Tissue_Site = NULL
+read_only$STUDY_PATIENT_ID = NULL
+
+read_only = merge(read_only, samps, by = "Indiv")
 
 #----------------------------------------------------------------------
 #analysis
@@ -176,9 +195,13 @@ dev.off()
 #2. how many mutations found in all samples fall into 'driver genes' vs
 #non driver genes
 samples_per_mut$driver = ""
-z = which(samples_per_mut$symbol %in% reddy$Gene)
+z = which((samples_per_mut$symbol %in% all_drivers$Gene[all_drivers$type=="MCL"]) &(samples_per_mut$patient == "LY_RAP_0001"))
 samples_per_mut$driver[z] = "driver"
-samples_per_mut$driver[-z] = "non_driver"
+z = which((samples_per_mut$symbol %in% all_drivers$Gene[all_drivers$type=="PMBCL"]) &(samples_per_mut$patient == "LY_RAP_0002"))
+samples_per_mut$driver[z] = "driver"
+z = which((samples_per_mut$symbol %in% all_drivers$Gene[all_drivers$type=="DLBCL"]) &(samples_per_mut$patient == "LY_RAP_0003"))
+samples_per_mut$driver[z] = "driver"
+samples_per_mut$driver[samples_per_mut$driver == ""] = "non_driver"
 
 paste(length(unique(samples_per_mut$mut_id)), "unique mutations")
 paste(length(unique(samples_per_mut$mut_id[samples_per_mut$driver == "driver"])), "unique mutations in driver genes including in non-exon regions")
@@ -263,13 +286,15 @@ p = ggplot(drivers, aes(phylogeny, gene_mut)) +
 print(p)
 dev.off()
 
+drivers$mut_type = factor(drivers$mut_type, levels=c("SNV", "INDEL"))
+
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summary_exonic_splicing_nonsynon_only_001.pdf", width=6, height=6)
 p = ggplot(filter(drivers, patient ==  "MCL blastoid stage IV"), aes(phylogeny, gene_mut)) +
   geom_tile(aes(fill = mut_type), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
 	theme_minimal()+
 	#coord_flip()+
-	theme(axis.text.x = element_text(angle = 0, vjust = 1))
+	theme(axis.text.x = element_text(angle = 0, vjust = 1, size=10))
 #	ggtitle("Summary of mutations in driver genes")
 print(p)
 dev.off()
@@ -278,11 +303,13 @@ pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summa
 p = ggplot(filter(drivers, patient ==  "PMBCL stage IV bulky B symptoms"), aes(phylogeny, gene_mut)) +
   geom_tile(aes(fill = mut_type), colour = "grey50") +
   xlab("Phylogeny") + ylab("Gene") +
-	theme_minimal()+
-	#coord_flip()+
-	theme(axis.text.x = element_text(angle = 0, hjust = 1, vjust = 1))
+	#theme(axis.text.x = element_text(size=3), axis.text.y=element_text(size=1))+#, angle = 0, hjust = 1, vjust = 1))+
+	theme_minimal() + theme(axis.text.x = element_text(size = 10),
+          axis.text.y = element_text(size = 5))
+
 #	ggtitle("Summary of mutations in driver genes")
 print(p)
+
 dev.off()
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/007_driver_genes_muts_summary_exonic_splicing_nonsynon_only_003.pdf", width=6, height=9)
