@@ -10,5 +10,20 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 source activate pyclone-vi
 module load python3
 
-pyclone-vi fit -i all_samples_pyclonevi_all_muts_neutral_pyclone_input.tsv -o rap_wgs_all_muts_neut.h5 -c 80 -d binomial -r 100
-pyclone-vi write-results-file -i rap_wgs_all_muts_neut.h5 -o rap_wgs_all_muts_neut.tsv
+#p001
+pyclone-vi fit -i all_samples_pyclonevi_all_muts_LY_RAP_0001_pyclone_input_neut.tsv \
+-o LY_RAP_0001_rap_wgs_all_muts_neut.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0001_rap_wgs_all_muts_neut.h5 -o LY_RAP_0001_rap_wgs_all_muts_neut.tsv
+
+#p002
+pyclone-vi fit -i all_samples_pyclonevi_all_muts_LY_RAP_0002_pyclone_input_neut.tsv \
+-o LY_RAP_0002_rap_wgs_all_muts_neut.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0002_rap_wgs_all_muts_neut.h5 -o LY_RAP_0002_rap_wgs_all_muts_neut.tsv
+
+#p003
+pyclone-vi fit -i all_samples_pyclonevi_all_muts_LY_RAP_0003_pyclone_input_neut.tsv \
+-o LY_RAP_0003_rap_wgs_all_muts_neut.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0003_rap_wgs_all_muts_neut.h5 -o LY_RAP_0003_rap_wgs_all_muts_neut.tsv
