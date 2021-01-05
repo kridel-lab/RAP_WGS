@@ -6,7 +6,6 @@
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J hatchet_tut
 
-
 #
 #Preliminaries
 #This preliminary part of the script contains all the preliminary
@@ -69,6 +68,28 @@ cd ${XDIR}
 #binBAM
 #
 
-\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-                                   -b 50kb -g ${REF} -j ${J} \
-                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+#\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#                                   -b 50kb -g ${REF} -j ${J} \
+#                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+
+#
+#deBAF
+#
+
+\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+            -r ${REF} -j ${J} -q 20 -Q 20 -U 20 -c 5 \
+            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
+                          &> ${BAF}bafs.log
+
+#
+#comBBo
+#
+
+\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+
+#
+#cluBB
+#
+
+#\time -v python2 -m hatchet cluBB ${BB}bulk.bb -by ${BNPY} -o ${BBC}bulk.seg -O ${BBC}bulk.bbc \
+#                                               -e 12 -tB 0.04 -tR 0.15 -d 0.08
