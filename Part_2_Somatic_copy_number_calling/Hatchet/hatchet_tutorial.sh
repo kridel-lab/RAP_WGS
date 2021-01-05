@@ -12,6 +12,7 @@
 #information that are required to execute the full pipeline.
 #
 
+module load python/2.7
 export GUROBI_HOME="/cluster/home/kisaev/gurobi911/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
@@ -26,8 +27,8 @@ export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
 conda activate hatchet
 
 REF="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
-SAM="/cluster/tools/software/centos7/samtools/1.10/bin/"
-BCF="/cluster/tools/software/centos7/samtools/1.10/bin/"
+SAM="/cluster/tools/software/centos7/samtools/1.10/bin/samtools"
+BCF="/cluster/tools/software/centos7/samtools/1.10/bin/bcftools"
 
 XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p001/"
 NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
@@ -48,19 +49,19 @@ export PATH=$PATH:${BCF}
 #
 
 BIN=${XDIR}bin/
-mkdir -p ${BIN}
+#mkdir -p ${BIN}
 BAF=${XDIR}baf/
-mkdir -p ${BAF}
+#mkdir -p ${BAF}
 BB=${XDIR}bb/
-mkdir -p ${BB}
+#mkdir -p ${BB}
 BBC=${XDIR}bbc/
-mkdir -p ${BBC}
+#mkdir -p ${BBC}
 ANA=${XDIR}analysis/
-mkdir -p ${ANA}
+#mkdir -p ${ANA}
 RES=${XDIR}results/
-mkdir -p ${RES}
+#mkdir -p ${RES}
 EVA=${XDIR}evaluation/
-mkdir -p ${EVA}
+#mkdir -p ${EVA}
 
 cd ${XDIR}
 
