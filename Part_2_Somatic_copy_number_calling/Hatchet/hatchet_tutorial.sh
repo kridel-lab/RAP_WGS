@@ -24,8 +24,6 @@ export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
 #make
 #cp libgurobi_c++.a ../../lib
 
-conda activate hatchet
-
 REF="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
 SAM="/cluster/tools/software/centos7/samtools/1.10/bin/samtools"
 BCF="/cluster/tools/software/centos7/samtools/1.10/bin/bcftools"
@@ -42,26 +40,26 @@ set -o xtrace
 PS4='\''[\t]'\'
 export PATH=$PATH:${SAM}
 export PATH=$PATH:${BCF}
-#source /path/to/virtualenv-python2.7/bin/activate
+source /cluster/home/kisaev/python2env/bin/activate
 
 #
 #Setting up running directory
 #
 
 BIN=${XDIR}bin/
-#mkdir -p ${BIN}
+mkdir -p ${BIN}
 BAF=${XDIR}baf/
-#mkdir -p ${BAF}
+mkdir -p ${BAF}
 BB=${XDIR}bb/
-#mkdir -p ${BB}
+mkdir -p ${BB}
 BBC=${XDIR}bbc/
-#mkdir -p ${BBC}
+mkdir -p ${BBC}
 ANA=${XDIR}analysis/
-#mkdir -p ${ANA}
+mkdir -p ${ANA}
 RES=${XDIR}results/
-#mkdir -p ${RES}
+mkdir -p ${RES}
 EVA=${XDIR}evaluation/
-#mkdir -p ${EVA}
+mkdir -p ${EVA}
 
 cd ${XDIR}
 
@@ -69,9 +67,9 @@ cd ${XDIR}
 #binBAM
 #
 
-#\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-#                                   -b 50kb -g ${REF} -j ${J} \
-#                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+                                   -b 50kb -g ${REF} -j ${J} \
+                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
 
 #
 #deBAF
