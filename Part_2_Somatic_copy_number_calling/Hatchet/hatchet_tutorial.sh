@@ -2,7 +2,7 @@
 #
 #SBATCH -N 1 # Ensure that all cores are on one machine
 #SBATCH -p himem
-#SBATCH --mem=41440M
+#SBATCH --mem=60000M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J hatchet_tut
 
@@ -47,19 +47,19 @@ source /cluster/home/kisaev/python2env/bin/activate
 #
 
 BIN=${XDIR}bin/
-mkdir -p ${BIN}
+#mkdir -p ${BIN}
 BAF=${XDIR}baf/
-mkdir -p ${BAF}
+#mkdir -p ${BAF}
 BB=${XDIR}bb/
-mkdir -p ${BB}
+#mkdir -p ${BB}
 BBC=${XDIR}bbc/
-mkdir -p ${BBC}
+#mkdir -p ${BBC}
 ANA=${XDIR}analysis/
-mkdir -p ${ANA}
+#mkdir -p ${ANA}
 RES=${XDIR}results/
-mkdir -p ${RES}
+#mkdir -p ${RES}
 EVA=${XDIR}evaluation/
-mkdir -p ${EVA}
+#mkdir -p ${EVA}
 
 cd ${XDIR}
 
@@ -67,9 +67,9 @@ cd ${XDIR}
 #binBAM
 #
 
-\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-                                   -b 50kb -g ${REF} -j ${J} \
-                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+#\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#                                   -b 50kb -g ${REF} -j ${J} \
+#                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
 
 #
 #deBAF
@@ -84,7 +84,7 @@ cd ${XDIR}
 #comBBo
 #
 
-\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+#\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
 
 #
 #cluBB
