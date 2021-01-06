@@ -76,7 +76,7 @@ cd ${XDIR}
 #
 
 \time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-            -r ${REF} -j ${J} -q 20 -Q 20 -U 20 -c 5 \
+            -r ${REF} -j ${J} -q 10 -Q 10 -U 10 -c 4 \
             -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
                           &> ${BAF}bafs.log
 
