@@ -17,6 +17,7 @@ export GUROBI_HOME="/cluster/home/kisaev/gurobi911/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
+export PATH=/cluster/home/kisaev/bin:$PATH
 
 #one time during gurobi installation
 #cd "${GUROBI_HOME}"
@@ -25,8 +26,8 @@ export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
 #cp libgurobi_c++.a ../../lib
 
 REF="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
-SAM="/cluster/tools/software/centos7/samtools/1.10/bin/samtools"
-BCF="/cluster/tools/software/centos7/samtools/1.10/bin/bcftools"
+SAM="/cluster/home/kisaev/bin/samtools"
+BCF="/cluster/home/kisaev/bin/bcftools"
 
 XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p001/"
 NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
@@ -38,8 +39,8 @@ J=22
 set -e
 set -o xtrace
 PS4='\''[\t]'\'
-export PATH=$PATH:${SAM}
-export PATH=$PATH:${BCF}
+#export PATH=$PATH:${SAM}
+#export PATH=$PATH:${BCF}
 source /cluster/home/kisaev/python2env/bin/activate
 
 #
