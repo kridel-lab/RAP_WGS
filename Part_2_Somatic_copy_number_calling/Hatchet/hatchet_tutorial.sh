@@ -94,7 +94,4 @@ cd ${XDIR}
 #
 
 BNPY=/cluster/home/kisaev/bnpy/bnpy/
-#\time -v python2 -m hatchet cluBB ${BB}bulk.bb -by ${BNPY} -o ${BBC}bulk.seg -O ${BBC}bulk.bbc \
-#                                               -e 12 -tB 0.04 -tR 0.15 -d 0.08
-\time -v python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc \
-                                               -e 12 -tB 0.04 -tR 0.15 -d 0.08
+\time -v python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc -e ${RANDOM} -tB 0.04 -tR 0.15 -d 0.08
