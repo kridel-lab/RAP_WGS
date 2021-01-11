@@ -85,11 +85,14 @@ cd ${XDIR}
 #comBBo
 #
 
-\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+#\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
 
 #
-#cluBB
+#cluBB-cluBB globally clusters genomic bins based on RDR and BAF jointly along the genome and across
+#all tumor samples, specified in a BB file ${BB}bulk.bb. The home directory of BNPY is specified through ${BNPY}
+#to perform a Dirichelt-process clustering.
 #
 
-#\time -v python2 -m hatchet cluBB ${BB}bulk.bb -by ${BNPY} -o ${BBC}bulk.seg -O ${BBC}bulk.bbc \
-#                                               -e 12 -tB 0.04 -tR 0.15 -d 0.08
+BNPY=/cluster/home/kisaev/bnpy
+\time -v python2 -m hatchet cluBB ${BB}bulk.bb -by ${BNPY} -o ${BBC}bulk.seg -O ${BBC}bulk.bbc \
+                                               -e 12 -tB 0.04 -tR 0.15 -d 0.08
