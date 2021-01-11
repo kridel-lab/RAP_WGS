@@ -18,17 +18,36 @@ option_list = list(
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
-TUMOURNAME = opt$tumourname
-NORMALNAME = opt$normalname
-NORMALBAM = opt$nb
-TUMOURBAM = opt$tb
-IS.MALE = opt$sex=="male" | opt$sex=="Male"
-RUN_DIR = opt$output
-SKIP_ALLELECOUNTING = opt$skip_allelecount
-SKIP_PREPROCESSING = opt$skip_preprocessing
-SKIP_PHASING = opt$skip_phasing
-NTHREADS = opt$cpu
-PRIOR_BREAKPOINTS_FILE = opt$bp
+#TUMOURNAME = opt$tumourname
+#NORMALNAME = opt$normalname
+TUMOURNAME = "LY_RAP_0003_Aut_FzT_01"
+NORMALNAME = "LY_RAP_0003_Ctl_FzG_01"
+
+#NORMALBAM = opt$nb
+NORMALBAM = "/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
+
+#TUMOURBAM = opt$tb
+TUMOURBAM = "/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_01_files/gatk/LY_RAP_0003_Aut_FzT_01.sorted.dup.recal.cram.bam"
+
+#IS.MALE = opt$sex=="male" | opt$sex=="Male"
+IS.MALE = TRUE
+
+#RUN_DIR = opt$output
+RUN_DIR = "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Battenberg"
+
+#SKIP_ALLELECOUNTING = opt$skip_allelecount
+#SKIP_PREPROCESSING = opt$skip_preprocessing
+SKIP_ALLELECOUNTING = FALSE
+SKIP_PREPROCESSING = FALSE
+
+#SKIP_PHASING = opt$skip_phasing
+SKIP_PHASING = FALSE
+
+#NTHREADS = opt$cpu
+NTHREADS = 8
+
+#PRIOR_BREAKPOINTS_FILE = opt$bp
+PRIOR_BREAKPOINTS_FILE = NULL
 
 ###############################################################################
 # 2018-11-01
@@ -37,11 +56,11 @@ PRIOR_BREAKPOINTS_FILE = opt$bp
 ###############################################################################
 
 # General static
-IMPUTEINFOFILE = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_impute_v3/impute_info.txt"
-G1000PREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_1000genomesloci2012_v3/1000genomesAlleles2012_chr"
-G1000PREFIX_AC = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_1000genomesloci2012_v3/1000genomesloci2012_chr"
-GCCORRECTPREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_wgs_gc_correction_1000g_v3_noNA/1000_genomes_GC_corr_chr_"
-REPLICCORRECTPREFIX = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_wgs_replic_correction_1000g_v3/1000_genomes_replication_timing_chr_"
+IMPUTEINFOFILE = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/battenberg_impute_v3/impute_info.txt"
+G1000PREFIX = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/battenberg_1000genomesloci2012_v3/1000genomesAlleles2012_chr"
+G1000PREFIX_AC = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/battenberg_1000genomesloci2012_v3/1000genomesloci2012_chr"
+GCCORRECTPREFIX = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/battenberg_wgs_gc_correction_1000g_v3_noNA/1000_genomes_GC_corr_chr_"
+REPLICCORRECTPREFIX = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/battenberg_wgs_replic_correction_1000g_v3/1000_genomes_replication_timing_chr_"
 IMPUTE_EXE = "impute2"
 
 PLATFORM_GAMMA = 1
@@ -63,7 +82,7 @@ CALC_SEG_BAF_OPTION = 3
 
 # WGS specific static
 ALLELECOUNTER = "alleleCounter"
-PROBLEMLOCI = "/lustre/scratch117/casm/team219/sd11/reference/GenomeFiles/battenberg_probloci/probloci_270415.txt.gz"
+PROBLEMLOCI = "/cluster/projects/kridelgroup/RAP_ANALYSIS/Battenberg_files/probloci_270415.txt.gz"
 
 # Change to work directory and load the chromosome information
 setwd(RUN_DIR)

@@ -76,16 +76,16 @@ cd ${XDIR}
 #deBAF
 #
 
-\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-            -r ${REF} -j ${J} -q 10 -Q 10 -U 10 -c 4 \
-            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
-                          &> ${BAF}bafs.log
+#\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#            -r ${REF} -j ${J} -q 10 -Q 10 -U 10 -c 4 \
+#            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
+#                          &> ${BAF}bafs.log
 
 #
 #comBBo
 #
 
-#\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
 
 #
 #cluBB

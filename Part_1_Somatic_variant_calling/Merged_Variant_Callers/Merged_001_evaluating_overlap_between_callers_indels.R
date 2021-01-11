@@ -33,7 +33,7 @@ lapply(packages, require, character.only = TRUE)
 #note these VCF files were normalized after each tool was run
 
 strelka = list.files("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered", pattern="indels.bed")
-mutect2 = list.files("/cluster/projects/burst2/MUTECT2_selected_VCFs", pattern="indels.bed")
+mutect2 = list.files("/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_selected_VCFs", pattern="indels.bed")
 
 summary = as.data.frame(matrix(ncol=4, nrow=27)) ; colnames(summary) = c("patient", "unique_mutect2", "unique_strelka", "unique_common")
 
@@ -49,7 +49,7 @@ for(i in 1:length(strelka)){
   if(m_f_pat == s_f_pat){
     #read in each file
     s_f = fread(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered", s_f, sep="/"))
-    m_f = fread(paste("/cluster/projects/burst2/MUTECT2_selected_VCFs", m_f, sep="/"))
+    m_f = fread(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_selected_VCFs", m_f, sep="/"))
     both = merge(s_f, m_f, by = c("ChromKey", "CHROM", "POS", "mut_id", "REF", "ALT"))
     #save merged summary stats
     summary[i,] = c(pat, length(unique(m_f$mut_id)), length(unique(s_f$mut_id)), length(unique(both$mut_id)))
