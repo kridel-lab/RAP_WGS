@@ -105,7 +105,12 @@ cd ${XDIR}
 #wait
 
 cd ${RES}
-\time -v python2 -m hatchet solve -i ${BBC}bulk -n2,8 -p 400 -v 3 -u 0.03 -r ${RANDOM} -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.6 &> >(tee >(grep -v Progress > hatchet.log))
+export GUROBI_HOME="/cluster/home/kisaev/gurobi911/linux64"
+export PATH="${PATH}:${GUROBI_HOME}/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
+export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
+
+\time -v python2 -m hatchet solve -i ${BBC}bulk -n2,8 -p 100 -v 3 -u 0.03 -r ${RANDOM} -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
 
 ## Increase -l to 0.6 to decrease the sensitivity in high-variance or noisy samples, and decrease it to -l 0.3 in low-variance samples to increase the sensitivity and explore multiple solutions with more clones.
 ## Increase -u if solutions have clone proportions equal to the minimum threshold -u
