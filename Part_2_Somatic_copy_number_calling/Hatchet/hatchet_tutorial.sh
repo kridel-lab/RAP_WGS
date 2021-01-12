@@ -17,7 +17,7 @@ export GUROBI_HOME="/cluster/home/kisaev/gurobi911/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
-export PATH=/cluster/home/kisaev/bin:$PATH
+#export PATH=/cluster/home/kisaev/bin:$PATH #this needs to be done for samtools and bcftools to work
 
 #one time during gurobi installation
 #cd "${GUROBI_HOME}"
@@ -105,10 +105,6 @@ cd ${XDIR}
 #wait
 
 cd ${RES}
-export GUROBI_HOME="/cluster/home/kisaev/gurobi911/linux64"
-export PATH="${PATH}:${GUROBI_HOME}/bin"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
-export GRB_LICENSE_FILE="/cluster/home/kisaev/gurobi.lic"
 
 \time -v python2 -m hatchet solve -i ${BBC}bulk -n2,8 -p 100 -v 3 -u 0.03 -r ${RANDOM} -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
 
