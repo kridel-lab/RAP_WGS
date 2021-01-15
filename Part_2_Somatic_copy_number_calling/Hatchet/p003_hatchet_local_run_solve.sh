@@ -68,7 +68,7 @@ cd ${XDIR}
 #
 
 #BNPY=/cluster/home/kisaev/bnpy/bnpy/
-#\time -v python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc -e ${RANDOM} -tB 0.04 -tR 0.15 -d 0.08
+#\time python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc -e ${RANDOM} -tB 0.04 -tR 0.15 -d 0.08
 
 #cd ${ANA}
 #\time -v python2 -m hatchet BBot -c RD --figsize 6,3 ${BBC}bulk.bbc &

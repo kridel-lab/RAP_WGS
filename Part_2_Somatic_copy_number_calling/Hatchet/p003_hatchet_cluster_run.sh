@@ -93,7 +93,7 @@ cd ${XDIR}
 #
 
 \time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-                                   -b 50kb -g ${REF} -j ${J} \
+                                   -b 100kb -g ${REF} -j ${J} \
                                    -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
 
 #
