@@ -1,22 +1,103 @@
-#config file
-#containing main folders and file names associated with scripts and programs
-#@Karin isaev
-#@July 20,2020
+#config-file.R
 
-#folder containing mutect2 VCF files
+#----------------------------------------------------------------------
+#karin isaev
+#----------------------------------------------------------------------
 
-#folder containing Strelka VCF files
+date = Sys.Date()
+print(date)
+options(scipen=999) #no scientific notation
 
-#folder containing merged files from two callers
-#that have been run through annovar
+#----------------------------------------------------------------------
+#load functions and libraries
+#----------------------------------------------------------------------
 
-#folder containing VCF files and variant lists as input for Treeomics
+options(stringsAsFactors=F)
 
-#final matrix of SNVs merged with copy number data
-#Our mutations
+#load libraries
+packages <- c("dplyr", "ggplot2", "tidyr", "data.table", "plyr",
+	"stringr")
+lapply(packages, require, character.only = TRUE)
+library("readxl")
+library(GenomicRanges)
+
+#----------------------------------------------------------------------
+#load mutation data
+#----------------------------------------------------------------------
+
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
-read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
 
-#CNAs annotated by gene that they overlap (no SNVs)
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
-cnas_all = fread(fread(list.files(pattern="all_CNAs_protein_coding_samples.txt")[length(list.files(pattern="all_CNAs_protein_coding_samples.txt"))]))
+#DLBCL driver genes from Reddy et al 2017
+reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+reddy$type = "DLBCL"
+
+#PMBCL genes
+pmbcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/PMBCL_genes.xlsx"))
+pmbcl$type = "PMBCL"
+pmbcl = unique(pmbcl)
+
+#MCL genes
+mcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/MCL_genes.xlsx"))
+mcl$type = "MCL"
+mcl = unique(mcl)
+
+all_drivers = rbind(reddy, pmbcl, mcl)
+
+#DLBCL mutations from Morin Blood 2013
+morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
+genes_sum=as.data.table(table(morin$Gene))
+genes_sum = as.data.table(filter(genes_sum, N > 5))
+colnames(genes_sum)=c("Gene", "num_samples_w_mut")
+
+#Our mutations
+read_only_snvs = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds"))])
+read_only_indels = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS_INDELS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS_INDELS.rds"))])
+read_only_snvs$mut_type = "SNV"
+read_only_indels$mut_type = "INDEL"
+
+read_only = rbind(read_only_snvs, read_only_indels)
+
+#sample info
+samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
+colnames(samps)[4] ="Indiv"
+z = which(samps$Indiv %in% read_only$Indiv)
+samps = samps[z,]
+samps[18,2] = "Kidney, NOS 2"
+
+read_only$Tissue_Site = NULL
+read_only$STUDY_PATIENT_ID = NULL
+
+read_only = merge(read_only, samps, by = "Indiv")
+
+#mut-gene summary table for downstream use
+mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "ExonicFunc.ensGene",
+"AAChange.ensGene", "cosmic68", "mut_type")])
+
+#1. how many patient samples is each mutation found in?
+samples_per_mut = as.data.table(table(read_only$mut_id, read_only$STUDY_PATIENT_ID))
+
+colnames(samples_per_mut) = c("mut_id", "patient", "num_of_samples_with_mut")
+samples_per_mut = merge(samples_per_mut, mut_gene, by="mut_id")
+samples_per_mut = samples_per_mut[order(-num_of_samples_with_mut)]
+samples_per_mut = as.data.table(filter(samples_per_mut, num_of_samples_with_mut >0))
+
+samples_per_mut$phylogeny = ""
+z = which(samples_per_mut$patient == "LY_RAP_0001")
+LY_RAP_0001 = samples_per_mut[z,]
+LY_RAP_0001$phylogeny[LY_RAP_0001$num_of_samples_with_mut == 3] = "ancestor"
+LY_RAP_0001$phylogeny[LY_RAP_0001$num_of_samples_with_mut == 1] = "private"
+LY_RAP_0001$phylogeny[LY_RAP_0001$phylogeny == ""] = "shared"
+
+z = which(samples_per_mut$patient == "LY_RAP_0002")
+LY_RAP_0002 = samples_per_mut[z,]
+LY_RAP_0002$phylogeny[LY_RAP_0002$num_of_samples_with_mut == 4] = "ancestor"
+LY_RAP_0002$phylogeny[LY_RAP_0002$num_of_samples_with_mut == 1] = "private"
+LY_RAP_0002$phylogeny[LY_RAP_0002$phylogeny == ""] = "shared"
+
+z = which(samples_per_mut$patient == "LY_RAP_0003")
+LY_RAP_0003 = samples_per_mut[z,]
+LY_RAP_0003$phylogeny[LY_RAP_0003$num_of_samples_with_mut == 20] = "ancestor"
+LY_RAP_0003$phylogeny[LY_RAP_0003$num_of_samples_with_mut == 1] = "private"
+LY_RAP_0003$phylogeny[LY_RAP_0003$phylogeny == ""] = "shared"
+
+samples_per_mut = rbind(LY_RAP_0001, LY_RAP_0002, LY_RAP_0003)

@@ -119,6 +119,27 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 #run first run of TitanCNA
 sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/titan_cna_job.sh
 
+#----Hatchet--------------------------------------------------------------------
+
+#1. get BAM files for patients 001 and 002
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/001_p001_p002_get_BAM_files.sh
+
+#2. run first part of Hatchet on patient 003 on the cluster (BAM files were already generated previously)
+sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/p003_hatchet_cluster_run.sh
+
+#3. run first part of Hatchet on patient 001 on the cluster
+
+#4. run first part of Hatchet on patient 002 on the cluster
+
+#5. run second part of Hatchet on patient 001 locally using Gurobi
+
+#6. run second part of Hatchet on patient 002 locally using Gurobi
+
+#7. run second part of Hatchet on patient 003 locally using Gurobi
+
+#8. prepare SNVs for each patient to be used for Hatchet provided explainMutationsCCF script
+Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/prep_SNVs_for_CCF_calculation.R
+
 #----CNVkit---------------------------------------------------------------------
 
 #save control germline files as BAM files for all three samples in temp folder
