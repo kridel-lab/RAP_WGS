@@ -9,7 +9,6 @@ export GRB_LICENSE_FILE="/Users/kisaev/gurobi.lic"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 
-
 XDIR="/Users/kisaev/Documents/Hatchet_analysis/p001/"
 
 set -e
