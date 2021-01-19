@@ -48,7 +48,7 @@ get_muts = function(patient){
     output_file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/", patient,".csv", sep="")
 
     #write file
-    write.csv(pat_dat, output_file, quote=F)
+    write.csv(pat_dat, output_file, quote=F, row.names=F)
     print("done")
 }
 
