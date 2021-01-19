@@ -23,8 +23,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS")
 
 vcf_file = "af-only-gnomad.raw.sites.b37.vcf.gz"
 #vcf_file = "test_snps.vcf.gz"
-
-vcf <- read.vcfR(vcf_file, verbose = TRUE)
+#vcf <- read.vcfR(vcf_file, verbose = TRUE)
 vcf <- fread(vcf_file)
 vcf = vcf[,1:2]
 colnames(vcf)=c('#CHR', 'POS')
