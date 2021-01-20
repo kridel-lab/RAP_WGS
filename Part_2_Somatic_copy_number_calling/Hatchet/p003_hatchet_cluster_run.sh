@@ -72,19 +72,19 @@ source /cluster/home/kisaev/python2env/bin/activate
 #
 
 BIN=${XDIR}bin/
-mkdir -p ${BIN}
+#mkdir -p ${BIN}
 BAF=${XDIR}baf/
-mkdir -p ${BAF}
+#mkdir -p ${BAF}
 BB=${XDIR}bb/
-mkdir -p ${BB}
+#mkdir -p ${BB}
 BBC=${XDIR}bbc/
-mkdir -p ${BBC}
+#mkdir -p ${BBC}
 ANA=${XDIR}analysis/
-mkdir -p ${ANA}
+#mkdir -p ${ANA}
 RES=${XDIR}results/
-mkdir -p ${RES}
+#mkdir -p ${RES}
 EVA=${XDIR}evaluation/
-mkdir -p ${EVA}
+#mkdir -p ${EVA}
 
 cd ${XDIR}
 
@@ -92,15 +92,16 @@ cd ${XDIR}
 #binBAM
 #
 
-\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-                                   -b 150kb -g ${REF} -j ${J} \
-                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+#\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#                                   -b 150kb -g ${REF} -j ${J} \
+#                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
 
 #
 #deBAF
 #
 
 \time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
             -r ${REF} -j ${J} -q 20 -Q 20 -U 20 -c 10 \
             -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
                           &> ${BAF}bafs.log
