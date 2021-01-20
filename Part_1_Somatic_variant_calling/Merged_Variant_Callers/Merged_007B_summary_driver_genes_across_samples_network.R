@@ -45,7 +45,8 @@ t1= as.data.table(table(p003$mut_id, p003$Tissue_Site)) %>% filter(N >0)
 t1$N=NULL
 colnames(t1) = c("mutation", "sample")
 
-founders = as.data.table(table(t1$mutation)) %>% filter(N <20)
+founders = as.data.table(table(t1$mutation)) %>% filter(N ==20)
+t1=as.data.table(filter(t1, !(mutation %in% founders$V1)))
 
 pairs = as.data.table(t1 %>%
     mutate(n = 1) %>%

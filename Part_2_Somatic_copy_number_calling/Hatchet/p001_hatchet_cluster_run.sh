@@ -31,11 +31,11 @@ BCF="/cluster/home/kisaev/bin/bcftools"
 
 XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p001/"
 
-NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Ctl_FzG_01.bam"
+NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0001_Ctl_FzG_01.bam"
 
-BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_05.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_02.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_08.bam"
+BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0001_Aut_FzT_05.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0001_Aut_FzT_02.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0001_Aut_FzT_08.bam"
 
 ALLNAMES="Normal Aut_FzT_05 Aut_FzT_02 Aut_FzT_08"
 NAMES="Aut_FzT_05 Aut_FzT_02 Aut_FzT_08"
