@@ -29,17 +29,17 @@ REF="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
 SAM="/cluster/home/kisaev/bin/samtools"
 BCF="/cluster/home/kisaev/bin/bcftools"
 
-XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p001/"
+XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p002/"
 
-NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Ctl_FzG_01.bam"
+NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Ctl_FzG_07.bam"
 
-BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_05.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_02.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0001_Aut_FzT_08.bam"
+BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Aut_FzT_03.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Aut_FzT_02.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Aut_FzT_14.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0002_Aut_FzT_15.bam"
 
-ALLNAMES="Normal Aut_FzT_05 Aut_FzT_02 Aut_FzT_08"
-NAMES="Aut_FzT_05 Aut_FzT_02 Aut_FzT_08"
-
+ALLNAMES="Normal Aut_FzT_03 Aut_FzT_02 Aut_FzT_14 Aut_FzT_15"
+NAMES="Aut_FzT_03 Aut_FzT_02 Aut_FzT_14 Aut_FzT_15"
 J=22
 
 set -e

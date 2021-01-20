@@ -17,6 +17,7 @@ options(stringsAsFactors=F)
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
   "ggrepel", "stringr", "maftools")
 lapply(packages, require, character.only = TRUE)
+library(GenomicRanges)
 
 #----------------------------------------------------------------------
 #purpose
@@ -50,6 +51,29 @@ for(i in 1:length(strelka)){
     #read in each file
     s_f = fread(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/STRELKA_WORKDIR/strelka_filtered", s_f, sep="/"))
     m_f = fread(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/MUTECT2_selected_VCFs", m_f, sep="/"))
+
+    #get granges
+    s_f$END=s_f$POS
+    m_f$END=m_f$POS
+
+    s_f_clean = s_f[,c("CHROM", "POS", "END", "ChromKey", "REF", "ALT")]
+    s_f_clean$ChromKey = as.character(s_f_clean$ChromKey)
+    s_f_clean$ChromKey = "*"
+    colnames(s_f_clean)[2]="START"
+    s_f_clean_gr = makeGRangesFromDataFrame(s_f_clean, keep.extra.columns=TRUE)
+
+    m_f_clean = m_f[,c("CHROM", "POS", "END", "ChromKey", "REF", "ALT")]
+    m_f_clean$ChromKey = as.character(m_f_clean$ChromKey)
+    m_f_clean$ChromKey = "*"
+    colnames(m_f_clean)[2]="START"
+    m_f_clean_gr = makeGRangesFromDataFrame(m_f_clean, keep.extra.columns=TRUE)
+
+    hits <- findOverlaps(s_f_clean_gr, m_f_clean_gr, ignore.strand=TRUE, maxgap=10)
+    hits_overlap = cbind(s_f_clean[queryHits(hits),], m_f_clean[subjectHits(hits),])
+    colnames(hits_overlap) = c("s_CHR", "s_START", "s_END", "s_STRAND",
+    "s_REF", "s_ALT", "m_CHR", "m_START", "m_END", "m_STRAND", "m_REF", "s_ALT")
+    hits_overlap$distance=hits_overlap$m_START-hits_overlap$s_START
+
     both = merge(s_f, m_f, by = c("ChromKey", "CHROM", "POS", "mut_id", "REF", "ALT"))
     #save merged summary stats
     summary[i,] = c(pat, length(unique(m_f$mut_id)), length(unique(s_f$mut_id)), length(unique(both$mut_id)))
@@ -58,6 +82,7 @@ for(i in 1:length(strelka)){
     both$end = both$POS
     write.table(both, file=paste("merged_MUTECT2_STRELKA/", pat, "merged_mutations_indels.bed", sep="_"), quote=F, col.names=F, row.names=F, sep="\t")
     print(summary)
+    print(paste(dim(hits_overlap)[1], dim(both)[1]))
   }
 }
 
