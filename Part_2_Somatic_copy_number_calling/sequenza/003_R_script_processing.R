@@ -16,8 +16,8 @@ CP <- sequenza.fit(test)
 
 #3. sequenza.results: write files and plots using suggested or selected solution
 sequenza.results(sequenza.extract = test,
-    cp.table = CP, sample.id = "Test",
-    out.dir="TEST")
+    cp.table = CP, sample.id = "Dia_FoT_01",
+    out.dir="LY_RAP_0003_Dia_FoT_01")
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #plots and outputs
