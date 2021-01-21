@@ -6,6 +6,7 @@ index = args[1]
 print(index)
 
 data.file <-  index
+data.file = "LY_RAP_0003_Dia_FoT_01.small.seqz.gz"
 
 #1. sequenza.extract: process seqz data, normalization and segmentation
 test <- sequenza.extract(data.file, verbose = FALSE)
@@ -23,10 +24,12 @@ sequenza.results(sequenza.extract = test,
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #Grid search maximum likelihood
+pdf("TEST/cp_plot.pdf")
 cp.plot(CP)
 cp.plot.contours(CP, add = TRUE,
    likThresh = c(0.999, 0.95),
    col = c("lightsalmon", "red"), pch = 20)
+dev.off()
 
 #Chromosome view
 #Chromosome view is the visualization that displays chromosome by crhosome,
@@ -36,10 +39,11 @@ cp.plot.contours(CP, add = TRUE,
 #number calling using the cellularity and ploidy solution, making useful to
 #asses if the copy number calling is acurate. In addition it provides a
 #visualization of the mutation frequency that can also help to corroborate the solution.
-
+pdf("TEST/chrom_view_plot.pdf")
 chromosome.view(mut.tab = test$mutations[[1]], baf.windows = test$BAF[[1]],
                    ratio.windows = test$ratio[[1]],  min.N.ratio = 1,
                    segments = test$segments[[1]],
                    main = test$chromosomes[1],
                    cellularity = 0.89, ploidy = 1.9,
                    avg.depth.ratio = 1)
+dev.off()

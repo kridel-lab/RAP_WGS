@@ -12,24 +12,16 @@ module load python2
 module load samtools
 module load tabix
 
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
 
-names=($(cat input_sequenza_bam_files.txt))
+names=($(cat sequenza_input_bam_files_tum.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
 MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
-tum_loc=${MYVAR%/*}
-MYVAR=${MYVAR##*/}
-tum_name=${MYVAR%.sorted.dup.recal.cram*}
+#tum_loc=${MYVAR%/*}
+tum_name=${MYVAR%.bam*}
 patient_name=${MYVAR%_*_*_*}
-control_file=$(ls -d ${patient_name}_Ctl*)
-str="LY_RAP_0003"
-
-if [ "$patient_name" == "$str" ]; then
-  control_file=$(ls $control_file/gatk/*.bam)
-else
-  control_file=$(ls $control_file/gatk/*.cram)
-fi
+control_file=$(ls ${patient_name}_Ctl*.bam)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #run sequenza
@@ -41,13 +33,10 @@ fasta="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
 #From BAM files
 #Normal and tumor BAM files
 
-normal="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
-tumor="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Dia_FoT_01_files/gatk/LY_RAP_0003_Dia_FoT_01.sorted.dup.recal.cram.bam"
-sample="LY_RAP_0003_Dia_FoT_01"
+normal=$control_file
+tumor=$MYVAR
+sample=$tum_name
 out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
-
-#1.
-sequenza-utils gc_wiggle --fasta $fasta -o ${out_folder}/hg19.gc50Base.wig.gz -w 50
 
 #2.
 sequenza-utils bam2seqz --normal $normal --tumor $tumor \
@@ -55,5 +44,3 @@ sequenza-utils bam2seqz --normal $normal --tumor $tumor \
 
 #3.
 sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
-
-sequenza-utils seqz_binning --seqz LY_RAP_0003_Dia_FoT_01.seqz.gz -w 50 -o out LY_RAP_0003_Dia_FoT_01.small.seqz.gz
