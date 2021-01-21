@@ -8,9 +8,9 @@
 #SBATCH -c 8
 #SBATCH --array=0-26 # job array index because 27 total tumour samples
 
-module load strelka/2.9.10
-module load python
-module load manta/1.6.0
+module load python2
+module load samtools
+module load tabix
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
@@ -31,4 +31,29 @@ else
   control_file=$(ls $control_file/gatk/*.cram)
 fi
 
-fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#run sequenza
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Process a FASTA file to produce a GC Wiggle track file:
+fasta="/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta"
+
+#From BAM files
+#Normal and tumor BAM files
+
+normal="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
+tumor="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Dia_FoT_01_files/gatk/LY_RAP_0003_Dia_FoT_01.sorted.dup.recal.cram.bam"
+sample="LY_RAP_0003_Dia_FoT_01"
+out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
+
+#1.
+sequenza-utils gc_wiggle --fasta $fasta -o ${out_folder}/hg19.gc50Base.wig.gz -w 50
+
+#2.
+sequenza-utils bam2seqz --normal $normal --tumor $tumor \
+    --fasta $fasta -gc hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.seqz.gz
+
+#3.
+sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
+
+sequenza-utils seqz_binning --seqz LY_RAP_0003_Dia_FoT_01.seqz.gz -w 50 -o out LY_RAP_0003_Dia_FoT_01.small.seqz.gz

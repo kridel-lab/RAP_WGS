@@ -1,0 +1,45 @@
+library(sequenza)
+
+#get arguments
+args = commandArgs(trailingOnly = TRUE) #patient ID
+index = args[1]
+print(index)
+
+data.file <-  index
+
+#1. sequenza.extract: process seqz data, normalization and segmentation
+test <- sequenza.extract(data.file, verbose = FALSE)
+
+#2. sequenza.fit: run grid-search approach to estimate cellularity and ploidy
+CP <- sequenza.fit(test)
+
+#3. sequenza.results: write files and plots using suggested or selected solution
+sequenza.results(sequenza.extract = test,
+    cp.table = CP, sample.id = "Test",
+    out.dir="TEST")
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#plots and outputs
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Grid search maximum likelihood
+cp.plot(CP)
+cp.plot.contours(CP, add = TRUE,
+   likThresh = c(0.999, 0.95),
+   col = c("lightsalmon", "red"), pch = 20)
+
+#Chromosome view
+#Chromosome view is the visualization that displays chromosome by crhosome,
+#mutations, B-allele frequency and depth-ratio.
+#The visualization makes it easier to inspect the segmentation results,
+#comparing to a binned profile of the raw data. It also visualize the copy
+#number calling using the cellularity and ploidy solution, making useful to
+#asses if the copy number calling is acurate. In addition it provides a
+#visualization of the mutation frequency that can also help to corroborate the solution.
+
+chromosome.view(mut.tab = test$mutations[[1]], baf.windows = test$BAF[[1]],
+                   ratio.windows = test$ratio[[1]],  min.N.ratio = 1,
+                   segments = test$segments[[1]],
+                   main = test$chromosomes[1],
+                   cellularity = 0.89, ploidy = 1.9,
+                   avg.depth.ratio = 1)

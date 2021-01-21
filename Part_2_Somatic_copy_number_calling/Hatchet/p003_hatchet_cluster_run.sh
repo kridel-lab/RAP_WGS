@@ -31,28 +31,28 @@ BCF="/cluster/home/kisaev/bin/bcftools"
 
 XDIR="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/p003/"
 
-NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Ctl_FzG_01_files/gatk/LY_RAP_0003_Ctl_FzG_01.sorted.dup.recal.bam"
+NORMAL="/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Ctl_FzG_01.bam"
 
-BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Dia_FoT_01_files/gatk/LY_RAP_0003_Dia_FoT_01.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_13_files/gatk/LY_RAP_0003_Aut_FzT_13.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Dia_FoT_05_files/gatk/LY_RAP_0003_Dia_FoT_05.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_05_files/gatk/LY_RAP_0003_Aut_FzT_05.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_12_files/gatk/LY_RAP_0003_Aut_FzT_12.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_07_files/gatk/LY_RAP_0003_Aut_FzT_07.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_14_files/gatk/LY_RAP_0003_Aut_FzT_14.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_18_files/gatk/LY_RAP_0003_Aut_FzT_18.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_04_files/gatk/LY_RAP_0003_Aut_FzT_04.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_11_files/gatk/LY_RAP_0003_Aut_FzT_11.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_16_files/gatk/LY_RAP_0003_Aut_FzT_16.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_15_files/gatk/LY_RAP_0003_Aut_FzT_15.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_17_files/gatk/LY_RAP_0003_Aut_FzT_17.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_06_files/gatk/LY_RAP_0003_Aut_FzT_06.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_02_files/gatk/LY_RAP_0003_Aut_FzT_02.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Dia_FoT_03_files/gatk/LY_RAP_0003_Dia_FoT_03.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_03_files/gatk/LY_RAP_0003_Aut_FzT_03.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_01_files/gatk/LY_RAP_0003_Aut_FzT_01.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_09_files/gatk/LY_RAP_0003_Aut_FzT_09.sorted.dup.recal.cram.bam \
-/cluster/projects/kridelgroup/RAP_ANALYSIS/LY_RAP_0003_Aut_FzT_10_files/gatk/LY_RAP_0003_Aut_FzT_10.sorted.dup.recal.cram.bam"
+BAMS="/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Dia_FoT_01.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_13.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Dia_FoT_05.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_05.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_12.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_07.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_14.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_18.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_04.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_11.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_16.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_15.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_17.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_06.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_02.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Dia_FoT_03.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_03.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_01.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_09.bam \
+/cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/LY_RAP_0003_Aut_FzT_10.bam"
 
 ALLNAMES="Normal Dia_FoT_01 Aut_FzT_13 Dia_FoT_05 Aut_FzT_05 Aut_FzT_12 Aut_FzT_07 Aut_FzT_14 Aut_FzT_18 Aut_FzT_04 Aut_FzT_11 \
 Aut_FzT_16 Aut_FzT_15 Aut_FzT_17 Aut_FzT_06 Aut_FzT_02 Dia_FoT_03 Aut_FzT_03 Aut_FzT_01 Aut_FzT_09 Aut_FzT_10"

@@ -27,7 +27,3 @@ out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
 
 #1.
 sequenza-utils gc_wiggle --fasta $fasta -o ${out_folder}/hg19.gc50Base.wig.gz -w 50
-
-#2.
-sequenza-utils bam2seqz --normal $normal --tumor $tumor \
-    --fasta $fasta -gc hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.seqz.gz
