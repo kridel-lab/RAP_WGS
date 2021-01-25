@@ -100,11 +100,11 @@ cd ${XDIR}
 #deBAF
 #
 
-\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
-            -r ${REF} -j ${J} -q 20 -Q 20 -U 20 -c 10 \
-            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
-                          &> ${BAF}bafs.log
+#\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
+#            -r ${REF} -j ${J} -q 20 -Q 20 -U 20 -c 10 \
+#            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
+#                          &> ${BAF}bafs.log
 
 #
 #comBBo

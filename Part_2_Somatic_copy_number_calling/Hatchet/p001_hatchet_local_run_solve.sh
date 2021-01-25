@@ -9,30 +9,30 @@ export GRB_LICENSE_FILE="/Users/kisaev/gurobi.lic"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 
-XDIR="/Users/kisaev/UHN/kridel-lab - Documents/RAP_WGS/Analysis-Files/Hatchet/p001"
+XDIR="/Users/kisaev/Documents/Hatchet_analysis/p001"
 
-set -e
+#set -e
 #set -o xtrace
-PS4='\''[\t]'\'
+#PS4='\''[\t]'\'
 conda activate hatchet
 
 #
 #Setting up running directory
 #
 
-BIN=${XDIR}bin/
+BIN=${XDIR}/bin
 #mkdir -p ${BIN}
-BAF=${XDIR}baf/
+BAF=${XDIR}/baf
 #mkdir -p ${BAF}
-BB=${XDIR}bb/
+BB=${XDIR}/bb
 #mkdir -p ${BB}
-BBC=${XDIR}bbc/
+BBC=${XDIR}/bbc
 #mkdir -p ${BBC}
-ANA=${XDIR}analysis/
+ANA=${XDIR}/analysis
 #mkdir -p ${ANA}
-RES=${XDIR}results/
+RES=${XDIR}/results
 #mkdir -p ${RES}
-EVA=${XDIR}evaluation/
+EVA=${XDIR}/evaluation
 #mkdir -p ${EVA}
 
 cd ${XDIR}
@@ -79,7 +79,7 @@ cd ${XDIR}
 
 cd ${RES}
 J=22
-\time python2 -m hatchet solve -i ${BBC}bulk -n2,8 -p 100 -v 3 -u 0.03 -r 12 -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
+\time python2 -m hatchet solve -i ${BBC}/bulk -n2,8 -p 100 -v 3 -u 0.03 -r 12 -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
 
 ## Increase -l to 0.6 to decrease the sensitivity in high-variance or noisy samples, and decrease it to -l 0.3 in low-variance samples to increase the sensitivity and explore multiple solutions with more clones.
 ## Increase -u if solutions have clone proportions equal to the minimum threshold -u
