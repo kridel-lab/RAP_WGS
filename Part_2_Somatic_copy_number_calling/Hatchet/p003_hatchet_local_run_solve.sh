@@ -9,11 +9,11 @@ export GRB_LICENSE_FILE="/Users/kisaev/gurobi.lic"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 
-XDIR="/Users/kisaev/Documents/Hatchet_analysis/p001/"
+XDIR="/Users/kisaev/Documents/Hatchet_analysis/p003/"
 
-set -e
-set -o xtrace
-PS4='\''[\t]'\'
+#set -e
+#set -o xtrace
+#PS4='\''[\t]'\'
 conda activate hatchet
 
 #
@@ -87,4 +87,4 @@ J=22
 ## Increase the single-clone confidence to `-c 0.6` to increase the confidence in the presence of a single tumor clone and further increase this value when interested in a single clone.
 
 cd ${EVA}
-\time python2 -m hatchet BBeval ${RES}/best.bbc.ucn
+\time python2 -m hatchet BBeval ${RES}/chosen.diploid.bbc.ucn

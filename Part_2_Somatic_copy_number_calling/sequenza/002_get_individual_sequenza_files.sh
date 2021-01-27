@@ -38,12 +38,9 @@ tumor=$MYVAR
 sample=$tum_name
 out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
 
-#test
-#LY_RAP_0002_Aut_FzT_15.bam
-
 #2.
-sequenza-utils bam2seqz --normal $normal --tumor $tumor \
-    --fasta $fasta -gc ${out_folder}/hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.test.seqz.gz
+#sequenza-utils bam2seqz --normal $normal --tumor $tumor \
+#    --fasta $fasta -gc ${out_folder}/hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.test.seqz.gz
 
 #3.
-sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
+sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.test.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
