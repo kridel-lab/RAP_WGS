@@ -10,7 +10,10 @@
 
 
 #get list of input .seqz files
-names=($(cat sequenza_files.txt))
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza
+#ls *.small.seqz.gz > sequenza_small_seqz_files.txt
+
+names=($(cat sequenza_small_seqz_files.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 
