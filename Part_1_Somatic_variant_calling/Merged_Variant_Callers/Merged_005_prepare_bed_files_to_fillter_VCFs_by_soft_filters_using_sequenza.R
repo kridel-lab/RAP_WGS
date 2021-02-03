@@ -152,7 +152,7 @@ get_pyclone_input = function(patient){
 
     if(patient == "LY_RAP_0001"){
     read_only_pat = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient))
-    pat_founds_remove = filter(as.data.table(table(read_only_pat$mut_id)), N == 3)
+    pat_founds = filter(as.data.table(table(read_only_pat$mut_id)), N == 3)
     pat_founds_keep = filter(read_only_pat, mut_id %in% pat_founds$V1,
       ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain", "stoploss"))$mut_id
     pat_founds_rm = unique(pat_founds[which(!(pat_founds$V1 %in% pat_founds_keep))]$V1)
@@ -168,7 +168,7 @@ get_pyclone_input = function(patient){
 
   if(patient == "LY_RAP_0003"){
     read_only_pat = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient))
-    pat_founds_remove = filter(as.data.table(table(read_only_pat$mut_id)), N == 20)
+    pat_founds = filter(as.data.table(table(read_only_pat$mut_id)), N == 20)
     pat_founds_keep = filter(read_only_pat, mut_id %in% pat_founds$V1,
       ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain", "stoploss"))$mut_id
     pat_founds_rm = unique(pat_founds[which(!(pat_founds$V1 %in% pat_founds_keep))]$V1)
