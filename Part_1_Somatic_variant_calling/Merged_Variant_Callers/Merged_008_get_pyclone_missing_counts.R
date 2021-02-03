@@ -54,7 +54,7 @@ reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/dat
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #Copy number data
-cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_TITAN.rds")
+cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
 
 #----------------------------------------------------------------------
 #analysis
@@ -78,13 +78,13 @@ get_major_cn = function(patient, mut){
     seqnames = cnas_pat$CHROM,
     ranges = IRanges(cnas_pat$Start, end = cnas_pat$End),
     strand = rep("*", length(cnas_pat$Start)),
-    logR = cnas_pat$LogR)
+    logR = cnas_pat$depth.ratio)
 
   #intersect them
   #Then subset the original objects with the negative indices of the overlaps:
   hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
   hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
-  major_cn = hits_overlap$MajorCN[1]
+  major_cn = hits_overlap$Nmaj[1]
   return(major_cn)
 }
 
@@ -106,13 +106,13 @@ get_minor_cn = function(patient, mut){
     seqnames = cnas_pat$CHROM,
     ranges = IRanges(cnas_pat$Start, end = cnas_pat$End),
     strand = rep("*", length(cnas_pat$Start)),
-    logR = cnas_pat$LogR)
+    logR = cnas_pat$depth.ratio)
 
   #intersect them
   #Then subset the original objects with the negative indices of the overlaps:
   hits <- findOverlaps(snvs_gr, cnas_gr, ignore.strand=TRUE)
   hits_overlap = cbind(snvs[queryHits(hits),], cnas_pat[subjectHits(hits),])
-  minor_cn = hits_overlap$MinorCN[1]
+  minor_cn = hits_overlap$Nmin[1]
   return(minor_cn)
 }
 
@@ -157,22 +157,16 @@ get_reads = function(patient, type_analysis){
 
 	#for clonal evolution analysis only keep founder mutations that are in DLBCL genes
 	if(patient=="LY_RAP_0001"){
-		founds_keep = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 3, V2=="yes")
-		founds_remove = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 3, V2=="")
 		miss_vars_full = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_full_LY_RAP_0001_pyclone_bam_readcount_input.bed")
 		miss_vars_small = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_small_subset_LY_RAP_0001_pyclone_bam_readcount_input.bed")
 	}
 
 	if(patient=="LY_RAP_0002"){
-		founds_keep = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 4, V2=="yes")
-		founds_remove = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 4, V2=="")
 		miss_vars_full = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_full_LY_RAP_0002_pyclone_bam_readcount_input.bed")
 		miss_vars_small = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_small_subset_LY_RAP_0002_pyclone_bam_readcount_input.bed")
 	}
 
 	if(patient=="LY_RAP_0003"){
-		founds_keep = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 20, V2=="yes")
-		founds_remove = filter(as.data.table(table(read_only_pat$mut_id, read_only_pat$isdriver)), N == 4, V2=="")
 		miss_vars_full = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_full_LY_RAP_0003_pyclone_bam_readcount_input.bed")
 		miss_vars_small = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_small_subset_LY_RAP_0003_pyclone_bam_readcount_input.bed")
 	}
@@ -182,10 +176,10 @@ get_reads = function(patient, type_analysis){
 		z = which(str_detect(bamreadcount, patient))
 		bamreadcount = bamreadcount[z]
 
-		pyclone_input = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-		!(mut_id %in% founds_remove$V1),
-		MajorCN > 0, Copy_Number >=2))
-		print(length(unique(pyclone_input$mut_id)))
+#		pyclone_input = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
+#		!(mut_id %in% founds_remove$V1),
+#		MajorCN > 0, Copy_Number >=2))
+#		print(length(unique(pyclone_input$mut_id)))
 
 		#file with missing variants
 		miss_vars = miss_vars_full
@@ -199,13 +193,13 @@ get_reads = function(patient, type_analysis){
 		z = which(str_detect(bamreadcount, patient))
 		bamreadcount = bamreadcount[z]
 
-		pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-		!(mut_id %in% founds_remove$V1),
-		MajorCN > 0, Copy_Number >=2))
+#		pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
+#		!(mut_id %in% founds_remove$V1),
+#		MajorCN > 0, Copy_Number >=2))
 
-		pyclone_input = as.data.table(filter(pyclone_full,
-		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
-		length(unique(pyclone_input$mut_id))
+#		pyclone_input = as.data.table(filter(pyclone_full,
+#		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
+#		length(unique(pyclone_input$mut_id))
 
 		#file with missing variants
 		miss_vars = miss_vars_small
@@ -218,36 +212,19 @@ get_reads = function(patient, type_analysis){
 	missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
 	missing_mutations$patient = patient
 
-	#get list of mutations that are present in all
-	if(patient == "LY_RAP_0001"){
-		t = filter(as.data.table(table(pyclone_input$mut_id)), (N==3))
-		muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-		muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
-	}
-	if(patient == "LY_RAP_0002"){
-		t = filter(as.data.table(table(pyclone_input$mut_id)), (N==4))
-		muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-		muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
-	}
-	if(patient == "LY_RAP_0003"){
-		t = filter(as.data.table(table(pyclone_input$mut_id)), (N==20))
-		muts_all = as.data.table(filter(pyclone_input, mut_id %in% t$V1))
-		muts_some = as.data.table(filter(pyclone_input, !(mut_id %in% t$V1)))
-	}
-
 	#for mutations that are found in only some patients
 	#extract mutation info for those mutations across all samples
 	get_record = function(mutation){
 	  print(mutation)
 	  mut_dat = as.data.table(filter(missing_mutations, id == mutation))
-		pyclone_dat_mut = as.data.table(filter(pyclone_input, mut_id == mutation))
+		pyclone_dat_mut = as.data.table(filter(read_only_pat, mut_id == mutation))
 		pats = unique(mut_dat$samplename)
 		pats_missing = pats[which(!(pats %in% read_only_pat$Indiv[which(read_only_pat$mut_id %in% mutation)]))]
 
 	    make_pat = function(pat){
 	      pat_dat = filter(mut_dat, samplename == pat)
 				pat_dat$mut_id = mutation
-				pat_dat$id = read_only_pat$id[which(read_only_pat$Indiv == pat)[1]]
+				#pat_dat$id = read_only_pat$id[which(read_only_pat$Indiv == pat)[1]]
 
 					if(pat %in% pats_missing){
 							pat_dat$MajorCN=get_major_cn(pat, mutation)
@@ -256,8 +233,8 @@ get_reads = function(patient, type_analysis){
 							}
 
 					if(!(pat %in% pats_missing)){
-						pat_dat$MajorCN=filter(read_only_pat, mut_id==mutation, Indiv == pat)$MajorCN
-						pat_dat$MinorCN=filter(read_only_pat, mut_id==mutation, Indiv == pat)$MinorCN
+						pat_dat$MajorCN=filter(read_only_pat, mut_id==mutation, Indiv == pat)$Nmaj
+						pat_dat$MinorCN=filter(read_only_pat, mut_id==mutation, Indiv == pat)$Nmin
 						pat_dat$source = "mutation_called"
 					}
 
@@ -272,23 +249,9 @@ get_reads = function(patient, type_analysis){
 	  return(all_pats)
 	}
 
-	all_muts = unique(muts_some$mut_id)
+	all_muts = unique(missing_mutations$id)
 	missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
-
-	#combine with mutation data for mutations that were called in all samples
-	#need the same columns, make sure sample column included
-	colnames(muts_all)[1] = "samplename"
-	z = which(colnames(muts_all) %in% colnames(missing_records))
-	muts_all = muts_all[,..z]
-
-	z = which(colnames(missing_records) %in% colnames(muts_all))
-	missing_records = missing_records[,..z]
-
-	#now make them match wtih missing records columns so that can bind them together
-	cols  = colnames(missing_records)
-	muts_all = muts_all[,..cols]
-
-	all_records = rbind(muts_all, missing_records)
+	all_records = missing_records
 	write.table(all_records, file=paste(date, type_analysis, patient, "mutations", "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
 	print(length(unique(all_records$mut_id)))

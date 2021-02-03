@@ -177,6 +177,8 @@ get_pyclone_input = function(patient){
   print(length(pat_founds_rm))
   print(dim(read_only_pat))
 
+  print(length(unique(read_only_pat$mut_id)))
+
   #filter out unique mutations those only in one sample for clonal evolution analysis
   unique = filter(as.data.table(table(read_only_pat$mut_id)), N == 1)
   unique_muts_keep = filter(read_only_pat, mut_id %in% unique$V1,
@@ -185,8 +187,7 @@ get_pyclone_input = function(patient){
 
   #run one version of pyclone with all mutations except for unique ones
   #and those with major copy number greater than 0
-  pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique_rm),
-  Nmaj > 0, ntot >=2, !(mut_id %in% pat_founds_rm)))
+  pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique_rm), Nmaj > 0, ntot >=2, !(mut_id %in% pat_founds_rm)))
 
   print(table(as.data.table(table(pyclone_full$mut_id))$N))
 
