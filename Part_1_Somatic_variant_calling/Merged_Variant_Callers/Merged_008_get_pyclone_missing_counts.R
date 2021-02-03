@@ -117,7 +117,7 @@ get_minor_cn = function(patient, mut){
 }
 
 #first combine all results from bamreadcount into one matrix
-get_bam_readcount = function(file_res, type_analysis){
+get_bam_readcount = function(file_res, type_analysis, patient){
 
 	print(file_res)
 
@@ -129,11 +129,11 @@ get_bam_readcount = function(file_res, type_analysis){
 
 	#mut file
 	if(type_analysis == "full"){
-		muts_file="pyclone_bam_readcount_all_muts_input.bed"
+		muts_file=paste(patient, "pyclone_bam_readcount_all_muts_input.bed", sep="_")
 	}
 
 	if(type_analysis == "subset"){
-		muts_file="pyclone_bam_readcount_some_muts_input.bed"
+		muts_file=paste(patient, "pyclone_bam_readcount_some_muts_input.bed", sep="_")
 	}
 
 	#get output
@@ -176,16 +176,11 @@ get_reads = function(patient, type_analysis){
 		z = which(str_detect(bamreadcount, patient))
 		bamreadcount = bamreadcount[z]
 
-#		pyclone_input = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-#		!(mut_id %in% founds_remove$V1),
-#		MajorCN > 0, Copy_Number >=2))
-#		print(length(unique(pyclone_input$mut_id)))
-
 		#file with missing variants
 		miss_vars = miss_vars_full
 		colnames(miss_vars) = c("chr", "start", "end",
 																			 "ref_allele", "alt_allele")
-	  write.table(miss_vars, "pyclone_bam_readcount_all_muts_input.bed", quote=F, row.names=F, sep="\t")
+	  write.table(miss_vars, paste(patient, "pyclone_bam_readcount_all_muts_input.bed", sep="_"), quote=F, row.names=F, sep="\t")
 	}
 
 	if(type_analysis == "subset"){
@@ -193,22 +188,14 @@ get_reads = function(patient, type_analysis){
 		z = which(str_detect(bamreadcount, patient))
 		bamreadcount = bamreadcount[z]
 
-#		pyclone_full = as.data.table(filter(read_only_pat, !(mut_id %in% unique$V1),
-#		!(mut_id %in% founds_remove$V1),
-#		MajorCN > 0, Copy_Number >=2))
-
-#		pyclone_input = as.data.table(filter(pyclone_full,
-#		!(Func.ensGene %in% c("ncRNA_intronic", "intergenic", "intronic"))))
-#		length(unique(pyclone_input$mut_id))
-
 		#file with missing variants
 		miss_vars = miss_vars_small
 		colnames(miss_vars) = c("chr", "start", "end",
 																			 "ref_allele", "alt_allele")
-	  write.table(miss_vars, "pyclone_bam_readcount_some_muts_input.bed", quote=F, row.names=F, sep="\t")
+	  write.table(miss_vars, paste(patient, "pyclone_bam_readcount_some_muts_input.bed", sep="_"), quote=F, row.names=F, sep="\t")
 	}
 
-	missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount, type_analysis)))
+	missing_mutations = as.data.table(ldply(llply(bamreadcount, get_bam_readcount, type_analysis, patient)))
 	missing_mutations$id = paste(missing_mutations$chr, missing_mutations$start, sep="_")
 	missing_mutations$patient = patient
 
