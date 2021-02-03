@@ -1,6 +1,5 @@
 #----------------------------------------------------------------------
 #karin isaev
-#Nov 1st, 2019
 #----------------------------------------------------------------------
 
 date = Sys.Date()
@@ -15,19 +14,15 @@ options(stringsAsFactors=F)
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
 	"ggrepel", "stringr", "maftools")
 lapply(packages, require, character.only = TRUE)
+library("readxl")
 
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
 
-#setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClusterSolution")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza")
 
-#output from TitanCNA, combine all samples into one dataframe
-#use optimalClusterSolution.txt file to identify optimal cluster for each sample
-#use sample to identifier conversion to get actual sample name
-
-#2]. cna_data: copy number alteration data
+#[2]. cna_data: copy number alteration data
 
 #Sample: Sample identifier. Any alphanumeric string.
 #CHROM: Chromosome. Between chr1 and chr22 or the chrX or chrY ('chr' prefix required).
@@ -43,46 +38,46 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClust
 #data
 #----------------------------------------------------------------------
 
-#sample conversion
-samples = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/cna_vcf_sample_conversion.csv")
-colnames(samples) = c("barcode", "Sample")
+all_segs = fread("all_segments_files_sequenza.txt", header=F)$V1 #27 samples results
 
-#optimal clusters
-clusters = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/results/titan/hmm/optimalClusterSolution.txt")
-clusters= merge(samples, clusters, by = "barcode")
+read_files = function(seq_file){
+	segs = fread(seq_file)
+	sample = unlist(strsplit(seq_file, "/"))[1]
+	segs$Sample = sample
+	return(segs)
+}
+
+all_segs_dt = as.data.table(ldply(llply(all_segs, read_files)))
 
 samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
 colnames(samps)[4] ="Sample"
 
-clusters = merge(clusters, samps, by="Sample")
+all_segs_dt = merge(all_segs_dt, samps, by="Sample")
+print(head(all_segs_dt))
 
-#save sample cluster and purity info and upload to files
-cna_save = clusters[,c("Sample", "numClust", "cellPrev",
-"purity", "norm", "ploidy", "Tissue_Site", "Specimen_Type")]
+#purity and ploidy info
+purities = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Purity_Ploidy_Results_Hatchet_Sequenza.xlsx")) %>%
+	filter(Tool == "Sequenza") %>% select(Patient, Sample, Purity, Ploidy)
+purities$Sample = paste(purities$Patient, purities$Sample, sep="_")
+all_segs_dt = merge(all_segs_dt, purities, by="Sample")
 
-write.table(cna_save, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/TitanCNA_summary.txt",
-quote=F, row.names=F, sep="}")
-
-#titanCNA results
-files = list.files(pattern="seg.txt")
-files = files[sapply(clusters$id, function(x){which(str_detect(files, x))})]
-
-#read in data files
-all_cnas = as.data.table(ldply(llply(files, function(x){fread(x)})))
-colnames(all_cnas)[1] = "barcode"
-all_cnas = merge(all_cnas, clusters, by = "barcode")
-all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
+all_segs_dt$CHROM = paste("chr", all_segs_dt$chromosome, sep="")
+print(head(all_segs_dt))
 
 #save for filtering SNVs
-all_cnas = all_cnas[,c("Sample", "CHROM", "Start", "End",
-"logR_Copy_Number", "MinorCN", "MajorCN", "TITAN_state",
-"Copy_Number", "Corrected_Call", "ploidy")]
+all_cnas = all_segs_dt[,c("Sample", "Tissue_Site", "CHROM", "start.pos", "end.pos",
+"B", "A", "Ploidy", "Purity", "CNt", "depth.ratio")]
 #save full dataset
-saveRDS(all_cnas, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_TITAN.rds")
+colnames(all_cnas)[4:5] = c("Start", "End")
+colnames(all_cnas)[6:7] = c("Nmin", "Nmaj")
+colnames(all_cnas)[10] = c("ntot")
+print(head(all_cnas))
+
+saveRDS(all_cnas, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
 
 all_cnas_palimpsest = all_cnas[,c("Sample", "CHROM", "Start", "End",
-"logR_Copy_Number", "MinorCN", "MajorCN",
-"Copy_Number", "ploidy")]
+"depth.ratio", "Nmin", "Nmaj",
+"ntot", "Ploidy")]
 colnames(all_cnas_palimpsest) = c("Sample", "CHROM", "POS_START",
 "POS_END", "LogR", "Nmin", "Nmaj", "ntot", "Ploidy")
-write.table(all_cnas_palimpsest, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/copy_number_alteration_data_palimpsest_input.txt", quote=F, row.names=F, sep="\t")
+write.table(all_cnas_palimpsest, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/copy_number_alteration_data_via_Sequenza_palimpsest_input.txt", quote=F, row.names=F, sep="\t")
