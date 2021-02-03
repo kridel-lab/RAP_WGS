@@ -21,25 +21,18 @@ module load tabix
 module load bam-readcount
 
 #pwd
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
 
 #pwd
-names=($(cat all_bam_files_raw.txt))
+names=($(cat sequenza_input_bam_files_tum.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
 MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
-tum_loc=${MYVAR%/*}
-MYVAR=${MYVAR##*/}
-tum_name=${MYVAR%.sorted.dup.recal.cram*}
-patient_name=${MYVAR%_*_*_*}
-control_file=$(ls -d ${patient_name}_Ctl*)
-str="LY_RAP_0003"
 
-if [ "$patient_name" == "$str" ]; then
-  control_file=$(ls $control_file/gatk/*.bam)
-else
-  control_file=$(ls $control_file/gatk/*.cram)
-fi
+MYVAR=${MYVAR##*/}
+tum_name=${MYVAR%.bam*}
+patient_name=${MYVAR%_*_*_*}
+
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 #file with mutations that need to be identified from each sample (bed_file)
@@ -53,9 +46,6 @@ bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 out_put_file_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_small.bed
 out_put_file_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_all.bed
 
-samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} > ${tum_name}.bam
-samtools index ${tum_name}.bam
-
 #get counts small list of variants
 bam-readcount -f $fasta \
 ${tum_name}.bam \
@@ -65,5 +55,3 @@ ${tum_name}.bam \
 bam-readcount -f $fasta \
  ${tum_name}.bam \
 -l $muts_all > $out_put_file_all
-
-rm ${tum_name}.bam
