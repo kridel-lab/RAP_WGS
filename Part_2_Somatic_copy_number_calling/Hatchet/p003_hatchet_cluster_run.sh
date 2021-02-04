@@ -72,19 +72,19 @@ source /cluster/home/kisaev/python2env/bin/activate
 #
 
 BIN=${XDIR}bin/
-#mkdir -p ${BIN}
+mkdir -p ${BIN}
 BAF=${XDIR}baf/
-#mkdir -p ${BAF}
+mkdir -p ${BAF}
 BB=${XDIR}bb/
-#mkdir -p ${BB}
+mkdir -p ${BB}
 BBC=${XDIR}bbc/
-#mkdir -p ${BBC}
+mkdir -p ${BBC}
 ANA=${XDIR}analysis/
-#mkdir -p ${ANA}
+mkdir -p ${ANA}
 RES=${XDIR}results/
-#mkdir -p ${RES}
+mkdir -p ${RES}
 EVA=${XDIR}evaluation/
-#mkdir -p ${EVA}
+mkdir -p ${EVA}
 
 cd ${XDIR}
 
