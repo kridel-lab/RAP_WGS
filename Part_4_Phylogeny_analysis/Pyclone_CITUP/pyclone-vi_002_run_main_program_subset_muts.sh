@@ -10,7 +10,23 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
 source activate pyclone-vi
 module load python3
 
-pyclone-vi fit -i all_samples_pyclonevi_subset_muts_pyclone_input.tsv \
--o rap_wgs_subset_muts.h5 -c 40 -d binomial -r 50
+#P001+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-pyclone-vi write-results-file -i rap_wgs_subset_muts.h5 -o rap_wgs_subset_muts.tsv
+pyclone-vi fit -i all_samples_pyclonevi_subset_muts_LY_RAP_0001_pyclone_input.tsv \
+-o LY_RAP_0001_rap_wgs_subset_muts.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0001_rap_wgs_subset_muts.h5 -o LY_RAP_0001_rap_wgs_subset_muts.tsv
+
+#P002+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+pyclone-vi fit -i all_samples_pyclonevi_subset_muts_LY_RAP_0002_pyclone_input.tsv \
+-o LY_RAP_0002_rap_wgs_subset_muts.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0002_rap_wgs_subset_muts.h5 -o LY_RAP_0002_rap_wgs_subset_muts.tsv
+
+#P003+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+pyclone-vi fit -i all_samples_pyclonevi_subset_muts_LY_RAP_0003_pyclone_input.tsv \
+-o LY_RAP_0003_rap_wgs_subset_muts.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i LY_RAP_0003_rap_wgs_subset_muts.h5 -o LY_RAP_0003_rap_wgs_subset_muts.tsv
