@@ -50,7 +50,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 #results from pyclone-vi
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
-#patient = "LY_RAP_0002" #test
+patient = "LY_RAP_0001" #test
 
 #----------------------------------------------------------------------
 #analysis
@@ -76,7 +76,7 @@ get_patient_pyclone_plot = function(patient){
   cluster_sum = unique(pyclone_file[,c("cluster_id", "mutation_id")])
 
   if(patient == "LY_RAP_0001"){
-    cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=10)
+    cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=50)
     pyclone_remove=c()
   }
 
@@ -156,9 +156,10 @@ get_patient_pyclone_plot = function(patient){
   summaries_vafs_fixed$sample = NULL
   summaries_vafs_fixed = as.matrix(summaries_vafs_fixed)
   col<- colorRampPalette(c("red", "white", "blue"))(256)
-  pdf(paste(patient, "heatmap_clusters_summary.pdf", sep="_"), width=10, height=10)
-  pheatmap(summaries_vafs_fixed, cutree_cols=3)
-  dev.off()
+
+#  pdf(paste(patient, "heatmap_clusters_summary.pdf", sep="_"), width=10, height=10)
+#  pheatmap(summaries_vafs_fixed, cutree_cols=3)
+#  dev.off()
 
   #for each cluster and sample get mean cell prev
   mean_cp_clusters = as.data.table(pyclone_file_merged %>% group_by(sample_id, cluster_id) %>%
@@ -193,7 +194,7 @@ get_patient_pyclone_plot = function(patient){
 
   dat$is.driver = as.logical(dat$is.driver)
 
-  pdf(paste(patient,'box.pdf', sep="_"), width = 5, height = 7, useDingbats = FALSE, title='')
+  pdf(paste(patient,'all_mutations_box.pdf', sep="_"), width = 5, height = 7, useDingbats = FALSE, title='')
 
   if(patient == "LY_RAP_0001"){
     vafs_cols = colnames(dat)[4:6]}
@@ -215,7 +216,7 @@ get_patient_pyclone_plot = function(patient){
     jitter = TRUE,
     jitter.color = col_vector,
     jitter.shape = 1,
-    highlight ='is.driver',
+    #highlight ='is.driver',
     highlight.shape = 21,
     highlight.color ='blue',
     highlight.fill.color ='green',
@@ -233,7 +234,7 @@ get_patient_pyclone_plot = function(patient){
 
     summ_dlbcl = unique(filter(dat, is.driver == TRUE) %>% select(symbol, cluster))
 
-    pdf(paste(patient,'flow.pdf', sep="_"), width=10, height=5, useDingbats=FALSE, title='')
+    pdf(paste(patient,'all_mutations_flow.pdf', sep="_"), width=10, height=5, useDingbats=FALSE, title='')
       plot.cluster.flow(dat, vaf.col.names = vafs_cols,
           colors = col_vector)
     dev.off()
@@ -241,75 +242,37 @@ get_patient_pyclone_plot = function(patient){
     print("done making pyclone summary plots")
 }#end function patient input
 
-get_patient_pyclone_plot("LY_RAP_0001")
-get_patient_pyclone_plot("LY_RAP_0002")
-
-#llply(patients, get_patient_pyclone_plot)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#change cluster 1 so it's not 100 cell prevalence
-#z = which(dat$cluster==1)
-#dat$FFPE_right_neck_LN[z] = 98
+p001_dat = get_patient_pyclone_plot("LY_RAP_0001")
+p002_dat = get_patient_pyclone_plot("LY_RAP_0002")
+p003_dat = get_patient_pyclone_plot("LY_RAP_0003")
 
 #to make tree need to have founding clone be labelled 1
 #so remove the first cluster since ignoring it anyways
-if(patient == "LY_RAP_0001"){
-z = which(dat$cluster==1)
-dat$cluster[z] = 8
-z = which(dat$cluster==7)
-dat$cluster[z] = 1
-z = which(dat$cluster==8)
-dat$cluster[z] = 7
-#z = which(dat$cluster==3)
-#dat$cluster[z] = 2
-#z = which(dat$cluster==4)
-#dat$cluster[z] = 3
-#z = which(dat$cluster==5)
-#dat$cluster[z] = 4
-#z = which(dat$cluster==6)
-#dat$cluster[z] = 5
-#z = which(dat$cluster==7)
-#dat$cluster[z] = 6
-}
+z1=which(dat$cluster == 1)
+z2=which(dat$cluster == 4)
+dat$cluster[z1] = 4
+dat$cluster[z2] = 1
 
-#z = which(dat$cluster==11)
-#dat$cluster[z] = 10
+z = which(dat$cluster==2)
+dat$Mediastinal_lymph_node[z] = 20
 
 #infer clonal evolution tree
 y = infer.clonal.models(variants = dat,
   cluster.col.name ='cluster',
 vaf.col.names = vafs_cols,
 cancer.initiation.model='monoclonal',
-#subclonal.test ='none',
-subclonal.test = 'bootstrap',
+#subclonal.test = 'none',
+subclonal.test ='bootstrap',
 subclonal.test.model ='non-parametric',
-num.boots = 1000,
-ignore.clusters=c(2,7),
-#score.model.by = 'metap',
-cluster.center ='mean', min.cluster.vaf = 0,
-          sum.p = 0.05,
-          alpha = 0.05, founding.cluster = 1,
+#subclonal.test.model ='non-parametric',
+#num.boots = 1000,
+#ignore.clusters=c(4, 5, 8),
+score.model.by = 'metap',
+seeding.aware.tree.pruning = TRUE,
+cluster.center ='mean',
+min.cluster.vaf = 0.0001,
+          sum.p = 0.0001,
+          alpha = 0.0001, founding.cluster = 1,
 clone.colors = col_vector)
 
 #y <-transfer.events.to.consensus.trees(y,dat[dat$is.driver,],
@@ -317,7 +280,7 @@ clone.colors = col_vector)
 
 y <-convert.consensus.tree.clone.to.branch(y, branch.scale ='sqrt')
 
-pdf('trees.pdf', width = 3, height = 5, useDingbats = FALSE)
+pdf(paste(patient, 'all_trees.pdf', sep="_"), width = 3, height = 5, useDingbats = FALSE)
 plot.all.trees.clone.as.branch(y)
 dev.off()
 
@@ -355,13 +318,13 @@ cell.border.color ='black',clone.grouping ='horizontal',
 scale.monoclonal.cell.frac = TRUE,show.score = FALSE,cell.frac.ci = TRUE,
 disable.cell.frac = FALSE,
 # output figure parameters
-out.dir ='output',out.format ='pdf',overwrite.output = TRUE,
-width = 35,height = 30)
+out.dir = paste(patient, 'all_output', sep="_"),out.format ='pdf',overwrite.output = TRUE,
+width = 40,height = 30)
 
 #mut info
 mut_info = merge(mut_gene, dat, by=c("mut_id", "symbol"))
 library(openxlsx)
-write.xlsx(mut_info, 'Pyclone-VI-clonevol-results.xlsx')
+write.xlsx(mut_info, paste(patient, "all_mutations", 'Pyclone-VI-clonevol-results.xlsx', sep="_"))
 
 #save input data required for mapscape
 #adjacency matrix
@@ -377,7 +340,7 @@ dplyr::summarize(mean_cp=mean(value)))
 #convert back from VAF to CCF
 mean_cps$mean_cp = mean_cps$mean * 2 / 100
 colnames(mean_cps) = c("sample_id" ,"clone_id", "clonal_prev")
-write.table(mean_cps, file=paste(date, "_clonevol_output_for_mapscape.txt", sep=""), quote=F, row.names=F, sep="\t")
+write.table(mean_cps, file=paste(date, patient, "all_mutations", "_clonevol_output_for_mapscape.txt", sep=""), quote=F, row.names=F, sep="\t")
 
 #-----
 #DONE-
