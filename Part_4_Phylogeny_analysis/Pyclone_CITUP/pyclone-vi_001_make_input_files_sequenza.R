@@ -104,6 +104,6 @@ make_input_pyclone("2021-02-03_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt
 make_input_pyclone("2021-02-03_subset_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
 
 #make input for all muts
-#make_input_pyclone("2021-02-03_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
+make_input_pyclone("2021-02-03_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
 #make input for some muts
-#make_input_pyclone("2021-02-03_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2021-02-03_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
