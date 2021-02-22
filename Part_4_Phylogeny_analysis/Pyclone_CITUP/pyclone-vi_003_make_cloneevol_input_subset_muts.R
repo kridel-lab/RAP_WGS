@@ -1,5 +1,4 @@
 #----------------------------------------------------------------------
-#pyclone_008_make_cloneevol_input.R
 #----------------------------------------------------------------------
 
 #----------------------------------------------------------------------
@@ -32,14 +31,19 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 read_only = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds"))])
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
+
 #sample info
 samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
 colnames(samps)[4] ="Indiv"
 z = which(samps$Indiv %in% read_only$Indiv)
 samps = samps[z,]
-samps = samps %>% select(STUDY_PATIENT_ID, Indiv)
-samps = merge(samps, read_only, by = "Indiv")
-colnames(samps)[1] = "samplename"
+samps[18,2] = "Kidney, NOS 2"
+
+read_only$Tissue_Site = NULL
+read_only$STUDY_PATIENT_ID = NULL
+read_only$Specimen_Type = NULL
+
+read_only = merge(read_only, samps, by = "Indiv")
 
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
@@ -50,7 +54,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 #results from pyclone-vi
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
-patient = "LY_RAP_0002" #test
+patient = "LY_RAP_0003" #test
 
 #----------------------------------------------------------------------
 #analysis
@@ -88,9 +92,10 @@ get_patient_pyclone_plot = function(patient){
   }
 
   if(patient == "LY_RAP_0003"){
-    cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=400)
+    cluster = filter(as.data.table(table(cluster_sum$cluster_id)), N >=40)
     #remove clusters with low cluster_assignment_prob
-    pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
+    #pyclone_remove = unique(as.data.table(filter(pyclone_file, (cluster_assignment_prob < 0.5) | (is.na(cellular_prevalence_std))))$cluster_id)
+    pyclone_remove=c()
   }
 
   pyclone_file = filter(pyclone_file, cluster_id %in% cluster$V1, !(cluster_id %in% pyclone_remove))
@@ -104,43 +109,13 @@ get_patient_pyclone_plot = function(patient){
   colnames(samps)[1] = "sample_id"
   samps$sample = ""
 
-  if(patient == "LY_RAP_0001"){
-    samps$sample = c(
-      "Mediastinal_lymph_node",
-      "Aorta_abdominal",
-      "Aorta_ascending")
-    }
-
-  if(patient == "LY_RAP_0002"){
-    samps$sample = c(
-      "Left_lobe_liver",
-      "Mesenteric_lymph_node",
-      "Thorax",
-      "Adrenal_gland")
-    }
-
-  if(patient == "LY_RAP_0003"){
-    samps$sample = c(
-      "FFPE_left_axilla_LN",
-      "FFPE_left_breast",
-      "FFPE_right_neck_LN",
-      "FT_Abdomen",
-      "FT_Adrenal_gland",
-      "FT_Axilla",
-      "FT_Bladder",
-      "FT_Cecum",
-      "FT_Cervical_lymph_node",
-      "FT_Inguinal_region",
-      "FT_Kidney_NOS_341360",
-      "FT_Kidney_NOS_341364",
-      "FT_Mediastinum",
-      "FT_Omentum",
-      "FT_Pancreas",
-      "FT_Parotid_gland",
-      "FT_Retroperitoneum",
-      "FT_Shoulder",
-      "FT_Spleen",
-      "FT_Stomach")}
+  for(i in 1:length(unique(samps$sample_id))){
+    print(i)
+    tissue = read_only$Tissue_Site[read_only$Sample == samps$sample_id[i]][1]
+    tissue = print(paste(unlist(strsplit(tissue, ", ")), collapse="_"))
+    tissue=print(paste(unlist(strsplit(tissue, " ")), collapse="_"))
+    samps$sample[i] = tissue
+  }
 
   pyclone_file_merged = merge(pyclone_file_merged, samps, by="sample_id")
   pyclone_file_merged$vaf_fixed = pyclone_file_merged$cellular_prevalence /2 *100
@@ -156,9 +131,6 @@ get_patient_pyclone_plot = function(patient){
   summaries_vafs_fixed$sample = NULL
   summaries_vafs_fixed = as.matrix(summaries_vafs_fixed)
   col<- colorRampPalette(c("red", "white", "blue"))(256)
-  #pdf(paste(patient, "heatmap_clusters_summary.pdf", sep="_"), width=10, height=10)
-  #pheatmap(summaries_vafs_fixed, cutree_cols=3)
-  #dev.off()
 
   #for each cluster and sample get mean cell prev
   mean_cp_clusters = as.data.table(pyclone_file_merged %>% group_by(sample_id, cluster_id) %>%
@@ -193,7 +165,7 @@ get_patient_pyclone_plot = function(patient){
 
   dat$is.driver = as.logical(dat$is.driver)
 
-  pdf(paste(patient,'subset_mutations_box.pdf', sep="_"), width = 5, height = 7, useDingbats = FALSE, title='')
+  pdf(paste(patient,'subset_mutations_box.pdf', sep="_"), width = 20, height = 20, useDingbats = FALSE, title='')
 
   if(patient == "LY_RAP_0001"){
     vafs_cols = colnames(dat)[4:6]}
@@ -282,12 +254,41 @@ get_patient_pyclone_plot = function(patient){
       clone.colors = col_vector)
     }
 
+    if(patient == "LY_RAP_0003"){
+      z1 = which(dat$cluster == 1)
+      z2 = which(dat$cluster == 5)
+      dat$cluster[z2]=1
+      dat$cluster[z1]=5
+
+      #make all clonal clusters = 100% CP
+      dat[which(dat$cluster==1), 4:23] = 50
+      dat$Omentum[which(dat$cluster==4)] = 49
+      dat$Spleen[which(dat$cluster==4)] = 49
+
+      #infer clonal evolution tree
+      y = infer.clonal.models(variants = dat,
+        cluster.col.name ='cluster',
+      vaf.col.names = vafs_cols,
+      cancer.initiation.model='monoclonal',
+      #subclonal.test ='none',
+      subclonal.test = 'bootstrap',
+      subclonal.test.model ='non-parametric',
+      num.boots = 1000,
+      #ignore.clusters=c(9),
+      #ignore.clusters=c(2),
+      #score.model.by = 'metap',
+      cluster.center ='mean', #min.cluster.vaf = 0,
+                sum.p = 0.05,
+                alpha = 0.05, founding.cluster = 1,
+      clone.colors = col_vector)
+    }
+
     #y <-transfer.events.to.consensus.trees(y,dat[dat$is.driver,],
     #  cluster.col.name ='cluster',event.col.name ='symbol')
 
     y <-convert.consensus.tree.clone.to.branch(y, branch.scale ='sqrt')
 
-    pdf(paste(patient, 'subset_trees.pdf', sep="_"), width = 3, height = 5, useDingbats = FALSE)
+    pdf(paste(patient, date, 'subset_trees.pdf', sep="_"), width = 3, height = 5, useDingbats = FALSE)
     plot.all.trees.clone.as.branch(y)
     dev.off()
 
@@ -325,13 +326,13 @@ get_patient_pyclone_plot = function(patient){
     scale.monoclonal.cell.frac = TRUE,show.score = FALSE,cell.frac.ci = TRUE,
     disable.cell.frac = FALSE,
     # output figure parameters
-    out.dir = paste(patient, 'subset_output', sep="_"),out.format ='pdf',overwrite.output = TRUE,
+    out.dir = paste(patient, date, 'subset_output', sep="_"),out.format ='pdf',overwrite.output = TRUE,
     width = 40,height = 30)
 
     #mut info
     mut_info = merge(mut_gene, dat, by=c("mut_id", "symbol"))
     library(openxlsx)
-    write.xlsx(mut_info, paste(patient, "subset_mutations", 'Pyclone-VI-clonevol-results.xlsx', sep="_"))
+    write.xlsx(mut_info, paste(patient, date, "subset_mutations", 'Pyclone-VI-clonevol-results.xlsx', sep="_"))
 
     #save input data required for mapscape
     #adjacency matrix
