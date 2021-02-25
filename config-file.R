@@ -30,18 +30,31 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_
 #DLBCL driver genes from Reddy et al 2017
 reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
 reddy$type = "DLBCL"
+treeomics_driver_3 = reddy[,1]
+colnames(treeomics_driver_3)[1] = "Gene_Symbol"
+write.csv(treeomics_driver_3, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p003_drivers.csv", quote=F, row.names=F)
 
 #PMBCL genes
 pmbcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/PMBCL_genes.xlsx"))
 pmbcl$type = "PMBCL"
 pmbcl = unique(pmbcl)
+treeomics_driver_2 = pmbcl[,1]
+colnames(treeomics_driver_2)[1] = "Gene_Symbol"
+write.csv(treeomics_driver_2, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p002_drivers.csv", quote=F, row.names=F)
 
 #MCL genes
 mcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/MCL_genes.xlsx"))
 mcl$type = "MCL"
 mcl = unique(mcl)
+treeomics_driver_1 = mcl[,1]
+colnames(treeomics_driver_1)[1] = "Gene_Symbol"
+write.csv(treeomics_driver_1, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p001_drivers.csv", quote=F, row.names=F)
 
 all_drivers = rbind(reddy, pmbcl, mcl)
+
+#save driver genes for Treeomics
+#column_name="Gene_Symbol"
+
 
 #DLBCL mutations from Morin Blood 2013
 morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
