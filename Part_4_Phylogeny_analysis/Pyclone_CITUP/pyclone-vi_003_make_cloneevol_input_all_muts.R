@@ -54,7 +54,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 #results from pyclone-vi
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
-patient = "LY_RAP_0003" #test
+patient = "LY_RAP_0002" #test
 
 #----------------------------------------------------------------------
 #analysis
@@ -244,9 +244,28 @@ get_patient_pyclone_plot = function(patient){
 
     if(patient == "LY_RAP_0002"){
       z1 = which(dat$cluster == 1)
-      z2 = which(dat$cluster == 4)
+      z2 = which(dat$cluster == 14)
       dat$cluster[z2]=1
-      dat$cluster[z1]=4
+      dat$cluster[z1]=14
+
+      #make all clonal clusters = 100% CP
+      dat[which(dat$cluster==1), 4:7] = 50
+
+      #cluster 2 is thorax specific
+      #dat[which(dat$cluster==2), 4:6] = 0
+
+      #cluster 5 is thorax specific
+      #dat[which(dat$cluster==5), 5:7] = 0
+
+      #cluster 8 is liver specific
+      #dat[which(dat$cluster==8), c(4, 6:7)] = 0
+
+      #cluster 12 is thorax specific
+      #dat[which(dat$cluster==12), c(4:6)] = 0
+
+      #cluster 14 is mesenteric specific
+      #dat[which(dat$cluster==14), c(4:5, 7)] = 0
+
       #infer clonal evolution tree
       y = infer.clonal.models(variants = dat,
         cluster.col.name ='cluster',
@@ -257,12 +276,9 @@ get_patient_pyclone_plot = function(patient){
       subclonal.test.model ='non-parametric',
       num.boots = 1000,
       seeding.aware.tree.pruning=TRUE,
-#      ignore.clusters=c(2),
-      ignore.clusters=c(2,4), #final working model
-      #score.model.by = 'metap',
-      cluster.center ='mean', min.cluster.vaf = 0,
-                sum.p = 0.05,
-                alpha = 0.05, founding.cluster = 1,
+      ignore.clusters=c(10, 13, 11, 4, 6, 7, 14, 5, 8, 2),
+#      ignore.clusters=c(10,13),
+      founding.cluster = 1,
       clone.colors = col_vector)
     }
 
