@@ -32,29 +32,22 @@ print(patient)
 #overlapping mutations that were only found in some samples and not all
 #Pyclone input requires these values
 
+#test
+#patient="LY_RAP_0001"
+
 #----------------------------------------------------------------------
 #data
 #----------------------------------------------------------------------
 
-#Our mutations
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
-read_only = readRDS(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.rds"))])
-
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
-#sample info
-samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
-colnames(samps)[4] ="Indiv"
-z = which(samps$Indiv %in% read_only$Indiv)
-samps = samps[z,]
-
-#DLBCL driver genes from Reddy et al 2017
-reddy = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Reddyetal_2017_driver_mutations.xlsx"))
+source("/cluster/home/kisaev/RAP_WGS/config-file.R")
 
 #save sample id versus sample name clean
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #Copy number data
 cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/")
 
 #----------------------------------------------------------------------
 #analysis
