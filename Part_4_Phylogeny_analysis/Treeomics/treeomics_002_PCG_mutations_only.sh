@@ -6,6 +6,7 @@
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J treeomics
 #SBATCH -c 2
+#SBATCH --array=0-2 # job array index
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/treeomics/src
 
@@ -17,9 +18,11 @@ export TEXTLIVEPATH=/cluster/tools/software/centos7/texlive/2019/
 
 python3 -c 'import cplex'
 
-#add comment
+names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_treomics_pats.txt))
+pat=${names[${SLURM_ARRAY_TASK_ID}]}
+echo $pat
 
-normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline variants
+#normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline variants
 
 #purity_info=/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2/annotation_data_palimpsest_input.txt
 
@@ -35,10 +38,10 @@ normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline varia
 driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/${pat}_drivers.csv
 
 #RUN
-python treeomics -d input/mutect2_strelka_pcgs_only -n $normal \
+python treeomics -d input/mutect2_strelka_pcgs_only/${pat} \
 -l 10 --wes_filtering \
 --driver_genes=$driver_genes \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp
+-o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp/${pat}
 
 #--include `cat treeomics_samples_include.txt` \
 #--purities `cat treeomics_samples_purities.txt` \
