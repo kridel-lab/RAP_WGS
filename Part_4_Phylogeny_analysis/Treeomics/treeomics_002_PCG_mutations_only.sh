@@ -32,10 +32,12 @@ normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline varia
 #purities
 #awk -F"\t" '{print $3}' purities_no_cols.txt > treeomics_samples_purities.txt
 
+driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/${pat}_drivers.csv
+
 #RUN
 python treeomics -d input/mutect2_strelka_pcgs_only -n $normal \
--l 50 --wes_filtering \
---driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/reddy_drivers.csv \
+-l 10 --wes_filtering \
+--driver_genes=$driver_genes \
 -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_50_mp
 
 #--include `cat treeomics_samples_include.txt` \
