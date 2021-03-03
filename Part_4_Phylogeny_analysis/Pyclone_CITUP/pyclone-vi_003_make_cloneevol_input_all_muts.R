@@ -309,7 +309,7 @@ get_patient_pyclone_plot = function(patient){
       dat[which(dat$cluster==10)]$Pancreas_NOS = 0
       dat[which(dat$cluster==10)]$Retroperitoneum_NOS = 0
 
-      clusters_remove=c(2, 5,7, 9,6)
+      clusters_remove=c(3, 6, 12, 8, 4)
 
       #infer clonal evolution tree
       y = infer.clonal.models(variants = dat,
