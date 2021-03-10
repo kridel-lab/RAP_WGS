@@ -92,19 +92,19 @@ cd ${XDIR}
 #binBAM
 #
 
-\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-                                   -b 50kb -g ${REF} -j ${J} \
-                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
+#\time -v python2 -m hatchet binBAM -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#                                   -b 50kb -g ${REF} -j ${J} \
+#                                   -q 20 -O ${BIN}normal.bin -o ${BIN}bulk.bin -v &> ${BIN}bins.log
 
 #
 #deBAF
 #
 
-#\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-#            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
-#            -r ${REF} -j ${J} -c 20 \
-#            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
-#                          &> ${BAF}bafs.log
+\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
+            -r ${REF} -j ${J} -c 20 \
+            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
+                          &> ${BAF}bafs.log
 #
 #comBBo
 #
