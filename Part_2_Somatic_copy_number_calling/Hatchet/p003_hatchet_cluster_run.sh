@@ -100,16 +100,16 @@ cd ${XDIR}
 #deBAF
 #
 
-\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
-            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
-            -r ${REF} -j ${J} -c 20 \
-            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
-                          &> ${BAF}bafs.log
+#\time -v python2 -m hatchet deBAF -N ${NORMAL} -T ${BAMS} -S ${ALLNAMES} \
+#            --snps /cluster/projects/kridelgroup/RAP_ANALYSIS/deBAF_input_gnomad_snps.txt \
+#            -r ${REF} -j ${J} -c 20 \
+#            -C 300 -O ${BAF}normal.baf -o ${BAF}bulk.baf -v \
+#                          &> ${BAF}bafs.log
 #
 #comBBo
 #
 
-#\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -v -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -v -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
 
 #
 #cluBB-cluBB globally clusters genomic bins based on RDR and BAF jointly along the genome and across
