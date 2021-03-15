@@ -109,7 +109,7 @@ cd ${XDIR}
 #comBBo
 #
 
-\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -v -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
+#\time -v python2 -m hatchet comBBo -c ${BIN}normal.bin -v -C ${BIN}bulk.bin -B ${BAF}bulk.baf -m MIRROR -e 12 > ${BB}bulk.bb
 
 #
 #cluBB-cluBB globally clusters genomic bins based on RDR and BAF jointly along the genome and across
@@ -120,14 +120,14 @@ cd ${XDIR}
 #I think that it's worth trying to form smaller clusters with BNPY (i.e. -sf 0.001) and then merge those (i.e. -tB 0.02 -tR 0.8 or -tB 0.03 -tR 0.8)
 #from https://github.com/raphael-group/hatchet/issues/18
 
-#\time -v python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc -e ${RANDOM} -sf 0.001 -tB 0.02 -tR 0.8 -d 0.07
+\time -v python2 -m hatchet cluBB ${BB}bulk.bb -o ${BBC}bulk.seg -O ${BBC}bulk.bbc -e ${RANDOM} -sf 0.001 -tB 0.02 -tR 0.8 -d 0.07
 
 #cd ${ANA}
-#\time -v python2 -m hatchet BBot -c RD --figsize 6,3 ${BBC}bulk.bbc &
-#\time -v python2 -m hatchet BBot -c CRD --figsize 6,3 ${BBC}bulk.bbc &
-#\time -v python2 -m hatchet BBot  -c BAF --figsize 6,3 ${BBC}bulk.bbc &
-#\time -v python2 -m hatchet BBot  -c BB ${BBC}bulk.bbc &
-#\time -v python2 -m hatchet BBot  -c CBB ${BBC}bulk.bbc -tS 0.03 &
+\time -v python2 -m hatchet BBot -c RD --figsize 6,3 ${BBC}bulk.bbc &
+\time -v python2 -m hatchet BBot -c CRD --figsize 6,3 ${BBC}bulk.bbc &
+\time -v python2 -m hatchet BBot  -c BAF --figsize 6,3 ${BBC}bulk.bbc &
+\time -v python2 -m hatchet BBot  -c BB ${BBC}bulk.bbc &
+\time -v python2 -m hatchet BBot  -c CBB ${BBC}bulk.bbc -tS 0.03 &
 #wait
 
 #cd ${RES}
