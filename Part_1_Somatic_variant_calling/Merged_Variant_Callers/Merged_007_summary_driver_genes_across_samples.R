@@ -6,6 +6,8 @@
 
 #load packages and data
 source("/cluster/home/kisaev/RAP_WGS/config-file.R")
+library(ggpubr)
+library("ggsci")
 
 #----------------------------------------------------------------------
 #purpose
@@ -44,6 +46,18 @@ p<-ggplot(data=barplot, aes(x=num_of_samples_with_mut, y=num_of_muts, fill=patie
 print(p)
 dev.off()
 
+colnames(barplot)[2]="Patient"
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/001_samples_per_mutation_lineplot.pdf",
+width=5, height=5)
+# Basic barplot
+p<-ggline(barplot, x="num_of_samples_with_mut", y="num_of_muts",
+palette = c("#00AFBB", "#E7B800", "#FC4E07"), color="Patient")+
+xlab("# of samples sharing mutation") + ylab("Mutation count")+
+scale_y_continuous(breaks=seq(0,300000,20000))
+
+print(p)
+dev.off()
+
 #summarize number of mutations per sample
 muts_per_sample = as.data.table(table(read_only$STUDY_PATIENT_ID,read_only$Tissue_Site))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
@@ -59,32 +73,74 @@ muts_per_sample$Patient = factor(muts_per_sample$Patient, levels=c("MCL blastoid
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 muts_per_sample$Sample = factor(muts_per_sample$Sample, levels=unique(muts_per_sample$Sample))
 
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pdf")
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/002_mutations_per_sample.pdf",
+width=4, height=5)
 # Basic barplot
 p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts, fill=Patient)) +
-  geom_bar(stat="identity")+theme_minimal()+#+ggtitle("Number of mutations per sample")+
-	theme(axis.text.x = element_text(angle = 60, hjust=1)) + xlab("Sample")+
-	ylab("Number of mutations")+
+  geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
+	theme(axis.text.x = element_text(angle = 90, hjust=1),
+  legend.position = "none") + xlab("Sample")+
+	ylab("Mutation count")+
 	facet_grid(. ~ Patient, scales="free", space='free')+
 	theme(
   strip.background = element_blank(),
-  strip.text.x = element_blank(), legend.position="bottom",
+  strip.text.x = element_blank(),
 	legend.text = element_text(size=6))+
-	scale_y_continuous(breaks=seq(0, 400000, by = 25000))
+	scale_y_continuous(breaks=seq(0, 400000, by = 50000))+
+  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07"))
 print(p)
 dev.off()
 
 #summarize biotypes - types of genes that are mutated
-biotypes = as.data.table(table(read_only$ExonicFunc.ensGene, read_only$STUDY_PATIENT_ID))
-colnames(biotypes) = c("gene_type", "patient", "num_muts_in_gene_type")
+biotypes = as.data.table(table(read_only$Func.ensGene, read_only$symbol, read_only$STUDY_PATIENT_ID))
+colnames(biotypes) = c("gene_type", "gene", "patient", "num_muts_in_gene_type")
 biotypes = as.data.table(filter(biotypes, num_muts_in_gene_type > 0))
 biotypes = biotypes[order(-num_muts_in_gene_type)]
 biotypes$gene_type = factor(biotypes$gene_type, levels=unique(biotypes$gene_type))
+biotypes$driver = ""
+z = which((biotypes$gene %in% all_drivers$Gene[all_drivers$type=="MCL"]) &(biotypes$patient == "LY_RAP_0001"))
+biotypes$driver[z] = "driver"
+z = which((biotypes$gene %in% all_drivers$Gene[all_drivers$type=="PMBCL"]) &(biotypes$patient == "LY_RAP_0002"))
+biotypes$driver[z] = "driver"
+z = which((biotypes$gene %in% all_drivers$Gene[all_drivers$type=="DLBCL"]) &(biotypes$patient == "LY_RAP_0003"))
+biotypes$driver[z] = "driver"
+biotypes$driver[biotypes$driver == ""] = "non_driver"
 biotypes$patient[biotypes$patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
 biotypes$patient[biotypes$patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
 biotypes$patient[biotypes$patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
 biotypes$patient = factor(biotypes$patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
+
+introns = filter(biotypes, gene_type=="intronic")
+introns$N = log1p(introns$num_muts_in_gene_type)
+introns$driver = factor(introns$driver, levels=c("driver", "non-driver"))
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/intronic_mutations_drivers_vs_nondrivers.pdf",
+height=4, width=4)
+p<-ggboxplot(data=introns, x="driver", y="N", fill="patient", facet.by ="patient") +
+  theme_classic() +
+  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07"))+
+	theme(strip.background = element_blank(),
+  strip.text.x = element_blank(), legend.position="none")#+
+	#scale_y_continuous(breaks=seq(0, 400000, by = 25000))
+p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+ stat_compare_means(label = "p.format") + ylab("log1p(# of mutations per gene)")
+dev.off()
+
+biotypes$N = log1p(biotypes$num_muts_in_gene_type)
+biotypes$driver = factor(biotypes$driver, levels=c("driver", "non-driver"))
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_mutations_drivers_vs_nondrivers.pdf",
+height=4, width=4)
+p<-ggboxplot(data=biotypes, x="driver", y="N", fill="patient", facet.by ="patient") +
+  theme_classic() +
+  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07"))+
+	theme(strip.background = element_blank(),
+  strip.text.x = element_blank(), legend.position="none")#+
+	#scale_y_continuous(breaks=seq(0, 400000, by = 25000))
+p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+ stat_compare_means(label = "p.format") + ylab("log1p(# of mutations per gene)")
+dev.off()
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/003_all_mutation_overview_gene_types.pdf")
 # Basic barplot
@@ -118,8 +174,73 @@ z = which(samples_per_mut$symbol %in% genes_sum$Gene)
 samples_per_mut$morin[z] = "morin"
 samples_per_mut$morin[-z] = "not_in_morin"
 
+summ_d_a = as.data.table(table(samples_per_mut$patient, samples_per_mut$phylogeny, samples_per_mut$driver))
+colnames(summ_d_a) = c("Patient", "Phylogeny", "Driver", "N")
+summ_d_a$Phylogeny[summ_d_a$Phylogeny %in% c("private", "shared")] = "Non-Truncal"
+summ_d_a$Phylogeny[summ_d_a$Phylogeny %in% c("ancestor")] = "Truncal"
+summ_d_a$N_log1p = log1p(summ_d_a$N)
+summ_d_a$Phylogeny = factor(summ_d_a$Phylogeny, levels = c("Truncal", "Non-Truncal"))
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_mutations_drivers_vs_nondrivers_vs_ancestor_status.pdf",
+height=6, width=3)
+p<-ggboxplot(data=summ_d_a, x="Driver", y="N_log1p", fill="Phylogeny",
+palette = get_palette("Dark2", 3)) +
+  theme_classic() +
+  #scale_fill_manual(values=c(""))+
+	theme(strip.background = element_blank(),
+  strip.text.x = element_blank(), legend.position="bottom")#+
+	#scale_y_continuous(breaks=seq(0, 400000, by = 25000))
+p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+ stat_compare_means(aes(group = Phylogeny)) +
+ ylab("log1p(# of mutations)")
+dev.off()
+
+#keep only functional protein coding gene mutations
+summ_d_a = as.data.table(filter(samples_per_mut, biotype == "protein_coding",
+Func.ensGene %in% c("exonic", "splicing"), !(ExonicFunc.ensGene == "synonymous_SNV")))
+summ_d_a = as.data.table(table(summ_d_a$patient, summ_d_a$phylogeny, summ_d_a$driver))
+colnames(summ_d_a) = c("Patient", "Phylogeny", "Driver", "N")
+summ_d_a$Phylogeny[summ_d_a$Phylogeny %in% c("private", "shared")] = "Non-Truncal"
+summ_d_a$Phylogeny[summ_d_a$Phylogeny %in% c("ancestor")] = "Truncal"
+summ_d_a$N_log1p = log1p(summ_d_a$N)
+summ_d_a$Phylogeny = factor(summ_d_a$Phylogeny, levels = c("Truncal", "Non-Truncal"))
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_mutations_drivers_vs_nondrivers_vs_ancestor_status_exonic_only.pdf",
+height=6, width=3)
+p<-ggboxplot(data=summ_d_a, x="Driver", y="N_log1p", fill="Phylogeny",
+palette = get_palette("Dark2", 3)) +
+  theme_classic() +
+  #scale_fill_manual(values=c(""))+
+	theme(strip.background = element_blank(),
+  strip.text.x = element_blank(), legend.position="bottom")#+
+	#scale_y_continuous(breaks=seq(0, 400000, by = 25000))
+p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+ stat_compare_means(aes(group = Phylogeny)) +
+ ylab("log1p(# of mutations)")
+dev.off()
+
 write.table(samples_per_mut, file=paste(date, "mutation_summary_occurence_phylogeny_driver_gene_status.txt", sep="_"),
 quote=F, row.names=F, sep=";")
+
+#summarize driver genes and what kind of mutations they are affected by
+drivers_all = filter(samples_per_mut, driver=="driver")
+drivers_all = as.data.table(table(drivers_all$patient, drivers_all$symbol, drivers_all$phylogeny, drivers_all$Func.ensGene)) %>% filter(N > 0, V4 %in% c("exonic", "intronic", "splicing", "UTR3", "UTR5"))
+colnames(drivers_all) = c("Patient", "Gene", "Status", "Mutation", "Mutation_count")
+drivers_all$Status = factor(drivers_all$Status, levels=c("ancestor", "shared", "private"))
+
+pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/driver_genes_vs_shared_status_type.pdf", height=6,width=4)
+p = ggplot(filter(drivers_all, Status == "ancestor"), aes(Status, Gene)) +
+theme_bw()+
+  geom_tile(aes(fill = Status), colour = "black") +
+scale_fill_rickandmorty()+
+  geom_text(aes(label=Mutation_count),size=1) +
+	facet_grid(Patient ~ Mutation, scales="free", space='free')+
+theme(axis.text =element_text(size=4),
+axis.title.x=element_blank(),
+legend.position = "none",
+strip.text = element_text(size = 4))+xlab("")
+print(p)
+dev.off()
 
 #keep only functional protein coding gene mutations
 samples_per_mut = as.data.table(filter(samples_per_mut, biotype == "protein_coding",

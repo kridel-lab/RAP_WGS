@@ -128,7 +128,7 @@ cd ${ANA}
 \time -v python2 -m hatchet BBot  -c BAF --figsize 6,3 ${BBC}bulk.bbc &
 \time -v python2 -m hatchet BBot  -c BB ${BBC}bulk.bbc &
 \time -v python2 -m hatchet BBot  -c CBB ${BBC}bulk.bbc -tS 0.03 &
-#wait
+wait
 
 #cd ${RES}
 
