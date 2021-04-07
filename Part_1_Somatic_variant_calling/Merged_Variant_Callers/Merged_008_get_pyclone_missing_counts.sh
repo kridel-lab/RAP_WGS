@@ -9,6 +9,9 @@
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
+module purge
+module load R/3.5.0
+
 names=($(cat patients_three_names.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 pat=${names[${SLURM_ARRAY_TASK_ID}]}
