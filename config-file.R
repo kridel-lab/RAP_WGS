@@ -53,6 +53,9 @@ write.csv(treeomics_driver_1, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p
 
 all_drivers = rbind(reddy, pmbcl, mcl)
 
+#Copy number data
+cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
+
 #save driver genes for Treeomics
 #column_name="Gene_Symbol"
 
