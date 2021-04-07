@@ -18,8 +18,9 @@ options(stringsAsFactors=F)
 packages <- c("dplyr", "ggplot2", "tidyr", "data.table", "plyr",
 	"stringr")
 lapply(packages, require, character.only = TRUE)
-library("readxl")
+library(readxl)
 library(GenomicRanges)
+library(openxlsx)
 
 #----------------------------------------------------------------------
 #load mutation data
@@ -55,7 +56,6 @@ all_drivers = rbind(reddy, pmbcl, mcl)
 #save driver genes for Treeomics
 #column_name="Gene_Symbol"
 
-
 #DLBCL mutations from Morin Blood 2013
 morin = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/supp_blood-2013-02-483727_TableS3.xlsx"))
 genes_sum=as.data.table(table(morin$Gene))
@@ -79,8 +79,12 @@ samps[18,2] = "Kidney, NOS 2"
 
 read_only$Tissue_Site = NULL
 read_only$STUDY_PATIENT_ID = NULL
+read_only$Specimen_Type = NULL
 
 read_only = merge(read_only, samps, by = "Indiv")
+#save file and download locally
+#file_name=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/", date, "_", "Mutect2_Strelka_merged_mutations_wCNA_status.rds", sep="")
+#saveRDS(read_only, file_name)
 
 #mut-gene summary table for downstream use
 mut_gene = unique(read_only[,c("mut_id", "symbol", "biotype", "Func.ensGene", "ExonicFunc.ensGene",

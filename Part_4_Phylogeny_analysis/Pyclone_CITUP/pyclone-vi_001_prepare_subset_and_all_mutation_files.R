@@ -111,32 +111,12 @@ get_bam_read_full_dat = function(dat){
   patient = unique(dat[[1]]$STUDY_PATIENT_ID)
   print(name_analysis)
 
-  if(patient == "LY_RAP_0001"){
-    t = filter(as.data.table(table(dat[[1]]$mut_id)), (N==3))
-    muts_all = as.data.table(filter(dat[[1]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[1]], !(mut_id %in% t$V1)))
-  }
-
-  if(patient == "LY_RAP_0002"){
-    t = filter(as.data.table(table(dat[[1]]$mut_id)), (N==4))
-    muts_all = as.data.table(filter(dat[[1]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[1]], !(mut_id %in% t$V1)))
-  }
-
-  if(patient == "LY_RAP_0003"){
-    t = filter(as.data.table(table(dat[[1]]$mut_id)), (N==20))
-    muts_all = as.data.table(filter(dat[[1]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[1]], !(mut_id %in% t$V1)))
-  }
-
-  print(patient)
-  print(dim(muts_all))
-  print(dim(muts_some))
+  muts = dat[[1]]
 
   #save muts_some so that can run bam readcount and extract counts in those mutations
   #across all samples
   #need chr, start, end, ref and alt save as bed file, no colnames, tab sep
-  muts_some_bam_readcount = unique(muts_some[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
+  muts_some_bam_readcount = unique(muts[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
   muts_some_bam_readcount$mut_id = muts_some_bam_readcount$POS
   #remove chr from CHROM
   muts_some_bam_readcount$CHROM = sapply(muts_some_bam_readcount$CHR, function(x){
@@ -157,32 +137,14 @@ get_bam_read_partial_dat = function(dat){
   patient = unique(dat[[1]]$STUDY_PATIENT_ID)
   print(name_analysis)
 
-  if(patient == "LY_RAP_0001"){
-    t = filter(as.data.table(table(dat[[2]]$mut_id)), (N==3))
-    muts_all = as.data.table(filter(dat[[2]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[2]], !(mut_id %in% t$V1)))
-  }
-
-  if(patient == "LY_RAP_0002"){
-    t = filter(as.data.table(table(dat[[2]]$mut_id)), (N==4))
-    muts_all = as.data.table(filter(dat[[2]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[2]], !(mut_id %in% t$V1)))
-  }
-
-  if(patient == "LY_RAP_0003"){
-    t = filter(as.data.table(table(dat[[2]]$mut_id)), (N==20))
-    muts_all = as.data.table(filter(dat[[2]], mut_id %in% t$V1))
-    muts_some = as.data.table(filter(dat[[2]], !(mut_id %in% t$V1)))
-  }
+  muts = dat[[2]]
 
   print(patient)
-  print(dim(muts_all))
-  print(dim(muts_some))
 
   #save muts_some so that can run bam readcount and extract counts in those mutations
   #across all samples
   #need chr, start, end, ref and alt save as bed file, no colnames, tab sep
-  muts_some_bam_readcount = unique(muts_some[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
+  muts_some_bam_readcount = unique(muts[,c("CHROM", "POS", "mut_id", "REF", "ALT")])
   muts_some_bam_readcount$mut_id = muts_some_bam_readcount$POS
   #remove chr from CHROM
   muts_some_bam_readcount$CHROM = sapply(muts_some_bam_readcount$CHR, function(x){

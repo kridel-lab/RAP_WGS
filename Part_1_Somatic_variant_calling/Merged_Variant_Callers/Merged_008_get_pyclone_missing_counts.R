@@ -229,7 +229,7 @@ get_reads = function(patient, type_analysis){
 	  return(all_pats)
 	}
 
-	all_muts = unique(missing_mutations$id)
+	all_muts = unique(read_only_pat$mut_id)
 	missing_records = as.data.table(ldply(llply(all_muts, get_record, .progress="text")))
 	all_records = missing_records
 	write.table(all_records, file=paste(date, type_analysis, patient, "mutations", "PYCLONE_INPUT_MUTS.txt", sep="_"), quote=F, row.names=F, sep="\t")
