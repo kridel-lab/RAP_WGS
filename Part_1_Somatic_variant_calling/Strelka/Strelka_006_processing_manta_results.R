@@ -156,4 +156,4 @@ clean_up_001 = function(vcf){
 processed_vcf = clean_up_001(vcf)
 print("done")
 print(index)
-saveRDS(processed_vcf, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Manta/", date, index, ".rds", sep="_"))
+saveRDS(processed_vcf, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Manta/", date, "_", index, ".rds", sep=""))
