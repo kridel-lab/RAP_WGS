@@ -7,6 +7,7 @@
 #SBATCH -J process_manta
 #SBATCH -c 8
 
+module purge
 module load R/3.5.0
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/
 
