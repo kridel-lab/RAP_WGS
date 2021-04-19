@@ -15,6 +15,6 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/
 for sample in $(cat patient_ids.txt)
 do
 	echo $sample
-	Rscript /cluster/projects/kridelgroup/RAP_ANALYSIS/Part_1_Somatic_variant_calling/Strelka_006_processing_manta_results.R $sample
+	Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_006_processing_manta_results.R $sample
 
 done
