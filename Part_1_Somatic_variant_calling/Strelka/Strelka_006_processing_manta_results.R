@@ -13,8 +13,8 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.tabl
   "ggrepel", "stringr", "maftools", "VariantAnnotation")
 lapply(packages, require, character.only = TRUE)
 library(GenomicRanges)
-library(Homo.sapiens)
-library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
+#library(Homo.sapiens)
+#library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
 library(biomaRt)
 
 date = Sys.Date()
@@ -24,7 +24,7 @@ args = commandArgs(trailingOnly = TRUE) #patient ID
 index = args[1]
 print(index)
 
-setwd(paste("MANTA_RESULTS/", "MANTA_WORKDIR_", index, "_files/", "gatk/", index, ".sorted.dup.recal.cram.bam/results/variants", sep=""))
+setwd(paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_WORKDIR/", "MANTA_WORKDIR_", index, "/results/variants", sep=""))
 
 #----------------------------------------------------------------------
 #purpose
@@ -51,7 +51,6 @@ all_genes = unique(all_genes[,c("ensembl_gene_id", "hgnc_symbol", "chromosome_na
 genes = unique(fread("/cluster/home/kisaev/data/annotables_grch37.txt"))
 genes = as.data.table(filter(genes, biotype == "protein_coding"))
 genes = as.data.table(filter(genes, !(is.na(entrez))))
-
 
 #add extra window to start and end of gene to capture gene even if not directly overlapping
 all_genes$start_position = all_genes$start_position - 5000
@@ -157,4 +156,4 @@ clean_up_001 = function(vcf){
 processed_vcf = clean_up_001(vcf)
 print("done")
 print(index)
-saveRDS(processed_vcf, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs/", date, index, ".rds", sep="_"))
+saveRDS(processed_vcf, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Manta/", date, index, ".rds", sep="_"))

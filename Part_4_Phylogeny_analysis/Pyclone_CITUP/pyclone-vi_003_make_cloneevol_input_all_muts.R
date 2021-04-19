@@ -198,18 +198,18 @@ get_patient_pyclone_plot = function(patient){
 
       dat[which(dat$cluster==1),][,4:6] = 50
 
-      z = which(dat$cluster==2)
-      dat$Mediastinal_lymph_node[z] = 49
-      dat$Aorta_ascending[z] = 49
+      #z = which(dat$cluster==2)
+      #dat$Mediastinal_lymph_node[z] = 49
+      #dat$Aorta_ascending[z] = 49
 
-      z = which(dat$cluster==7)
-      dat$Mediastinal_lymph_node[z] = 48
-      dat$Aorta_ascending[z] = 48
+      #z = which(dat$cluster==7)
+      #dat$Mediastinal_lymph_node[z] = 48
+      #dat$Aorta_ascending[z] = 48
 
-      z = which(dat$cluster==3)
-      dat$Aorta_abdominal_not_specified[z] = 27.5
+      #z = which(dat$cluster==3)
+      #dat$Aorta_abdominal_not_specified[z] = 27.5
 
-      clusters_remove=c(2, 5,7, 9,6)
+      clusters_remove=c(5, 3, 6, 7)
 
       #infer clonal evolution tree
       y = infer.clonal.models(variants = dat,
@@ -221,7 +221,7 @@ get_patient_pyclone_plot = function(patient){
         subclonal.test.model ='non-parametric',
         #subclonal.test.model ='non-parametric',
         #num.boots = 1000,
-        ignore.clusters=c(2, 5,7, 9,6),
+        ignore.clusters=clusters_remove,
         score.model.by = 'metap',
         seeding.aware.tree.pruning = TRUE,
         cluster.center ='mean',
@@ -231,33 +231,52 @@ get_patient_pyclone_plot = function(patient){
     }
 
     if(patient == "LY_RAP_0002"){
-      z1 = which(dat$cluster == 1)
-      z2 = which(dat$cluster == 3)
-      dat$cluster[z2]=1
-      dat$cluster[z1]=3
+
+    #  z1 = which(dat$cluster == 1)
+  #    z2 = which(dat$cluster == 3)
+  #    dat$cluster[z2]=1
+  #    dat$cluster[z1]=3
 
       #make all clonal clusters = 100% CP
       dat[which(dat$cluster==1), 4:7] = 50
-      dat[which(dat$cluster==10)]$Adrenal_gland_NOS = 37
+
+#      dat[which(dat$cluster==10)]$Adrenal_gland_NOS = 37
+
       dat[which(dat$cluster==4)]$Adrenal_gland_NOS = 0
-      dat[which(dat$cluster==4)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==4)]$Mesenteric_lymph_node_NOS = 0
+      dat[which(dat$cluster==4)]$Thorax_NOS = 0
 
-      dat[which(dat$cluster==12)]$Adrenal_gland_NOS = 0
-      dat[which(dat$cluster==12)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==7)]$Adrenal_gland_NOS = 0
+      dat[which(dat$cluster==7)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==7)]$Mesenteric_lymph_node_NOS = 0
 
-      dat[which(dat$cluster==5)]$Adrenal_gland_NOS = 0
-      dat[which(dat$cluster==5)]$Thorax_NOS = 0
+      dat[which(dat$cluster==8)]$Adrenal_gland_NOS = 0
+      dat[which(dat$cluster==8)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==8)]$Thorax_NOS = 0
 
-      dat[which(dat$cluster==9)]$Liver_Left_lobe = 0
-      dat[which(dat$cluster==9)]$Mesenteric_lymph_node_NOS = 0
+      dat[which(dat$cluster==2)]$Mesenteric_lymph_node_NOS = 0
+      dat[which(dat$cluster==2)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==2)]$Thorax_NOS = 0
 
-      dat[which(dat$cluster==10)]$Liver_Left_lobe = 0
-      dat[which(dat$cluster==10)]$Mesenteric_lymph_node_NOS = 0
-      dat[which(dat$cluster==10)]$Thorax_NOS = 0
+      dat[which(dat$cluster==3)]$Liver_Left_lobe = 0
+      dat[which(dat$cluster==3)]$Mesenteric_lymph_node_NOS = 0
 
-      dat[which(dat$cluster==13)]$Liver_Left_lobe = 0
+#      dat[which(dat$cluster==12)]$Adrenal_gland_NOS = 0
+#      dat[which(dat$cluster==12)]$Liver_Left_lobe = 0
 
-      clusters_remove=c(8, 2, 6, 11, 7,3)
+#      dat[which(dat$cluster==5)]$Adrenal_gland_NOS = 0
+#      dat[which(dat$cluster==5)]$Thorax_NOS = 0
+
+#      dat[which(dat$cluster==9)]$Liver_Left_lobe = 0
+#      dat[which(dat$cluster==9)]$Mesenteric_lymph_node_NOS = 0
+
+#      dat[which(dat$cluster==10)]$Liver_Left_lobe = 0
+#      dat[which(dat$cluster==10)]$Mesenteric_lymph_node_NOS = 0
+#      dat[which(dat$cluster==10)]$Thorax_NOS = 0
+
+#      dat[which(dat$cluster==13)]$Liver_Left_lobe = 0
+
+      clusters_remove=c(13, 5, 9, 6, 11, 10, 12)
 
       #infer clonal evolution tree
       y = infer.clonal.models(variants = dat,
@@ -267,7 +286,7 @@ get_patient_pyclone_plot = function(patient){
       #subclonal.test ='none',
       #subclonal.test = 'bootstrap',
       #subclonal.test.model ='non-parametric',
-      ignore.clusters=c(8, 2, 6, 11, 7,3),
+      ignore.clusters=clusters_remove,
       #score.model.by = 'metap',
       #seeding.aware.tree.pruning = TRUE,
       cluster.center ='mean',
@@ -278,38 +297,39 @@ get_patient_pyclone_plot = function(patient){
 
     if(patient == "LY_RAP_0003"){
       z1 = which(dat$cluster == 1)
-      z2 = which(dat$cluster == 5)
+      z2 = which(dat$cluster == 11)
       dat$cluster[z2]=1
-      dat$cluster[z1]=5
+      dat$cluster[z1]=11
 
       #make all clonal clusters = 100% CP
       dat[which(dat$cluster==1), 4:23] = 50
 
-      dat[which(dat$cluster==2)]$Spleen = 49
-      dat[which(dat$cluster==9)]$Abdomen_NOS = 48
-      dat[which(dat$cluster==9)]$Inguinal_region_NOS = 48
-      dat[which(dat$cluster==5)]$Axilla_NOS = 48
-      dat[which(dat$cluster==11)]$Abdomen_NOS = 47.5
+      dat[which(dat$cluster==4)]$Adrenal_gland_NOS = 49
+      dat[which(dat$cluster==4)]$Axilla_NOS = 49
+      dat[which(dat$cluster==4)]$Cecum = 49
+      dat[which(dat$cluster==4)]$Spleen = 49
 
-      dat[which(dat$cluster==11)]$Axilla_NOS = 0
-      dat[which(dat$cluster==11)]$Kidney_NOS = 0
-      dat[which(dat$cluster==11)]$left_breast = 0
-      dat[which(dat$cluster==11)]$Mediastinum_NOS = 0
-      dat[which(dat$cluster==11)]$Omentum = 0
-      dat[which(dat$cluster==11)]$right_neck_LN = 0
-      dat[which(dat$cluster==11)]$Shoulder_NOS = 0
-      dat[which(dat$cluster==11)]$Spleen = 0
+      dat[which(dat$cluster==11)]$Axilla_NOS = 48
 
-      dat[which(dat$cluster==10)]$Bladder_NOS = 0
-      dat[which(dat$cluster==10)]$left_axilla_LN = 0
-      dat[which(dat$cluster==10)]$left_breast = 0
-      dat[which(dat$cluster==10)]$Mediastinum_NOS = 0
-      dat[which(dat$cluster==10)]$Omentum = 0
-      dat[which(dat$cluster==10)]$Shoulder_NOS = 0
-      dat[which(dat$cluster==10)]$Pancreas_NOS = 0
-      dat[which(dat$cluster==10)]$Retroperitoneum_NOS = 0
+      #dat[which(dat$cluster==11)]$Axilla_NOS = 0
+      #dat[which(dat$cluster==11)]$Kidney_NOS = 0
+      #dat[which(dat$cluster==11)]$left_breast = 0
+      #dat[which(dat$cluster==11)]$Mediastinum_NOS = 0
+      #dat[which(dat$cluster==11)]$Omentum = 0
+      #dat[which(dat$cluster==11)]$right_neck_LN = 0
+      #dat[which(dat$cluster==11)]$Shoulder_NOS = 0
+      #dat[which(dat$cluster==11)]$Spleen = 0
 
-      clusters_remove=c(3, 6, 12, 8, 4)
+      #dat[which(dat$cluster==10)]$Bladder_NOS = 0
+      #dat[which(dat$cluster==10)]$left_axilla_LN = 0
+      #dat[which(dat$cluster==10)]$left_breast = 0
+      #dat[which(dat$cluster==10)]$Mediastinum_NOS = 0
+      #dat[which(dat$cluster==10)]$Omentum = 0
+      #dat[which(dat$cluster==10)]$Shoulder_NOS = 0
+      #dat[which(dat$cluster==10)]$Pancreas_NOS = 0
+      #dat[which(dat$cluster==10)]$Retroperitoneum_NOS = 0
+
+      clusters_remove=c(5, 6, 8, 9, 10, 12, 15)
 
       #infer clonal evolution tree
       y = infer.clonal.models(variants = dat,
@@ -319,7 +339,7 @@ get_patient_pyclone_plot = function(patient){
       #subclonal.test ='none',
       #subclonal.test = 'bootstrap',
       #subclonal.test.model ='non-parametric',
-      ignore.clusters=c(3, 6, 12, 8, 4),
+      ignore.clusters=clusters_remove,
       #score.model.by = 'metap',
       #seeding.aware.tree.pruning = TRUE,
       cluster.center ='mean',

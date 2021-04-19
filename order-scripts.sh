@@ -174,7 +174,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyc
 #Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files_neut.R
 
 #prepare individual sample mutations
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files.R
+#Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files.R
 
 #run pyclone
 #sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_all_muts.sh
