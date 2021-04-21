@@ -3,28 +3,28 @@
 #----------------------------------------------------------------------
 
 #----------------------------------------------------------------------
-#load functions and libraries 
+#load functions and libraries
 #----------------------------------------------------------------------
 
 options(stringsAsFactors=F)
 
-#load libraries 
-packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr", 
+#load libraries
+packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table", "plyr",
   "ggrepel", "stringr", "maftools", "VariantAnnotation")
 lapply(packages, require, character.only = TRUE)
 library(GenomicRanges)
-library(Homo.sapiens)
-library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
+#library(Homo.sapiens)
+#library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
 library(biomaRt)
 
 date = Sys.Date()
 
 print(date)
-#args = commandArgs(trailingOnly = TRUE) #patient ID 
-#index = args[1] 
-#print(index) 
+#args = commandArgs(trailingOnly = TRUE) #patient ID
+#index = args[1]
+#print(index)
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Manta")
 
 #----------------------------------------------------------------------
 #purpose
@@ -33,10 +33,10 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/MANTA_RESULTS/PROCESSED_VCFs")
 #how did we get here?
 
 #----------------------------------------------------------------------
-#data 
+#data
 #----------------------------------------------------------------------
 
-all_SVs = list.files(pattern = "_2019-12-16")
+all_SVs = list.files(pattern = "2021-04-19")
 
 read_f = function(filee){
   f = readRDS(filee)
