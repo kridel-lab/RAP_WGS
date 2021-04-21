@@ -20,6 +20,9 @@ less all_control_samples.txt | wc -l
 #call SVs and indels
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
+#process and summmarize manta results
+
+
 #----run strelka----------------------------------------------------------------
 
 #1. call variants
@@ -119,11 +122,6 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_using_sequenza.R
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_indels_using_sequenza.R
 
-#----TitanCNA-------------------------------------------------------------------
-
-#run first run of TitanCNA
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/titan_cna_job.sh
-
 #----Hatchet--------------------------------------------------------------------
 
 #1. get BAM files for patients 001 and 002
@@ -145,17 +143,6 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/p
 #8. prepare SNVs for each patient to be used for Hatchet provided explainMutationsCCF script
 Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/prep_SNVs_for_CCF_calculation.R
 
-#----CNVkit---------------------------------------------------------------------
-
-#save control germline files as BAM files for all three samples in temp folder
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_pre_001_make_bam_files_for_control_samples.sh
-
-#run WGS CNVkit mode on each tumour sample with appropriate control sample
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_001.sh
-
-#run PureCN to get ploidy and purity estimates
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/CNVkit/CNVkit_002_PureCN.sh
-
 #----Pyclone--------------------------------------------------------------------
 
 #prepare input for bamreadcount
@@ -170,58 +157,11 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varian
 #prepare input for pyclone-vi
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files_sequenza.R
 
-#prepare input for pyclone-vi copy neutral assumption
-#Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files_neut.R
-
-#prepare individual sample mutations
-#Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files.R
-
-#run pyclone
-#sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_all_muts.sh
-
 #run pyclone-vi all muts
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts.sh
 
-#run pyclone-vi all muts neutral assumption
-#sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts_neut.sh
-
-#run subset of mutations
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_subset_muts.sh
-
-#run pyclone low mem
-#sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_002_run_main_program_low_mem.sh
-
-#prepare input for CITUP
-#Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_003_make_citup_input.R
-
-#run through CITUP
-#cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone
-#sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_004_setting_up_CITUP.sh
-
-#get output from CITUP
-#python /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_005_reading_CITUP_results_rap.py
-
-#summarize results from pyclone
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_006_pyclone_summary.R
-
-#run mapscape locally after results from citup have been transferred over
-Rscript /Users/kisaev/github/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone_007_mapscape.R
-
-#----SciClone------------------------------------------------------------------
-
-#generate input files
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_make_CNA_input_list.R
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_make_SNV_input_list.R
-
-#run on individual samples
-index=1 #from 1 to 20....
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_001_run.R $index
-
-#run on all samples
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_002_job_submit.sh
-
-#run pairwise sciclone comparing each sample to another sample 2D
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/SciClone/sciclone_003_job_submit.sh
+#generate clonevol trees using pyclone results
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_003_make_cloneevol_input_all_muts.R
 
 #----Treeomics------------------------------------------------------------------
 

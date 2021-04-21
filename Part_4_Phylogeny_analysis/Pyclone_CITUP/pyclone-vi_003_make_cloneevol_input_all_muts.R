@@ -17,7 +17,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #test
-patient = "LY_RAP_0003"
+#patient = "LY_RAP_0003"
 
 z = which(read_only$Tissue_Site == "Aorta, ascending, not specified \n\n")
 if(!(length(z) == 0)){
@@ -28,6 +28,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 get_patient_pyclone_plot = function(patient){
+
+  print(patient)
 
   #get results from pyclone
   file_name = paste(patient, "_rap_wgs_all_muts.tsv", sep="")
@@ -435,9 +437,6 @@ get_patient_pyclone_plot = function(patient){
 p001_dat = get_patient_pyclone_plot("LY_RAP_0001")
 p002_dat = get_patient_pyclone_plot("LY_RAP_0002")
 p003_dat = get_patient_pyclone_plot("LY_RAP_0003")
-
-#to make tree need to have founding clone be labelled 1
-#so remove the first cluster since ignoring it anyways
 
 #-----
 #DONE-
