@@ -29,7 +29,7 @@ setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #test
-patient = "LY_RAP_0003"
+#patient = "LY_RAP_0003"
 
 z = which(read_only$Tissue_Site == "Aorta, ascending, not specified \n\n")
 if(!(length(z) == 0)){
@@ -47,8 +47,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 #test
-patient_clonevol_results="LY_RAP_0002_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-patient = "LY_RAP_0002"
+#patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
+#patient = "LY_RAP_0003"
 
 #----------------------------------------------------------------------
 #analysis

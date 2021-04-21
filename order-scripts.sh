@@ -161,7 +161,11 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyc
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts.sh
 
 #generate clonevol trees using pyclone results
+module load R/3.5.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_003_make_cloneevol_input_all_muts.R
+
+#evaluate mutation signatures across pyclone clusters
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_005_pyclone_mutation_signatures_in_clusters.R
 
 #----Treeomics------------------------------------------------------------------
 
