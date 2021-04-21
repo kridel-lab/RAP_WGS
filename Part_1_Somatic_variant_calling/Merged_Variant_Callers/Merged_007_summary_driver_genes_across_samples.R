@@ -47,6 +47,7 @@ print(p)
 dev.off()
 
 colnames(barplot)[2]="Patient"
+
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/001_samples_per_mutation_lineplot.pdf",
 width=5, height=5)
 # Basic barplot
@@ -54,7 +55,6 @@ p<-ggline(barplot, x="num_of_samples_with_mut", y="num_of_muts",
 palette = c("#00AFBB", "#E7B800", "#FC4E07"), color="Patient")+
 xlab("# of samples sharing mutation") + ylab("Mutation count")+
 scale_y_continuous(breaks=seq(0,300000,20000))
-
 print(p)
 dev.off()
 
@@ -62,9 +62,6 @@ dev.off()
 muts_per_sample = as.data.table(table(read_only$STUDY_PATIENT_ID,read_only$Tissue_Site))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
 muts_per_sample = muts_per_sample[order(-N)]
-#muts_per_sample$V1 = factor(muts_per_sample$V1, levels=unique(muts_per_sample$V1))
-#muts_per_sample$V2 = factor(muts_per_sample$V2, levels=unique(muts_per_sample$V2))
-
 colnames(muts_per_sample) = c("Patient", "Sample", "num_of_muts")
 muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
 muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
