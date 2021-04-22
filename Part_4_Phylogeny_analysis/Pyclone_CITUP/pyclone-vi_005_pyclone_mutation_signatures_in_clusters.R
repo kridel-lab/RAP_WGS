@@ -62,8 +62,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 #test
-#patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-#patient = "LY_RAP_0003"
+patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
+patient = "LY_RAP_0003"
 
 #----------------------------------------------------------------------
 #analysis
@@ -126,26 +126,16 @@ get_mut_signatures = function(patient, patient_clonevol_results){
     muts_maf = read.maf(maf = "tem_maf_file.txt")
 
     pdf(paste(clust, "mutation_signature_analysis_plots.pdf", sep="_"))
-
     laml.titv = titv(maf = muts_maf, plot = FALSE, useSyn = TRUE)
-
     #plot titv summary
     plotTiTv(res = laml.titv)
-
     #rainfall plot
     rainfallPlot(maf = muts_maf, detectChangePoints = TRUE, pointSize = 0.4)
-
     #mutation signatures analysis
     laml.tnm = trinucleotideMatrix(maf = muts_maf, ref_genome = "BSgenome.Hsapiens.UCSC.hg19")
-
-    #library('NMF')
-    #laml.sign = estimateSignatures(mat = laml.tnm, nMin = 2, nTry = 3, nrun = 2, pConstant = 0.01)
-
     num_clusts = 2
-
     laml.sig = extractSignatures(mat = laml.tnm, n = num_clusts, pConstant = 1e-9)
     laml.v3.cosm = compareSignatures(nmfRes = laml.sig, sig_db = "SBS")
-
     all_cos = as.data.frame(laml.v3.cosm$cosine_similarities)
     all_cos$nmf_sig = rownames(all_cos)
     all_cos = as.data.table(all_cos)
@@ -169,12 +159,9 @@ get_mut_signatures = function(patient, patient_clonevol_results){
     lapply(type_context, head, 12)
     type_occurrences <- mut_type_occurrences(GRangesList(grl_my), ref_genome)
     mut_mat <- mut_matrix(vcf_list = GRangesList(grl_my), ref_genome = ref_genome)
+    signatures = get_known_signatures()
 
-    #save result
-    sigs=as.data.table(laml.v3.cosm$best_match)
-    sigs$patient = patient
-    sigs$clust=clust
-    return(sigs)
+    return()
   }
 
   all_clusts = as.data.table(ldply(llply(clusters, get_cluster_muts)))
