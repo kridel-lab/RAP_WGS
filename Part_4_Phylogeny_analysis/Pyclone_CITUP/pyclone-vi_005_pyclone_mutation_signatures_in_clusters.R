@@ -62,8 +62,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 #test
-patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-patient = "LY_RAP_0003"
+#patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
+#patient = "LY_RAP_0003"
 
 #----------------------------------------------------------------------
 #analysis
@@ -115,12 +115,12 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
   fit_res_strict <- strict_refit$fit_res
 
-  pdf(paste(clust, "mutation_signature_analysis_plots.pdf", sep="_"))
+  pdf("mutation_signature_analysis_plots.pdf")
   plot_contribution(fit_res_strict$contribution, palette=mypal)
   dev.off()
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
-  return(all_clusts)
+  #return(all_clusts)
 }
 
 p001 = get_mut_signatures("LY_RAP_0001", "LY_RAP_0001_all_mutations_Pyclone-VI-clonevol-results.xlsx")
