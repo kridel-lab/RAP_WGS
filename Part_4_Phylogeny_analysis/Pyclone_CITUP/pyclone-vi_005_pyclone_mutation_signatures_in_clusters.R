@@ -24,14 +24,14 @@ library('pheatmap')
 
 library(dplyr)
 library(reshape2)
-library(kableExtra)
+#library(kableExtra)
 library(ggplot2)
 library(gridExtra)
 library(BSgenome.Hsapiens.UCSC.hg19)
 hg19 <- BSgenome.Hsapiens.UCSC.hg19
 
 # Load mutSignatures
-library(mutSignatures)
+#library(mutSignatures)
 library(MutationalPatterns)
 
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
