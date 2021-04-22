@@ -121,3 +121,87 @@ LY_RAP_0003$phylogeny[LY_RAP_0003$num_of_samples_with_mut == 1] = "private"
 LY_RAP_0003$phylogeny[LY_RAP_0003$phylogeny == ""] = "shared"
 
 samples_per_mut = rbind(LY_RAP_0001, LY_RAP_0002, LY_RAP_0003)
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+get_known_signatures <- function(muttype = c("snv", "dbs", "indel", "tsb_snv"),
+                                 source = c("COSMIC", "SIGNAL", "SPARSE"),
+                                 sig_type = c("reference", "exposure", "tissue"),
+                                 incl_poss_artifacts = FALSE,
+                                 tissue_type = c(
+                                   NA, "Biliary", "Bladder", "Bone",
+                                   "Breast", "Cervix", "CNS",
+                                   "Colorectal", "Esophagus", "Head",
+                                   "Kidney", "Liver", "Lung",
+                                   "Lymphoid", "Myeloid", "Ovary",
+                                   "Pancreas", "Prostate", "Skin",
+                                   "Stomach", "Thyroid", "Uterus"
+                                 )) {
+
+  # Validate arguments
+  muttype <- match.arg(muttype)
+  source <- match.arg(source)
+  sig_type <- match.arg(sig_type)
+  tissue_type <- match.arg(tissue_type)
+
+  if (!.is_na(tissue_type) & sig_type != "tissue") {
+    stop("tissue_type can only be used with `sig_type == 'tissue'`",
+      call. = FALSE
+    )
+  }
+
+  # Determine signature file name
+  basename_sig <- paste0(muttype, "_", source, "_", sig_type, ".txt")
+  fname_sig <- file.path("extdata", "signatures", basename_sig)
+  fname_sig <- system.file(fname_sig, package = "MutationalPatterns")
+
+  # Give error if file doesn't exist.
+  if (!file.exists(fname_sig)) {
+    stop(paste0(
+      "The signature file: ", fname_sig, " does not exist.\n",
+      "Look at the documentation of 'get_known_signatures()' for",
+      " all the possible combinations of arguments."
+    ),
+    call. = FALSE
+    )
+  }
+
+  # Read in signature file
+  signatures <- read.table(fname_sig, sep = "\t", header = TRUE)
+
+
+  # Remove meta columns
+  if (muttype == "snv") {
+    meta_cols <- c(1, 2)
+  } else if (muttype == "tsb_snv") {
+    meta_cols <- c(1, 2, 3)
+  } else {
+    meta_cols <- 1
+  }
+  signatures <- as.matrix(signatures[, -meta_cols, drop = FALSE])
+
+  # Remove possible artifacts
+  if (!incl_poss_artifacts) {
+    if (source == "SIGNAL" & sig_type == "reference") {
+      good_cols <- grep("Ref.Sig.N[0-9]{0-2}",
+        colnames(signatures),
+        invert = TRUE
+      )
+      signatures <- signatures[, good_cols, drop = FALSE]
+    }
+
+    if (source == "COSMIC" & muttype == "snv") {
+      bad_sigs <- paste0("SBS", c(27, 43, seq(45, 60)))
+      good_cols <- !colnames(signatures) %in% bad_sigs
+      signatures <- signatures[, good_cols, drop = FALSE]
+    }
+  }
+
+  # Select signatures of the specified tissue type
+  if (!.is_na(tissue_type)) {
+    tissue_cols <- grep(paste0("^", tissue_type, "_"), colnames(signatures))
+    signatures <- signatures[, tissue_cols, drop = FALSE]
+  }
+
+  return(signatures)
+}
