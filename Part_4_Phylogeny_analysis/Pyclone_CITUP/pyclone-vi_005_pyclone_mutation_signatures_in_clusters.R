@@ -62,8 +62,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 #test
-#patient_clonevol_results="LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-#patient = "LY_RAP_0003"
+patient_clonevol_results="LY_RAP_0001_all_mutations_Pyclone-VI-clonevol-results.xlsx"
+patient = "LY_RAP_0001"
 
 #----------------------------------------------------------------------
 #analysis
@@ -120,8 +120,14 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   print(p)
   dev.off()
 
+  all_clusts = as.data.frame(fit_res_strict$contribution)
+  all_clusts$signature = rownames(all_clusts)
+  all_clusts=melt(as.data.table(all_clusts))
+  all_clusts$patient = patient
+  all_clusts = as.data.table(all_clusts)[order(-value)]
+
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
-  #return(all_clusts)
+  return(all_clusts)
 }
 
 p001 = get_mut_signatures("LY_RAP_0001", "LY_RAP_0001_all_mutations_Pyclone-VI-clonevol-results.xlsx")
