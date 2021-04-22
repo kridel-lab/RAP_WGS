@@ -2,7 +2,7 @@
 #pyclone-vi_005_pyclone_mutation_signatures_in_clusters.R
 #Karin Isaev
 #March 3rd 2021, 2021
-#load R/3.5.0
+#load R/4.0.0
 #-------------------------------------------------------------------------------
 
 #load packages and data
