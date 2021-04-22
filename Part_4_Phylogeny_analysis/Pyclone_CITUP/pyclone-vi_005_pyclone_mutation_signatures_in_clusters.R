@@ -91,7 +91,7 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   #for each cluster gather mutations and their details from main mutation
   #file
 
-  cluster_muts = unique(cluster_muts[,c("mut_id", "cluster")])
+  cluster_muts = unique(muts[,c("mut_id", "cluster")])
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mut_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
   "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
