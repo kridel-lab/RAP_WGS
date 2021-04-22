@@ -74,6 +74,10 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   #read in mutation data for each cluster as obtained from pyclone
   muts <- as.data.table(read_excel(patient_clonevol_results))
 
+  #keep only clusters that were included in the tree
+  z = which(muts$cluster_removed == "removed")
+  muts = muts[-z,]
+
   #get clusters
   clusters = unique(muts$cluster)
 
@@ -86,85 +90,35 @@ get_mut_signatures = function(patient, patient_clonevol_results){
 
   #for each cluster gather mutations and their details from main mutation
   #file
-  get_cluster_muts = function(clust){
 
-    cluster_muts = filter(muts, cluster==clust)
-    mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mut_id))
-    mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
-    "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
-    mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
+  cluster_muts = unique(cluster_muts[,c("mut_id", "cluster")])
+  mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mut_id))
+  mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
+  mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
+  mut.merged = merge(cluster_muts, mut.merged, by="mut_id")
 
-    #maftools
-    #Mandatory fields: Hugo_Symbol, Chromosome, Start_Position, End_Position,
-    #Reference_Allele, Tumor_Seq_Allele2,
-    #Variant_Classification, Variant_Type and Tumor_Sample_Barcode.
-    colnames(mut.merged)[3] = "Start_Position"
-    mut.merged$End_Position = mut.merged$Start_Position
-    colnames(mut.merged)[4] = "Chromosome"
-    colnames(mut.merged)[5] = "Hugo_Symbol"
-    colnames(mut.merged)[6:7] = c("Reference_Allele", "Tumor_Seq_Allele2")
-    mut.merged$Tumor_Sample_Barcode = patient
+  colnames(mut.merged)[4] = "start"
+  mut.merged$end = mut.merged$start
+  colnames(mut.merged)[5] = "chr"
+  colnames(mut.merged)[6] = "Hugo_Symbol"
+  mut.merged$Tumor_Sample_Barcode = patient
 
-    #prepare input for maftools
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic frameshift_deletion"] = "Frame_Shift_Del"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic frameshift_insertion"] = "Frame_Shift_Ins"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic nonsynonymous_SNV"] = "Missense_Mutation"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic nonframeshift_deletion"] = "In_Frame_Del"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic stopgain"] = "Nonsense_Mutation"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic nonframeshift_insertion"] = "In_Frame_Ins"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic nonframeshift_substitution"] = "Inframe_INDEL"
-    mut.merged$Variant_Classification[mut.merged$Variant_Classification == "exonic stoploss"] = "Nonstop_Mutation"
+  #use Mutational Patterns
+  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="cluster", seqnames.field = "chr",
+  start.field = "start", end.field = "end", keep.extra.columns=TRUE)
+  mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
 
-    #make rest of mutations "misssense" so can use full dataset for signature analysis
-    mut.merged$Variant_Classification[!(mut.merged$Variant_Classification %in% c("Frame_Shift_Del", "Frame_Shift_Ins",
-        "Missense_Mutation", "In_Frame_Del", "Nonsense_Mutation", "In_Frame_Ins", "Inframe_INDEL", "Nonstop_Mutation"))] = "Missense_Mutation"
+  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.8)
 
-    mut.merged[,ref_alt_diff := nchar(Reference_Allele) - nchar(Tumor_Seq_Allele2)]
-    mut.merged[, Variant_Type := ifelse(ref_alt_diff == 0 , yes = "SNP", no = ifelse(ref_alt_diff < 0 , yes = "INS", no = "DEL"))]
-    #save as maf object
-    write.table(mut.merged, file="tem_maf_file.txt", quote=F, row.names=F, sep="\t")
-    muts_maf = read.maf(maf = "tem_maf_file.txt")
+  #Fit mutation matrix to the COSMIC mutational signatures:
+  strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
+  fit_res_strict <- strict_refit$fit_res
 
-    pdf(paste(clust, "mutation_signature_analysis_plots.pdf", sep="_"))
-    laml.titv = titv(maf = muts_maf, plot = FALSE, useSyn = TRUE)
-    #plot titv summary
-    plotTiTv(res = laml.titv)
-    #rainfall plot
-    rainfallPlot(maf = muts_maf, detectChangePoints = TRUE, pointSize = 0.4)
-    #mutation signatures analysis
-    laml.tnm = trinucleotideMatrix(maf = muts_maf, ref_genome = "BSgenome.Hsapiens.UCSC.hg19")
-    num_clusts = 2
-    laml.sig = extractSignatures(mat = laml.tnm, n = num_clusts, pConstant = 1e-9)
-    laml.v3.cosm = compareSignatures(nmfRes = laml.sig, sig_db = "SBS")
-    all_cos = as.data.frame(laml.v3.cosm$cosine_similarities)
-    all_cos$nmf_sig = rownames(all_cos)
-    all_cos = as.data.table(all_cos)
-    all_cos = melt(all_cos, id = "nmf_sig")
-    all_cos = all_cos[order(-value)]
+  pdf(paste(clust, "mutation_signature_analysis_plots.pdf", sep="_"))
+  plot_contribution(fit_res_strict$contribution, palette=mypal)
+  dev.off()
 
-    pheatmap::pheatmap(mat = laml.v3.cosm$cosine_similarities, cluster_rows = FALSE, main = "cosine similarity against validated signatures")
-    maftools::plotSignatures(nmfRes = laml.sig, title_size = 1.2, sig_db = "SBS")
-    dev.off()
-
-    #use Mutational Patterns
-    #convert maf data to granges object
-    colnames(mut.merged)[which(colnames(mut.merged) == "Reference_Allele")] = "REF"
-    colnames(mut.merged)[which(colnames(mut.merged) == "Tumor_Seq_Allele2")] = "ALT"
-    grl_my = makeGRangesFromDataFrame(mut.merged, seqnames.field = "Chromosome",
-    start.field = "Start_Position", end.field = "End_Position", keep.extra.columns=TRUE)
-    muts <- mutations_from_vcf(grl_my)
-    types <- mut_type(grl_my)
-    context <- mut_context(grl_my, ref_genome)
-    type_context <- type_context(grl_my, ref_genome)
-    lapply(type_context, head, 12)
-    type_occurrences <- mut_type_occurrences(GRangesList(grl_my), ref_genome)
-    mut_mat <- mut_matrix(vcf_list = GRangesList(grl_my), ref_genome = ref_genome)
-    signatures = get_known_signatures()
-
-    return()
-  }
-
-  all_clusts = as.data.table(ldply(llply(clusters, get_cluster_muts)))
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
   return(all_clusts)
 }
