@@ -116,7 +116,8 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   fit_res_strict <- strict_refit$fit_res
 
   pdf("mutation_signature_analysis_plots.pdf")
-  plot_contribution(fit_res_strict$contribution, palette=mypal)
+  p = plot_contribution(fit_res_strict$contribution, palette=mypal)
+  print(p)
   dev.off()
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
