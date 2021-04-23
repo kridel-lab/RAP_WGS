@@ -62,8 +62,8 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #----------------------------------------------------------------------
 
 #test
-patient_clonevol_results="LY_RAP_0001_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-patient = "LY_RAP_0001"
+patient_clonevol_results="LY_RAP_0002_all_mutations_Pyclone-VI-clonevol-results.xlsx"
+patient = "LY_RAP_0002"
 
 #----------------------------------------------------------------------
 #analysis

@@ -125,6 +125,7 @@ p + theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 dev.off()
 
 biotypes$N = log1p(biotypes$num_muts_in_gene_type)
+biotypes$driver[is.na(biotypes$driver)] = "non-driver"
 biotypes$driver = factor(biotypes$driver, levels=c("driver", "non-driver"))
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_muts_mutations_drivers_vs_nondrivers.pdf",
@@ -170,6 +171,18 @@ samples_per_mut$morin = ""
 z = which(samples_per_mut$symbol %in% genes_sum$Gene)
 samples_per_mut$morin[z] = "morin"
 samples_per_mut$morin[-z] = "not_in_morin"
+
+#protein-coding affecting mutations across both driver and non-driver genes
+
+drivers_muts = filter(samples_per_mut, Func.ensGene %in% c("exonic", "splicing", "exonic\\x3bsplicing"),
+ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain", "frameshift_deletion", "frameshift_insertion", "stoploss"))
+
+#question are there overall more truncal driver gene mutations than non-truncal?
+
+
+
+
+
 
 summ_d_a = as.data.table(table(samples_per_mut$patient, samples_per_mut$phylogeny, samples_per_mut$driver))
 colnames(summ_d_a) = c("Patient", "Phylogeny", "Driver", "N")
