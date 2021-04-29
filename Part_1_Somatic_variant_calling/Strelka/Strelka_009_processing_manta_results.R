@@ -44,6 +44,7 @@ colnames(samps)[4] ="Indiv"
 z = which(samps$Indiv %in% svs$pat)
 samps = samps[z,]
 samps[18,2] = "Kidney, NOS 2"
+samps$Tissue_Site[samps$Tissue_Site == "Aorta, ascending, not specified \n\n"] = "Aorta, ascending"
 
 colnames(svs)[which(colnames(svs)=="pat")] = "Indiv"
 svs = merge(svs, samps, by = "Indiv")
@@ -70,6 +71,7 @@ get_row = function(bnd){
   print(bnd)
   dat = as.data.table(filter(svs, id == bnd))
   other_dat = as.data.table(filter(svs, id %in% dat$MATEID))
+  print(dim(other_dat))
   colnames(other_dat) = paste("sv2", colnames(other_dat), sep="_")
   new_bnd_entry = cbind(dat, other_dat)
   return(new_bnd_entry)
@@ -162,6 +164,7 @@ all_svs_sum_plot$gene = factor(all_svs_sum_plot$gene, levels = t$V1)
 
 #save summary file used to generate plot
 saveRDS(all_svs_sum_plot, file=paste(date, "RAP_WGS_all_SVs_heatmap_plot.rds", sep="_"))
+write.table(all_svs_sum_plot, file=paste(date, "RAP_WGS_all_SVs_heatmap_plot.txt", sep="_"), quote=F, row.names=F, sep="}")
 
 #save main file for translocations
 write.csv(new_just_bnds, file=paste(date, "RAP_WGS_translocations_ONLY.csv", sep="_"), quote=F, row.names=F)

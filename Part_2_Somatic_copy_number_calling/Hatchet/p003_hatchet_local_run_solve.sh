@@ -79,7 +79,7 @@ cd ${XDIR}
 
 cd ${RES}
 J=22
-\time python2 -m hatchet solve -i ${BBC}bulk -n2,8 -p 100 -v 3 -u 0.03 -r 12 -j ${J} -eD 6 -eT 12 -g 0.35 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
+\time python2 -m hatchet solve -i ${BBC}bulk -n4,6 -p 300 -r 12 -j ${J} -eD 8 -eT 8 -g 0.25 -l 0.3 &> >(tee >(grep -v Progress > hatchet.log))
 
 ## Increase -l to 0.6 to decrease the sensitivity in high-variance or noisy samples, and decrease it to -l 0.3 in low-variance samples to increase the sensitivity and explore multiple solutions with more clones.
 ## Increase -u if solutions have clone proportions equal to the minimum threshold -u

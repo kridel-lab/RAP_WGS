@@ -49,4 +49,3 @@ J=22
 
 cd ${EVA}
 \time python2 -m hatchet BBeval ${RES}/best.bbc.ucn
-\time python2 -m hatchet BBeval ${RES}/chosen.tetraploid.bbc.ucn

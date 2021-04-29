@@ -44,6 +44,9 @@ get_muts = function(patient){
     colnames(pat_dat)=c("chrom", "position", "Patient", "Sample", "somatic_status",
     "tumor_var_freq", "tumor_reads1", "tumor_reads2")
 
+    #clean up sample colulmn
+    pat_dat$Sample = sapply(pat_dat$Sample, function(x){paste(unlist(strsplit(x, "_"))[4:6], collapse="_")})
+
     #prep output file
     output_file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Hatchet/", patient,".csv", sep="")
 
