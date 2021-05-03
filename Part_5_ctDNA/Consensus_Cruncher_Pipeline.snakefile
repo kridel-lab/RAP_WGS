@@ -49,17 +49,12 @@ rule consensus_crunch_fastq2bam:
                 module load samtools/1.10
                 module load snakemake/5.20.1
 
-                export TMPDIR=/cluster/projects/kridelgroup/LIBERATE/temp_files/
-                export TEMP=/cluster/projects/kridelgroup/LIBERATE/temp_files/
-                export TMP=/cluster/projects/kridelgroup/LIBERATE/temp_files/
-
-                fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta
-                echo $fasta
-                output=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
-                echo $output
+                export TMPDIR=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
+                export TEMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
+                export TMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
 
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o ${output} -r ${fasta} -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher -r /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
             """
 
 #Consensus Cruncher to get summar statistics
@@ -93,8 +88,6 @@ rule consensus_crunch_consensus:
                 module load samtools/1.10
                 module load snakemake/5.20.1
 
-                output=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus
-
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus -i {input.bam} -o $output -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus -i {input.bam} -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False
             """
