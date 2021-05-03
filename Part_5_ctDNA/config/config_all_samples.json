@@ -1,6 +1,6 @@
 {
     "fastqExtension": "fastq.gz",
-    "fastqDir": "/cluster/projects/kridelgroup/210419_A00469_0169_BH53HYDRXY.KLCS.fastqs/",
+    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/",
     "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/bamfiles/",
     "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus/",
     "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/fastq_tag/",
