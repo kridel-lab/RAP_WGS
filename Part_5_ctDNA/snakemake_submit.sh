@@ -3,12 +3,13 @@
 #SBATCH -N 1 # Ensure that all cores are on one machine
 #SBATCH -p himem
 #SBATCH -c 6
-#SBATCH --mem=60000M
+#SBATCH --mem=20000M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J ConsensusCruncher
-#SBATCH -o /cluster/projects/kridelgroup/LIBERATE/gpersad/slurm_outputs/%x-%j.out #redirect job output (both stdout and stderr) to a file called “<job name>-<job id>.out”
+#SBATCH -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/slurm_outputs/%x-%j.out #redirect job output (both stdout and stderr) to a file called “<job name>-<job id>.out”
 
 #load required modules
+module purge
 module load picard/2.10.9
 module load bwa/0.7.15
 module load python3/3.7.2
