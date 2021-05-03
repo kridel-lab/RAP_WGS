@@ -22,9 +22,7 @@ wildcard_constraints:
 # Pipeline output files
 rule all:
     input:
-        sscsvcf = expand(join(config["variantDir"], "{sample}_sscsSC.vcf.gz"), sample=SAMPLES),
-        dcsvcf = expand(join(config["variantDir"], "{sample}_dcsSC.vcf.gz"), sample=SAMPLES),
-        uniqvcf = expand(join(config["variantDir"], "{sample}_dcsSCuniq.vcf.gz"), sample=SAMPLES)
+        expand(join(config["consensusDir"], "{sample}/dcs_SC/{sample}.dcs.sc.sorted.bam"), sample=SAMPLES)
 
 #Consensus cruncher to convert FASTQ files to bam files
 rule consensus_crunch_fastq2bam:
@@ -87,6 +85,7 @@ rule consensus_crunch_consensus:
     shell:
             """
                 #load modules
+                module purge
                 module load bwa/0.7.15
                 module load python3/3.7.2
                 module load samtools/1.10
