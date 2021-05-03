@@ -45,6 +45,7 @@ rule consensus_crunch_fastq2bam:
     shell:
             """
                 #load modules
+                module purge
                 module load bwa/0.7.15
                 module load python3/3.7.2
                 module load samtools/1.10
@@ -58,7 +59,7 @@ rule consensus_crunch_fastq2bam:
                 output=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
 
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o $output -r $fasta -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o ${output} -r ${fasta} -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
             """
 
 #Consensus Cruncher to get summar statistics
