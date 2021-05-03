@@ -1,6 +1,0 @@
-__default__:
-    partition:  himem # users specified
-    mem:    55000M
-    time:   "5-00:00"
-    ncpus:  1
-    out:  "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/slurm_outputs/%x-%j.out"
