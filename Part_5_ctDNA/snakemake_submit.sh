@@ -16,8 +16,8 @@ module load samtools
 module load snakemake/5.20.1
 
 #set temp directories
-export TMPDIR=/cluster/projects/kridelgroup/LIBERATE/temp_files/
-export TEMP=/cluster/projects/kridelgroup/LIBERATE/temp_files/
-export TMP=/cluster/projects/kridelgroup/LIBERATE/temp_files/
+export TMPDIR=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
+export TEMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
+export TMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
 
-snakemake -s /cluster/home/gpersad/ctdna/Pipeline/LIBERATE_pipeline_all.snakefile -j56 --latency-wait 86400 --cluster-config /cluster/home/gpersad/ctdna/Pipeline/config/cluster.yaml --cluster-sync "sbatch -p {cluster.partition} --mem={cluster.mem} -t {cluster.time} -c {cluster.ncpus} -o {cluster.out}" --rerun-incomplete --nolock
+snakemake -s /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline.snakefile -j56 --latency-wait 86400 --cluster-config /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Config/cluster.yaml --cluster-sync "sbatch -p {cluster.partition} --mem={cluster.mem} -t {cluster.time} -c {cluster.ncpus} -o {cluster.out}" --rerun-incomplete --nolock

@@ -3,8 +3,8 @@ from pathlib import Path
 import subprocess
 from os.path import join
 
-configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/cluster.yaml"
-configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples.json"
+configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Config/cluster.yaml"
+configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Config/config_all_samples.json"
 
 
 ### Globals ---------------------------------------------------------------------
