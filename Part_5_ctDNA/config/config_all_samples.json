@@ -1,11 +1,11 @@
 {
     "fastqExtension": "fastq.gz",
-    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/",
-    "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/bamfiles/",
-    "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus/",
-    "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/fastq_tag/",
-    "badbarcodeDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/fastq_tag/bad_barcode/",
-    "barcodeDistDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/fastq_tag/barcode_dist/",
+    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/test_files/",
+    "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/bamfiles/",
+    "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus/",
+    "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/",
+    "badbarcodeDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/bad_barcode/",
+    "barcodeDistDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/barcode_dist/",
     "ressourcesDir": "/cluster/projects/kridelgroup/LIBERATE/gpersad/ressources/",
     "variantDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ctDNA_variant_Calling_TumourOnly/",
     "outputTARGET": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ctDNA_variant_Calling_TumourOnly/interval_lists/"
