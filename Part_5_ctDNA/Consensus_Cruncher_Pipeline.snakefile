@@ -20,9 +20,9 @@ wildcard_constraints:
 ### Rules -----------------------------------------------------------------------
 
 # Pipeline output files
-rule all:
-    input:
-        expand(join(config["consensusDir"], "{sample}/dcs_SC/{sample}.dcs.sc.sorted.bam"), sample=SAMPLES)
+#rule all:
+#    input:
+#        expand(join(config["consensusDir"], "{sample}/dcs_SC/{sample}.dcs.sc.sorted.bam"), sample=SAMPLES)
 
 #Consensus cruncher to convert FASTQ files to bam files
 rule consensus_crunch_fastq2bam:
@@ -57,7 +57,7 @@ rule consensus_crunch_fastq2bam:
                 echo $fasta
                 output=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
                 echo $output
-                
+
                 #run consensus cruncher
                 python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o ${output} -r ${fasta} -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
             """
