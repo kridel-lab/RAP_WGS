@@ -54,7 +54,7 @@ rule consensus_crunch_fastq2bam:
                 export TMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
 
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output -r /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam --fastq1 {input.fq1}  --fastq2 {input.fq2}  -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output -r /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta -b /cluster/tools/software/bwa/0.7.15/bwa  -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -l /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/IDT_dual_Index.txt -g /cluster/tools/software/picard/2.10.9/picard.jar -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
             """
 
 #Consensus Cruncher to get summar statistics
@@ -62,19 +62,19 @@ rule consensus_crunch_consensus:
     input:
         bam = rules.consensus_crunch_fastq2bam.output.bamout
     output:
-        sscssingle = join(config["consensusDir"], "{sample}.sorted/sscs/{sample}.singleton.sorted.bam"),
+        sscssingle = join(config["consensusDir"], "{sample}/sscs/{sample}.singleton.sorted.bam"),
         sscsbad = join(config["consensusDir"], "{sample}/sscs/{sample}.badReads.bam"),
         sscsbam = join(config["consensusDir"], "{sample}/sscs/{sample}.sscs.sorted.bam"),
-        ssSCbam = join(config["consensusDir"], "{sample}/sscs_SC/{sample}.sscs.sc.sorted.bam"),
-        ssSCrescue = join(config["consensusDir"], "{sample}/sscs_SC/{sample}.sscs.rescue.sorted.bam"),
-        ssSCsingle = join(config["consensusDir"], "{sample}/sscs_SC/{sample}.singleton.rescue.sorted.bam"),
-        ssSCremain = join(config["consensusDir"], "{sample}/sscs_SC/{sample}.rescue.remaining.sorted.bam"),
-        ssSCuniq = join(config["consensusDir"], "{sample}/sscs_SC/{sample}.all.unique.sscs.sorted.bam"),
+        ssSCbam = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.sscs.sc.sorted.bam"),
+        ssSCrescue = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.sscs.rescue.sorted.bam"),
+        ssSCsingle = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.singleton.rescue.sorted.bam"),
+        ssSCremain = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.rescue.remaining.sorted.bam"),
+        ssSCuniq = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.all.unique.sscs.sorted.bam"),
         dcssingle = join(config["consensusDir"], "{sample}/dcs/{sample}.sscs.singleton.sorted.bam"),
         dcsbam = join(config["consensusDir"], "{sample}/dcs/{sample}.dcs.sorted.bam"),
-        dcsSCbam = join(config["consensusDir"], "{sample}/dcs_SC/{sample}.dcs.sc.sorted.bam"),
-        dcsSCsingle = join(config["consensusDir"], "{sample}/dcs_SC/{sample}.sscs.sc.singleton.sorted.bam"),
-        dcsSCuniq = join(config["consensusDir"], "{sample}/dcs_SC/{sample}.all.unique.dcs.sorted.bam"),
+        dcsSCbam = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.dcs.sc.sorted.bam"),
+        dcsSCsingle = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.sscs.sc.singleton.sorted.bam"),
+        dcsSCuniq = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.all.unique.dcs.sorted.bam"),
     wildcard_constraints:
         sample = "\w+"
     message:
@@ -89,5 +89,5 @@ rule consensus_crunch_consensus:
                 module load snakemake/5.20.1
 
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus -i {input.bam} -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus -i {input.bam} -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
             """
