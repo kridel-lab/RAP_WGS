@@ -22,7 +22,7 @@ wildcard_constraints:
 # Pipeline output files
 rule all:
     input:
-        expand(join(config["consensusDir"], "{sample}/dcs_SC/{sample}.dcs.sc.sorted.bam"), sample=SAMPLES)
+        expand(join(config["consensusDir"], "{sample}/dcs_sc/{sample}.dcs.sc.sorted.bam"), sample=SAMPLES)
 
 #Consensus cruncher to convert FASTQ files to bam files
 rule consensus_crunch_fastq2bam:
