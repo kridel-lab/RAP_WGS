@@ -89,5 +89,5 @@ rule consensus_crunch_consensus:
                 module load snakemake/5.20.1
 
                 #run consensus cruncher
-                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus -i {input.bam} -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
+                python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus --bedfile -i {input.bam} -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools -b False -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
             """
