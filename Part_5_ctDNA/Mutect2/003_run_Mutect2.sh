@@ -2,7 +2,7 @@
 #
 #SBATCH -N 1 # Ensure that all cores are on one machine
 #SBATCH -p himem
-#SBATCH --mem=61440M
+#SBATCH --mem=21440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J MUTECT2
 #SBATCH --array=0-2 # job array index
