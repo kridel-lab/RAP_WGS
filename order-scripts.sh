@@ -143,7 +143,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/p
 #8. prepare SNVs for each patient to be used for Hatchet provided explainMutationsCCF script
 Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/prep_SNVs_for_CCF_calculation.R
 
-#----Pyclone--------------------------------------------------------------------
+#----Pyclone-VI-----------------------------------------------------------------
 
 #prepare input for bamreadcount
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_prepare_subset_and_all_mutation_files.R
