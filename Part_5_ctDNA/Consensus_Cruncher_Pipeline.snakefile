@@ -62,18 +62,8 @@ rule consensus_crunch_consensus:
     input:
         bam = rules.consensus_crunch_fastq2bam.output.bamout
     output:
-        sscssingle = join(config["consensusDir"], "{sample}/sscs/{sample}.singleton.sorted.bam"),
-        sscsbad = join(config["consensusDir"], "{sample}/sscs/{sample}.badReads.bam"),
-        sscsbam = join(config["consensusDir"], "{sample}/sscs/{sample}.sscs.sorted.bam"),
         ssSCbam = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.sscs.sc.sorted.bam"),
-        ssSCrescue = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.sscs.rescue.sorted.bam"),
-        ssSCsingle = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.singleton.rescue.sorted.bam"),
-        ssSCremain = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.rescue.remaining.sorted.bam"),
-        ssSCuniq = join(config["consensusDir"], "{sample}/sscs_sc/{sample}.all.unique.sscs.sorted.bam"),
-        dcssingle = join(config["consensusDir"], "{sample}/dcs/{sample}.sscs.singleton.sorted.bam"),
-        dcsbam = join(config["consensusDir"], "{sample}/dcs/{sample}.dcs.sorted.bam"),
         dcsSCbam = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.dcs.sc.sorted.bam"),
-        dcsSCsingle = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.sscs.sc.singleton.sorted.bam"),
         dcsSCuniq = join(config["consensusDir"], "{sample}/dcs_sc/{sample}.all.unique.dcs.sorted.bam"),
     wildcard_constraints:
         sample = "\w+"
