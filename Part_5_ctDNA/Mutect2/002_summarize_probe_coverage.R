@@ -39,11 +39,21 @@ library(ggplot2)
 #Load sample info
 #----------------------------------------------------------------------
 
-all_targets = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/my-targets.bed")
-all_probes = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/designed-probe-coords.bed")
+#targets list for 46 genes
+targets_pcg = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/my-targets.bed")
+targets_pcg$V1 = sapply(targets_pcg$V1, function(x){unlist(strsplit(x, "chr"))[2]})
+targets_pcg = unique(targets_pcg[,c(1:4)]) #571 targets
+colnames(targets_pcg) = c("Chr", "Start", "Stop", "Target")
+targets_pcg$type = "46_genes"
 
-colnames(all_targets)[1:4]=c("chr", "target_start", "stop", "target_gene")
-all_targets$chr = sapply(all_targets$chr, function(x){unlist(strsplit(x, "chr"))[2]})
+#targets list for additional 152 regions
+target_regs = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/NGS-Targets.xlsx"))
+target_regs = target_regs[,c("Chr", "Start", "Stop", "Target")] #1,675 baits including 38 which correspond to the Agena sample identity probes (TargetNN)
+target_regs$type = "other_regions"
+
+all_targets = rbind(targets_pcg, target_regs)
+
+colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
 
 #----------------------------------------------------------------------
 #load in output files from picard tools
@@ -64,13 +74,15 @@ read_file = function(file_name){
 
 all_res = as.data.table(ldply(llply(all_res, read_file)))
 all_res$id = paste(all_res$chrom, all_res$end, sep="_")
-all_targets$id = paste(all_targets$chr, all_targets$stop, sep="_")
+all_targets$id = paste(all_targets$chr, all_targets$target_stop, sep="_")
 
 dim(all_res)
+length(unique(all_res$id))
 dim(all_targets)
 
 all_res = merge(all_res, all_targets, by = "id")
 dim(all_res)
+length(unique(all_res$id))
 
 #----------------------------------------------------------------------
 #Analysis
@@ -85,8 +97,11 @@ target_regions = as.data.table(all_res %>% group_by(target_gene) %>% dplyr::summ
 
 #to do ====================================
 
-all_res$gene = sapply(all_res$target_gene, function(x){unlist(strsplit(x, "\\("))[2]})
-all_res$gene = sapply(all_res$gene, function(x){unlist(strsplit(x, ")"))[1]})
+all_res$gene = ""
+all_res$gene[all_res$type == "46_genes"] = sapply(all_res$target_gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, "\\("))[2]})
+all_res$gene[all_res$type == "46_genes"] = sapply(all_res$gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, ")"))[1]})
+all_res$gene[all_res$type == "other_regions"] = all_res$target_gene[all_res$type == "other_regions"]
+all_res$gene = unlist(all_res$gene)
 
 #calculate mean coverage by gene
 gene_cov = as.data.table(all_res %>% group_by(gene, Library) %>% dplyr::summarize(mean_cov = mean(mean_coverage)))
