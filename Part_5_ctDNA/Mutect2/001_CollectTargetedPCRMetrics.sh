@@ -26,7 +26,7 @@ module load vcftools
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus
 
 #get list of sample bam files
-#ls */sscs_sc/*.sscs.correction.sorted.bam > bam_files_for_mutect_all_samples.txt
+#ls */dcs_sc/*.dcs.sc.sorted.bam  > bam_files_for_mutect_all_samples.txt
 
 samples=bam_files_for_mutect_all_samples.txt
 names=($(cat $samples))
