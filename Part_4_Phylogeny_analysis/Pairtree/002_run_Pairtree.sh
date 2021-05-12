@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 #SBATCH -N 1 # Ensure that all cores are on one machine
 #SBATCH -p himem
 #SBATCH --mem=61440M
