@@ -5,7 +5,7 @@
 #SBATCH -c 10
 #SBATCH -t 21-00:00 # Runtime in D-HH:MM
 
-conda deactivate
+#conda deactivate
 conda activate pairtree
 
 #set up input files
