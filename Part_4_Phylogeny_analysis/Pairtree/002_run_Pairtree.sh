@@ -5,7 +5,8 @@
 #SBATCH -c 10
 #SBATCH -t 21-00:00 # Runtime in D-HH:MM
 
-#conda deactivate
+echo ". /cluster/tools/software/python/3.6.5/etc/profile.d/conda.sh" >> ~/.bashrc
+conda deactivate
 conda activate pairtree
 
 #set up input files
