@@ -164,3 +164,9 @@ setwd(file.path(mainDir, subDir))
 
 write.table(p1, file="p001_ssm_input.ssm", quote=F, row.names=F, sep="\t")
 write_json(p1_json, "p001_input.params.json")
+
+write.table(p2, file="p002_ssm_input.ssm", quote=F, row.names=F, sep="\t")
+write_json(p2_json, "p002_input.params.json")
+
+write.table(p3, file="p003_ssm_input.ssm", quote=F, row.names=F, sep="\t")
+write_json(p3_json, "p003_input.params.json")
