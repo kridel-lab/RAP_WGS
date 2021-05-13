@@ -22,7 +22,7 @@ print(date)
 options(stringsAsFactors=F)
 #load packages and data
 source("/cluster/home/kisaev/RAP_WGS/config-file.R")
-library(clonevol)
+#library(clonevol)
 library("gplots")
 library(threadr)
 

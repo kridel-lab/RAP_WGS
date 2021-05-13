@@ -32,3 +32,19 @@ $PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p0
 
 # View the HTML file.
 #firefox example.results.html
+
+#nano  $input_files/p002_input.params.json to remove "" from garabge variable
+
+# Run Pairtree.
+$PTDIR/bin/pairtree --params $input_files/p002_input.params.json $input_files/p002_ssm_input.ssm p002.results.npz
+
+# Plot results in an HTML file.
+$PTDIR/bin/plottree --runid p002 $input_files/p002_ssm_input.ssm $input_files/p002_input.params.json p002.results.npz p002.results.html
+
+#nano  $input_files/p003_input.params.json to remove "" from garabge variable
+
+# Run Pairtree.
+$PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz
+
+# Plot results in an HTML file.
+$PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html
