@@ -116,6 +116,7 @@ pair_tree_input_params = function(ssm_file, py_out){
   colnames(py_out)[1] = "name"
   py_out = merge(py_out, ssm_file, by="name")
   samples = unique(py_out$samples)
+  samples = unlist(strsplit(samples, ","))
 
   #make list of lists with which clusters mutations fall into
   muts_clusters = unique(py_out[,c("cluster_id", "id")])
