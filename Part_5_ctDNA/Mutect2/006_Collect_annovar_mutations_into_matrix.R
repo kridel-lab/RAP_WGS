@@ -114,3 +114,6 @@ all_muts = as.data.table(ldply(llply(files, clean_up_001, .progress="text")))
 
 write.table(all_muts, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/",
 date, "_Mutect2_annovar_mutations_all.txt", sep=""), quote=F, row.names=F, sep=";")
+
+saveRDS(all_muts, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/",
+date, "_Mutect2_annovar_mutations_all.rds", sep=""))

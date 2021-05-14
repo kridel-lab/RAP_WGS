@@ -21,6 +21,10 @@ less all_control_samples.txt | wc -l
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
 #process and summmarize manta results
+sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_007_processing_manta_results.sh
+
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_008_processing_manta_results.R
+Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_009_processing_manta_results.R
 
 
 #----run strelka----------------------------------------------------------------
@@ -168,6 +172,14 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyc
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_005_pyclone_mutation_signatures_in_clusters.R
 
+#----Pairtree------------------------------------------------------------------
+
+#generate input files for pairtree using pyclone input and output files
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/001_create_ssm_input_files.R
+
+#run pairtree with default parameters
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/002_run_Pairtree.sh
+
 #----Treeomics------------------------------------------------------------------
 
 #1. make patient specific bed files from which to pull mutations in vcf files for treeomics
@@ -203,7 +215,6 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Runnin
 
 #zoom in on DLBCL driver genes and how they are mutated
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_007_summary_driver_genes_across_samples.R
-
 
 #----Staudt-classifier----------------------------------------------------------
 
