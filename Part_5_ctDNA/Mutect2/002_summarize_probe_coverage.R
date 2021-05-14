@@ -88,6 +88,12 @@ length(unique(all_res$id))
 #Analysis
 #----------------------------------------------------------------------
 
+all_res$gene = ""
+all_res$gene[all_res$type == "46_genes"] = sapply(all_res$target_gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, "\\("))[2]})
+all_res$gene[all_res$type == "46_genes"] = sapply(all_res$gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, ")"))[1]})
+all_res$gene[all_res$type == "other_regions"] = all_res$target_gene[all_res$type == "other_regions"]
+all_res$gene = unlist(all_res$gene)
+
 #save all_res
 write.csv(all_res, file=paste(date,
   "picard_tools_coverage_summary_targets_DNA_sequencing.csv", sep="_"), quote=F, row.names=F)
@@ -96,12 +102,6 @@ write.csv(all_res, file=paste(date,
 target_regions = as.data.table(all_res %>% group_by(target_gene) %>% dplyr::summarize(mean_cov = mean(mean_coverage)))
 
 #to do ====================================
-
-all_res$gene = ""
-all_res$gene[all_res$type == "46_genes"] = sapply(all_res$target_gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, "\\("))[2]})
-all_res$gene[all_res$type == "46_genes"] = sapply(all_res$gene[all_res$type == "46_genes"], function(x){unlist(strsplit(x, ")"))[1]})
-all_res$gene[all_res$type == "other_regions"] = all_res$target_gene[all_res$type == "other_regions"]
-all_res$gene = unlist(all_res$gene)
 
 #calculate mean coverage by gene
 gene_cov = as.data.table(all_res %>% group_by(gene, Library) %>% dplyr::summarize(mean_cov = mean(mean_coverage)))
