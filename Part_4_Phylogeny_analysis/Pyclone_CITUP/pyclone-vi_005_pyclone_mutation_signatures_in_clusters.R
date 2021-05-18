@@ -113,14 +113,14 @@ get_mut_signatures = function(patient, pyclone_output){
   start.field = "start", end.field = "end", keep.extra.columns=TRUE)
   mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
 
-  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.8)
+  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.7)
 
   #Fit mutation matrix to the COSMIC mutational signatures:
   strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
   fit_res_strict <- strict_refit$fit_res
 
-  pdf("mutation_signature_analysis_plots.pdf")
-  p = plot_contribution(fit_res_strict$contribution, palette=mypal)
+  pdf("mutation_signature_analysis_plots.pdf", width=9, height=6)
+  p = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE)
   print(p)
   dev.off()
 
