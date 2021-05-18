@@ -50,6 +50,16 @@ z = which(read_only$Tissue_Site == "Aorta, ascending, not specified \n\n")
 if(!(length(z) == 0)){
 read_only$Tissue_Site[z] = "Aorta, ascending"}
 
+#pyclone input files
+p001_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0001_pyclone_input.tsv")
+p002_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0002_pyclone_input.tsv")
+p003_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0003_pyclone_input.tsv")
+
+#pyclone output files
+p001_pyclone_output = fread("LY_RAP_0001_rap_wgs_all_muts.tsv")
+p002_pyclone_output = fread("LY_RAP_0002_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("LY_RAP_0003_rap_wgs_all_muts.tsv")
+
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
@@ -61,25 +71,17 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 #data
 #----------------------------------------------------------------------
 
-#test
-patient_clonevol_results="LY_RAP_0002_all_mutations_Pyclone-VI-clonevol-results.xlsx"
-patient = "LY_RAP_0002"
-
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
 
-get_mut_signatures = function(patient, patient_clonevol_results){
+get_mut_signatures = function(patient, pyclone_output){
 
   #read in mutation data for each cluster as obtained from pyclone
-  muts <- as.data.table(read_excel(patient_clonevol_results))
-
-  #keep only clusters that were included in the tree
-  z = which(muts$cluster_removed == "removed")
-  muts = muts[-z,]
+  muts <- pyclone_output
 
   #get clusters
-  clusters = unique(muts$cluster)
+  clusters = unique(muts$cluster_id)
 
   #make folder to store plots for patient
   mainDir <- "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/clusters_mutation_signatures"
@@ -91,12 +93,14 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   #for each cluster gather mutations and their details from main mutation
   #file
 
-  cluster_muts = unique(muts[,c("mut_id", "cluster")])
-  mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mut_id))
+  cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
+  mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
   "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
-  mut.merged = merge(cluster_muts, mut.merged, by="mut_id")
+  colnames(mut.merged)[1] = "mutation_id"
+
+  mut.merged = merge(cluster_muts, mut.merged, by="mutation_id")
 
   colnames(mut.merged)[4] = "start"
   mut.merged$end = mut.merged$start
@@ -105,7 +109,7 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   mut.merged$Tumor_Sample_Barcode = patient
 
   #use Mutational Patterns
-  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="cluster", seqnames.field = "chr",
+  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="cluster_id", seqnames.field = "chr",
   start.field = "start", end.field = "end", keep.extra.columns=TRUE)
   mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
 
@@ -130,9 +134,9 @@ get_mut_signatures = function(patient, patient_clonevol_results){
   return(all_clusts)
 }
 
-p001 = get_mut_signatures("LY_RAP_0001", "LY_RAP_0001_all_mutations_Pyclone-VI-clonevol-results.xlsx")
-p002 = get_mut_signatures("LY_RAP_0002", "LY_RAP_0002_all_mutations_Pyclone-VI-clonevol-results.xlsx")
-p003 = get_mut_signatures("LY_RAP_0003", "LY_RAP_0003_all_mutations_Pyclone-VI-clonevol-results.xlsx")
+p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output)
+p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output)
+p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output)
 
 #combine all results
 all_results = rbind(p001, p002, p003)

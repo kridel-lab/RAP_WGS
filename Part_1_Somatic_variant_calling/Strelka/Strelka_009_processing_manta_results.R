@@ -13,8 +13,8 @@ packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.tabl
               "ggrepel", "stringr", "maftools", "VariantAnnotation", "ggpubr")
 lapply(packages, require, character.only = TRUE)
 library(GenomicRanges)
-library(Homo.sapiens)
-library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
+#library(Homo.sapiens)
+#library(TxDb.Hsapiens.UCSC.hg19.lincRNAsTranscripts)
 library(biomaRt)
 library(openxlsx)
 library(ggpubr)
@@ -167,10 +167,7 @@ saveRDS(all_svs_sum_plot, file=paste(date, "RAP_WGS_all_SVs_heatmap_plot.rds", s
 write.table(all_svs_sum_plot, file=paste(date, "RAP_WGS_all_SVs_heatmap_plot.txt", sep="_"), quote=F, row.names=F, sep="}")
 
 #save main file for translocations
-write.csv(new_just_bnds, file=paste(date, "RAP_WGS_translocations_ONLY.csv", sep="_"), quote=F, row.names=F)
+write.table(new_just_bnds, file=paste(date, "RAP_WGS_translocations_ONLY.txt", sep="_"), quote=F, row.names=F, sep="}")
 
 #save main file for all SVs other than translocations
-write.csv(all_nonbnds, file=paste(date, "RAP_WGS_nontranslocations_ONLY.csv", sep="_"), quote=F, row.names=F)
-
-#save SV masterfile that has all details regarding all SVs
-write.csv(new_just_bnds, file=paste(date, "RAP_WGS_MANTA_masterlist.csv", sep="_"), quote=F, row.names=F)
+write.table(all_nonbnds, file=paste(date, "RAP_WGS_nontranslocations_ONLY.txt", sep="_"), quote=F, row.names=F, sep="}")

@@ -77,29 +77,35 @@ print(p)
 dev.off()
 
 #summarize number of mutations per sample
-muts_per_sample = as.data.table(table(svs$STUDY_PATIENT_ID,svs$Tissue_Site))
+z = which((svs$Tissue_Site == "Adrenal gland, NOS") & (svs$STUDY_PATIENT_ID == "LY_RAP_0003"))
+svs$Tissue_Site[z] = "Adrenal gland"
+z = which((svs$Tissue_Site == "Aorta, ascending, not specified \n\n") & (svs$STUDY_PATIENT_ID == "LY_RAP_0001"))
+svs$Tissue_Site[z] = "Aorta, ascending"
+
+muts_per_sample = as.data.table(table(svs$STUDY_PATIENT_ID, svs$Tissue_Site, svs$SVTYPE))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
-
-muts_per_sample$V2[muts_per_sample$V2 == "Adrenal gland, NOS"][1] = "Adrenal gland"
-
 muts_per_sample = muts_per_sample[order(-N)]
-#muts_per_sample$V1 = factor(muts_per_sample$V1, levels=unique(muts_per_sample$V1))
-#muts_per_sample$V2 = factor(muts_per_sample$V2, levels=unique(muts_per_sample$V2))
 
-colnames(muts_per_sample) = c("Patient", "Sample", "num_of_muts")
+colnames(muts_per_sample) = c("Patient", "Sample", "type_SV", "num_of_muts")
 muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
 muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
 muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
 muts_per_sample$Patient = factor(muts_per_sample$Patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
-muts_per_sample$Sample = factor(muts_per_sample$Sample, levels=unique(muts_per_sample$Sample))
+
+#get order of samples for barplot
+t = as.data.table(table(svs$STUDY_PATIENT_ID,svs$Tissue_Site))
+t = as.data.table(filter(t, N >0))
+t = t[order(-N)]
+
+muts_per_sample$Sample = factor(muts_per_sample$Sample, levels=unique(t$V2))
 
 pdf("002_mutations_per_sample_SVs.pdf",width=4, height=5)
 # Basic barplot
-p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts, fill=Patient)) +
+p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts, fill=type_SV)) +
   geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
-	theme(axis.text.x = element_text(angle = 90, hjust=1),
-  legend.position = "none") + xlab("Sample")+
+	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
+  legend.position = "bottom") + xlab("Sample")+
 	ylab("Structural variants count")+
 	facet_grid(. ~ Patient, scales="free", space='free')+
 	theme(
@@ -107,6 +113,6 @@ p<-ggplot(data=muts_per_sample, aes(x=Sample, y=num_of_muts, fill=Patient)) +
   strip.text.x = element_blank(),
 	legend.text = element_text(size=6))+
 	scale_y_continuous(breaks=seq(0, 200, by = 20))+
-  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07"))
+  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07", "grey"))
 print(p)
 dev.off()
