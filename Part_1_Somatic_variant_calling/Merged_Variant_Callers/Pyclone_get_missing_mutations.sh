@@ -36,20 +36,13 @@ patient_name=${MYVAR%_*_*_*}
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 #file with mutations that need to be identified from each sample (bed_file)
-muts_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_small_subset_${patient_name}_pyclone_bam_readcount_input.bed
-muts_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/pyclone_full_${patient_name}_pyclone_bam_readcount_input.bed
+muts_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_mutations_${patient_name}_pyclone_bam_readcount_input.bed
 
 #sample BAM file
 bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 
 #output file to save
-out_put_file_small=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_small.bed
 out_put_file_all=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/${tum_name}_missing_muts_all.bed
-
-#get counts small list of variants
-bam-readcount -f $fasta \
-${tum_name}.bam \
--l $muts_small > $out_put_file_small
 
 #get counts full list of variants
 bam-readcount -f $fasta \
