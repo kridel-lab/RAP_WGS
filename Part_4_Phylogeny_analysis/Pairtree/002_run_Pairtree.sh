@@ -14,7 +14,7 @@ source /cluster/home/kisaev/.bashrc
 source activate pairtree
 
 #set up input files
-input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-05-19_input_files
+input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-05-12_input_files
 cd $input_files
 
 #set-up pairtree
