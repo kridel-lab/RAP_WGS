@@ -149,14 +149,16 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/
 
 #----Pyclone-VI-----------------------------------------------------------------
 
+pyclone_folder=/cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP
+
 #prepare input for bamreadcount
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_prepare_subset_and_all_mutation_files.R
+Rscript $pyclone_folder/pyclone-vi_001_prepare_subset_and_all_mutation_files.R
 
 #run bamreadcount
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Pyclone_get_missing_mutations.sh
+sbatch $pyclone_folder/pyclone-vi_002_Pyclone_get_missing_mutations.sh
 
 #assemble results from bamreadcount into pyclone mutation list
-sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_008_get_pyclone_missing_counts.sh
+sbatch $pyclone_folder/pyclone-vi_003_Merged_008_get_pyclone_missing_counts.sh
 
 #prepare input for pyclone-vi
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files_sequenza.R
