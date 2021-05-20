@@ -25,6 +25,14 @@ svs = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Manta/2021-04
 #Analysis
 #----------------------------------------------------------------------
 
+#average number of SVs per sample/patient
+t=as.data.table(table(svs$STUDY_PATIENT_ID, svs$Indiv))
+t=filter(t, N >0)
+t %>% group_by(V1) %>% dplyr::summarize(mean = mean(N))
+t %>% group_by(V1) %>% dplyr::summarize(sd = sd(N))
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 samples_per_mut = as.data.table(table(svs$id, svs$STUDY_PATIENT_ID))
 
 mut_gene = unique(svs[,c("gene", "id", "SVTYPE")])

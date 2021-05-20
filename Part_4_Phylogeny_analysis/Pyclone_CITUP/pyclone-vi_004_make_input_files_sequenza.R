@@ -1,7 +1,4 @@
 #----------------------------------------------------------------------
-#----------------------------------------------------------------------
-
-#----------------------------------------------------------------------
 #load functions and libraries
 #----------------------------------------------------------------------
 
@@ -46,18 +43,13 @@ patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #2. SNV/CNA input data for pyclone
 
-make_input_pyclone = function(input_muts, type){
+make_input_pyclone = function(input_muts){
   muts = fread(input_muts) #get most recent mutation file
   pats = unique(muts$samplename)
   t = as.data.table(table(muts$mut_id))
   t=t[order(V1)]
-  patient = unlist(strsplit(input_muts, "_mutations_PYCLONE_INPUT_MUTS.txt"))
-
-  if(type == "all_muts"){
-  patient = unlist(strsplit(patient, "full_"))[2]}
-
-  if(type == "subset_muts"){
-  patient = unlist(strsplit(patient, "subset_"))[2]}
+  patient = unlist(strsplit(input_muts, "_mutations_PYCLONE_INPUT_MUTS"))[1]
+  patient = paste(unlist(strsplit(patient, "_"))[2:4], collapse="_")
 
   #make sure mutations ordered in the same way in each sample specific file
   #try analysis assuming mutations are copy neutral
@@ -85,25 +77,22 @@ make_input_pyclone = function(input_muts, type){
   mut_rm = unique(muts[which(is.na(muts$major_cn)),]$mutation_id)
   muts = filter(muts, !(mutation_id %in% mut_rm))
 
+  mut_rm = unique(muts[which(muts$major_cn == 0),]$mutation_id)
+  muts = filter(muts, !(mutation_id %in% mut_rm))
+
   print(tail(muts))
   print(dim(muts))
-  write.table(muts, file=paste("all_samples_pyclonevi", type, patient, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
+  write.table(muts, file=paste("all_samples_pyclonevi", patient, "pyclone_input.tsv", sep="_"), quote=F, row.names=F, sep="\t")
   print("done!")
 }
 
 list.files(pattern="_mutations_PYCLONE_INPUT_MUTS")
 
 #make input for all muts
-make_input_pyclone("2021-04-07_full_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
-#make input for some muts
-make_input_pyclone("2021-04-07_subset_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2021-05-20_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt")
 
 #make input for all muts
-make_input_pyclone("2021-04-07_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
-#make input for some muts
-make_input_pyclone("2021-04-07_subset_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2021-04-07_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt")
 
 #make input for all muts
-make_input_pyclone("2021-04-07_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "all_muts")
-#make input for some muts
-make_input_pyclone("2021-04-07_subset_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt", "subset_muts")
+make_input_pyclone("2021-04-07_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt")

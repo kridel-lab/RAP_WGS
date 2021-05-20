@@ -161,7 +161,7 @@ sbatch $pyclone_folder/pyclone-vi_002_Pyclone_get_missing_mutations.sh
 sbatch $pyclone_folder/pyclone-vi_003_Merged_008_get_pyclone_missing_counts.sh
 
 #prepare input for pyclone-vi
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_001_make_input_files_sequenza.R
+Rscript $pyclone_folder/pyclone-vi_004_make_input_files_sequenza.R
 
 #run pyclone-vi all muts
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts.sh
