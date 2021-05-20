@@ -176,7 +176,18 @@ get_reads = function(patient){
 	t=as.data.table(table(missing_mutations$id))
 	print(unique(t$N))
 
-	muts_keep = filter(t, N ==3)$V1
+	if(patient == "LY_RAP_0001"){
+		muts_keep = filter(t, N ==3)$V1
+	}
+
+	if(patient == "LY_RAP_0002"){
+		muts_keep = filter(t, N ==4)$V1
+	}
+
+	if(patient == "LY_RAP_0003"){
+		muts_keep = filter(t, N ==20)$V1
+	}
+
 	missing_mutations = filter(missing_mutations, id %in% muts_keep)
 
 	#for mutations that are found in only some patients
