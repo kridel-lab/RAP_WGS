@@ -38,7 +38,7 @@ lapply(packages, require, character.only = TRUE)
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #pyclone input files
-p001_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0001_pyclone_input.tsv")
+p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
 p002_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0002_pyclone_input.tsv")
 p003_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0003_pyclone_input.tsv")
 
