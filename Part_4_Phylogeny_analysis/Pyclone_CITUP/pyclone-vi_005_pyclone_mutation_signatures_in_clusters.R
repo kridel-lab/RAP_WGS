@@ -51,7 +51,7 @@ if(!(length(z) == 0)){
 read_only$Tissue_Site[z] = "Aorta, ascending"}
 
 #pyclone input files
-p001_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0001_pyclone_input.tsv")
+p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
 p002_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0002_pyclone_input.tsv")
 p003_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0003_pyclone_input.tsv")
 
@@ -94,34 +94,53 @@ get_mut_signatures = function(patient, pyclone_output){
   #file
 
   cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
+
+  t = as.data.table(table(cluster_muts$cluster_id))
+  t = filter(t, N >30)
+  muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
+
+  t$new_order = 1:(nrow(t))
+  colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
+  t$cluster_id = as.numeric(t$cluster_id)
+  muts_keep = merge(muts_keep, t, by="cluster_id")
+
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
   "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
   colnames(mut.merged)[1] = "mutation_id"
 
-  mut.merged = merge(cluster_muts, mut.merged, by="mutation_id")
+  mut.merged = merge(muts_keep, mut.merged, by="mutation_id")
 
-  colnames(mut.merged)[4] = "start"
+  colnames(mut.merged)[6] = "start"
   mut.merged$end = mut.merged$start
-  colnames(mut.merged)[5] = "chr"
-  colnames(mut.merged)[6] = "Hugo_Symbol"
+  colnames(mut.merged)[7] = "chr"
+  colnames(mut.merged)[8] = "Hugo_Symbol"
   mut.merged$Tumor_Sample_Barcode = patient
 
   #use Mutational Patterns
-  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="cluster_id", seqnames.field = "chr",
+  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="pairtree_cluster_name", seqnames.field = "chr",
   start.field = "start", end.field = "end", keep.extra.columns=TRUE)
   mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
 
-  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.7)
+  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.5)
 
   #Fit mutation matrix to the COSMIC mutational signatures:
-  strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.004)
+  strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.008)
   fit_res_strict <- strict_refit$fit_res
 
   pdf("mutation_signature_analysis_plots.pdf", width=9, height=6)
-  p = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE)
-  print(p)
+  p1 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE,
+    signatures = merged_signatures, mode = "absolute")+
+  theme(legend.title=element_text(size=5),
+    legend.text=element_text(size=5))
+  print(p1)
+
+  p2 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE)+
+  theme(legend.title=element_text(size=5),
+    legend.text=element_text(size=5))
+  print(p2)
+
   dev.off()
 
   all_clusts = as.data.frame(fit_res_strict$contribution)
