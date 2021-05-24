@@ -92,7 +92,7 @@ list.files(pattern="_mutations_PYCLONE_INPUT_MUTS")
 make_input_pyclone("2021-05-20_LY_RAP_0001_mutations_PYCLONE_INPUT_MUTS.txt")
 
 #make input for all muts
-make_input_pyclone("2021-04-07_full_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt")
+make_input_pyclone("2021-05-20_LY_RAP_0002_mutations_PYCLONE_INPUT_MUTS.txt")
 
 #make input for all muts
-make_input_pyclone("2021-04-07_full_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt")
+make_input_pyclone("2021-05-20_LY_RAP_0003_mutations_PYCLONE_INPUT_MUTS.txt")

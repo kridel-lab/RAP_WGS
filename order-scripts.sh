@@ -164,7 +164,7 @@ sbatch $pyclone_folder/pyclone-vi_003_Merged_008_get_pyclone_missing_counts.sh
 Rscript $pyclone_folder/pyclone-vi_004_make_input_files_sequenza.R
 
 #run pyclone-vi all muts
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_002_run_main_program_all_muts.sh
+sbatch $pyclone_folder/pyclone-vi_005_run_main_program_all_muts.sh
 
 #generate clonevol trees using pyclone results
 module load R/3.5.0
