@@ -22,7 +22,7 @@ echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
 MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
 
-MYVAR=${MYVAR##*all_samples_pyclonevi_}
+patient_name=${MYVAR##*all_samples_pyclonevi_}
 patient_name=${MYVAR%_pyclone_input.tsv*}
 
 echo $patient_name
