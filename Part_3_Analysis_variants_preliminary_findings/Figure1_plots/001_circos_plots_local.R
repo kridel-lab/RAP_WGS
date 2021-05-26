@@ -32,7 +32,7 @@ cnas$width = cnas$End - cnas$Start
 #summarize mutation patterns across samples and driver genes
 #check which mutations occur in all samples versus only 1 or several
 
-dir.create(file.path("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/circos_plots"))
+#dir.create(file.path("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/circos_plots"))
 setwd(file.path("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/circos_plots"))
 
 patient = "LY_RAP_0001"

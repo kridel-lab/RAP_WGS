@@ -10,8 +10,10 @@ library(ggpubr)
 library("ggsci")
 library(annotables)
 hg19_genes = as.data.table(grch37)
-hg19_genes = filter(hg19_genes, biotype == "protein_coding")
+#hg19_genes = filter(hg19_genes, biotype == "protein_coding")
 hg19_genes = unique(hg19_genes[,c("chr", "start", "end", "symbol")]) #22810 genes
+z = which(hg19_genes$chr %in% c(1:22, "X"))
+hg19_genes = hg19_genes[z,]
 
 #----------------------------------------------------------------------
 #overlap CNA calls with protein coding genes coordinates
@@ -80,7 +82,6 @@ merge_cnas_in_patient = function(patient){
 #all_genes_cnas_samples = as.data.table(ldply(llply(genes_test, overlap_genes_cnas, .progress="text")))
 
 #keep only non-neutral CNAs
-#all_genes_cnas_samples = filter(all_genes_cnas_samples, !(ntot==2))
 #all_genes_cnas_samples$Patient = sapply(all_genes_cnas_samples$Sample, function(x){paste(unlist(strsplit(x, "_"))[1:3], collapse="_")})
 #saveRDS(all_genes_cnas_samples, file="cnas_across_hg19_genomes_all_samples.rds")
 
