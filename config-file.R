@@ -79,6 +79,9 @@ colnames(samps)[4] ="Indiv"
 z = which(samps$Indiv %in% read_only$Indiv)
 samps = samps[z,]
 samps[18,2] = "Kidney, NOS 2"
+samps$Tissue_Site[samps$Tissue_Site == "Aorta, ascending, not specified \n\n"] = "Aorta, ascending, not specified"
+
+write.table(samps, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/27_RAP_samples_used_in_study.txt", sep="}", quote=F, row.names=F)
 
 read_only$Tissue_Site = NULL
 read_only$STUDY_PATIENT_ID = NULL
