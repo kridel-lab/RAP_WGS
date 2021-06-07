@@ -39,13 +39,13 @@ patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #pyclone input files
 p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
-p002_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0002_pyclone_input.tsv")
-p003_pyclone_input = fread("all_samples_pyclonevi_all_muts_LY_RAP_0003_pyclone_input.tsv")
+p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
+p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-p001_pyclone_output = fread("LY_RAP_0001_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("LY_RAP_0002_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("LY_RAP_0003_rap_wgs_all_muts.tsv")
+p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_rap_wgs_all_muts.tsv")
+p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_rap_wgs_all_muts.tsv")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
@@ -69,7 +69,7 @@ pair_tree_input_ssm = function(py_in, py_out){
   #keep only mutations in clusters with at least 20 mutations
   clusts_muts = unique(py_out[,c("cluster_id", "mutation_id")])
   t = as.data.table(table(clusts_muts$cluster_id))
-  t = filter(t, N >30)
+  t = filter(t, N >20)
   muts_keep = filter(py_out, cluster_id %in% t$V1)
 
   #get all unique mutations

@@ -73,9 +73,16 @@ generate_circos = function(patient){
   #2. SVs keep
 
   svs_keep = filter(svs, STUDY_PATIENT_ID == patient, SVTYPE == "BND")
-  t=as.data.table(table(svs_keep$id)) %>% filter(N ==num_check)
-  svs_keep = filter(svs_keep, id %in% t$V1)
-  svs_keep = unique(svs_keep[,c("STUDY_PATIENT_ID", "gene", "id")])
+  svs_keep$chr1 = sapply(svs_keep$id, function(x){unlist(strsplit(unlist(strsplit(x, "chr"))[2], "_"))[1]})
+  svs_keep$chr2 = sapply(svs_keep$id, function(x){unlist(strsplit(unlist(strsplit(x, "chr"))[3], "_"))[1]})
+  svs_keep$gene1 = sapply(svs_keep$gene, function(x){unlist(strsplit(as.character(x), "_"))[1]})
+  svs_keep$gene2 = sapply(svs_keep$gene, function(x){unlist(strsplit(as.character(x), "_"))[2]})
+
+  svs_keep$new_id = paste(svs_keep$chr1, svs_keep$chr2, svs_keep$gene2, sep="_")
+
+  t=as.data.table(table(svs_keep$new_id)) %>% filter(N >= num_check)
+  svs_keep = filter(svs_keep, new_id %in% t$V1)
+  svs_keep = unique(svs_keep[,c("STUDY_PATIENT_ID", "gene", "id", "new_id")])
   links_chromosomes_1 = sapply(svs_keep$id, function(x){unlist(strsplit(unlist(strsplit(x, "chr"))[2], "_"))[1]})
   links_chromosomes_2 = sapply(svs_keep$id, function(x){unlist(strsplit(unlist(strsplit(x, "chr"))[3], "_"))[1]})
 
@@ -103,10 +110,10 @@ generate_circos = function(patient){
   #Make tracks for circos plot
 
   #first SNPs
-  points_values = 0:1
+  points_values = 0:4
 
   tracklist = BioCircosSNPTrack('mySNPTrack', points_chromosomes, points_coordinates,
-    points_values, colors = c("tomato2", "darkblue"), minRadius = 0.8, maxRadius = 0.95)
+    points_values, colors = c("darkblue"), minRadius = 0.8, maxRadius = 0.95, size=1)
 
   # Background are always placed below other tracks
   tracklist = tracklist + BioCircosBackgroundTrack("myBackgroundTrack",
@@ -117,6 +124,7 @@ generate_circos = function(patient){
   tracklist = tracklist + BioCircosArcTrack('myArcTrack', arcs_chromosomes, arcs_begin, arcs_end,
       minRadius = 0.68, maxRadius = 0.78, colors=c("green"))
 
+  #SVs
   tracklist = tracklist + BioCircosLinkTrack('myLinkTrack', links_chromosomes_1, links_pos_1,
       links_pos_1 + 50000000, links_chromosomes_2, links_pos_2, links_pos_2 + 750000,
       maxRadius = 0.65, color = "orange", labels = links_labels, labelSize=0.2, labelColor="blue", displayLabel=F)
@@ -124,11 +132,11 @@ generate_circos = function(patient){
   tracklist = tracklist + BioCircosBackgroundTrack("myBackgroundTrack", minRadius = 0, maxRadius = 0.65,
           borderSize = 0, fillColors = "#EEFFEE")
 
-  BioCircos(tracklist, genomeFillColor = "PuOr",
-    displayGenomeBorder = FALSE, yChr =  FALSE,
-    chrPad = 0,
+  BioCircos(tracklist, genomeFillColor = "YlGnBu",
+    displayGenomeBorder = TRUE, yChr =  FALSE,
+    chrPad = 0.03,
        genomeTicksLen = 3, genomeTicksTextSize = 0,
-       genomeTicksScale = 40000000,
-       genomeLabelTextSize = 18, genomeLabelDy = 0)
+       genomeTicksScale = 20000000,
+       genomeLabelTextSize = 18, genomeLabelDy = 0, genomeBorderSize=0.7)
 
 }
