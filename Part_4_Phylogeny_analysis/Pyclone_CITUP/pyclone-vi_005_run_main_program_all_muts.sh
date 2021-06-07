@@ -31,7 +31,10 @@ echo $patient_name
 #Run pyclone-vi
 #------------------------------------------------------------------
 
-pyclone-vi fit -i $MYVAR \
--o ${patient_name}_rap_wgs_all_muts.h5 -c 80 -d binomial -r 100
+folder="$(date +"%d-%m-%Y")"
+mkdir $folder
 
-pyclone-vi write-results-file -i ${patient_name}_rap_wgs_all_muts.h5 -o ${patient_name}_rap_wgs_all_muts.tsv
+pyclone-vi fit -i $MYVAR \
+-o $folder/${patient_name}_rap_wgs_all_muts.h5 -c 80 -d binomial -r 100
+
+pyclone-vi write-results-file -i $folder/${patient_name}_rap_wgs_all_muts.h5 -o $folder/${patient_name}_rap_wgs_all_muts.tsv
