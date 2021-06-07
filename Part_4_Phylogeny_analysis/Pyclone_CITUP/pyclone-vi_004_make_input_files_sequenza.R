@@ -52,11 +52,7 @@ make_input_pyclone = function(input_muts){
   patient = paste(unlist(strsplit(patient, "_"))[2:4], collapse="_")
 
   #make sure mutations ordered in the same way in each sample specific file
-  #try analysis assuming mutations are copy neutral
-  #muts$MajorCN=1
-  #muts$MinorCN=1
-  #muts$tot_cn = muts$MajorCN + muts$MinorCN
-  #muts_keep = as.data.table(filter(muts, tot_cn <= 4))
+
   if(patient == "LY_RAP_0001"){
   muts_sum = filter(as.data.table(table(muts$mut_id)), N ==3)$V1}
   if(patient == "LY_RAP_0002"){
