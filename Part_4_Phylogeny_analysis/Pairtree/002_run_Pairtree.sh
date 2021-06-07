@@ -31,7 +31,7 @@ cd results
 #nano  $input_files/p001_input.params.json to remove "" from garabge variable
 
 # Run Pairtree.
-$PTDIR/bin/pairtree --params $input_files/p001_input.params.json $input_files/p001_ssm_input.ssm p001.results.npz
+$PTDIR/bin/pairtree --params $input_files/p001_input.params.json $input_files/p001_ssm_input.ssm p001.results.npz --seed 123 --phi-fitter rprop
 
 # Plot best tree results in an HTML file.
 $PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz p001.results.html
@@ -46,7 +46,7 @@ $PTDIR/bin/summposterior --runid p001 $input_files/p001_ssm_input.ssm $input_fil
 #nano  $input_files/p002_input.params.json to remove "" from garabge variable
 
 # Run Pairtree.
-$PTDIR/bin/pairtree --params $input_files/p002_input.params.json $input_files/p002_ssm_input.ssm p002.results.npz
+$PTDIR/bin/pairtree --params $input_files/p002_input.params.json $input_files/p002_ssm_input.ssm p002.results.npz --seed 123 --phi-fitter rprop
 
 # Plot best tree results in an HTML file.
 $PTDIR/bin/plottree --runid p002 $input_files/p002_ssm_input.ssm $input_files/p002_input.params.json p002.results.npz p002.results.html
@@ -61,7 +61,7 @@ $PTDIR/bin/summposterior --runid p002 $input_files/p002_ssm_input.ssm $input_fil
 #nano  $input_files/p003_input.params.json to remove "" from garabge variable
 
 # Run Pairtree.
-$PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz
+$PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz --seed 123 --phi-fitter rprop
 
 # Plot best tree results in an HTML file.
 $PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html
