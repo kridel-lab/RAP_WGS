@@ -27,6 +27,8 @@ patient_name=${MYVAR%_pyclone_input.tsv*}
 
 echo $patient_name
 
+density=beta-binomial
+
 #------------------------------------------------------------------
 #Run pyclone-vi
 #------------------------------------------------------------------
@@ -35,6 +37,6 @@ folder="$(date +"%d-%m-%Y")"
 mkdir $folder
 
 pyclone-vi fit -i $MYVAR \
--o $folder/${patient_name}_rap_wgs_all_muts.h5 -c 80 -d binomial -r 100
+-o $folder/${patient_name}_${density}_rap_wgs_all_muts.h5 -c 40 -d $density -r 10
 
-pyclone-vi write-results-file -i $folder/${patient_name}_rap_wgs_all_muts.h5 -o $folder/${patient_name}_rap_wgs_all_muts.tsv
+pyclone-vi write-results-file -i $folder/${patient_name}_${density}_rap_wgs_all_muts.h5 -o $folder/${patient_name}_${density}_rap_wgs_all_muts.tsv
