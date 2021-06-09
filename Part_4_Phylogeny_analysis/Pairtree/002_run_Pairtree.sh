@@ -14,7 +14,7 @@ source /cluster/home/kisaev/.bashrc
 source activate pairtree
 
 #set up input files
-input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-07_input_files
+input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-09_input_files
 cd $input_files
 
 #don't forget to manually edit input *params.json files to remove the "" in the garbage []
