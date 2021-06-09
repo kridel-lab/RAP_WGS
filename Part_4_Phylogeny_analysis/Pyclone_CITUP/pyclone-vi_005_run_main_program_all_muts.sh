@@ -37,6 +37,6 @@ folder="$(date +"%d-%m-%Y")"
 mkdir $folder
 
 pyclone-vi fit -i $MYVAR \
--o $folder/${patient_name}_${density}_rap_wgs_all_muts.h5 -c 40 -d $density -r 10
+-o $folder/${patient_name}_${density}_rap_wgs_all_muts.h5 -c 40 -d $density -r 40  --seed 123
 
 pyclone-vi write-results-file -i $folder/${patient_name}_${density}_rap_wgs_all_muts.h5 -o $folder/${patient_name}_${density}_rap_wgs_all_muts.tsv
