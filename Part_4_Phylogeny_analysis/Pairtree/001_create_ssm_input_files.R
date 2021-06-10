@@ -156,13 +156,13 @@ p2 = pair_tree_input_ssm(p002_pyclone_input, p002_pyclone_output)
 p2_samples = unique(p2$samples)
 p2_json = pair_tree_input_params(p2, p002_pyclone_output)
 
-p3 = pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
-p3_samples = unique(p3$samples)
-p3_json = pair_tree_input_params(p3, p003_pyclone_output)
+#p3 = pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
+#p3_samples = unique(p3$samples)
+#p3_json = pair_tree_input_params(p3, p003_pyclone_output)
 
 p1$samples = NULL
 p2$samples = NULL
-p3$samples = NULL
+#p3$samples = NULL
 
 #save ssm input files in pairtree directory
 mainDir="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree"
