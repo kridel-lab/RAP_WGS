@@ -14,7 +14,7 @@ source /cluster/home/kisaev/.bashrc
 source activate pairtree
 
 #set up input files
-input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-09_input_files
+input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-10_input_files
 cd $input_files
 
 #don't forget to manually edit input *params.json files to remove the "" in the garbage []
@@ -61,10 +61,10 @@ $PTDIR/bin/summposterior --runid p002 $input_files/p002_ssm_input.ssm $input_fil
 #nano  $input_files/p003_input.params.json to remove "" from garabge variable
 
 # Run Pairtree.
-$PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz --seed 123 --trees-per-chain 4000
+#$PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz --seed 123 --trees-per-chain 4000
 
 # Plot best tree results in an HTML file.
-$PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html
+#$PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html
 
 #plot all posteriors
-$PTDIR/bin/summposterior --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.posterior_plots.html
+#$PTDIR/bin/summposterior --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.posterior_plots.html
