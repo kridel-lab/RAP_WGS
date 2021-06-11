@@ -40,14 +40,14 @@ patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 #pyclone input files
 p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
 p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
-#p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
+p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/10-06-2021")
 
 #pyclone output files
 p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
 p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-#p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
@@ -156,13 +156,13 @@ p2 = pair_tree_input_ssm(p002_pyclone_input, p002_pyclone_output)
 p2_samples = unique(p2$samples)
 p2_json = pair_tree_input_params(p2, p002_pyclone_output)
 
-#p3 = pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
-#p3_samples = unique(p3$samples)
-#p3_json = pair_tree_input_params(p3, p003_pyclone_output)
+p3 = pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
+p3_samples = unique(p3$samples)
+p3_json = pair_tree_input_params(p3, p003_pyclone_output)
 
 p1$samples = NULL
 p2$samples = NULL
-#p3$samples = NULL
+p3$samples = NULL
 
 #save ssm input files in pairtree directory
 mainDir="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree"
@@ -177,5 +177,5 @@ write_json(p1_json, "p001_input.params.json")
 write.table(p2, file="p002_ssm_input.ssm", quote=F, row.names=F, sep="\t")
 write_json(p2_json, "p002_input.params.json")
 
-#write.table(p3, file="p003_ssm_input.ssm", quote=F, row.names=F, sep="\t")
-#write_json(p3_json, "p003_input.params.json")
+write.table(p3, file="p003_ssm_input.ssm", quote=F, row.names=F, sep="\t")
+write_json(p3_json, "p003_input.params.json")

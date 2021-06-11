@@ -55,12 +55,10 @@ p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv"
 p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
 p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/10-06-21")
-
 #pyclone output files
-p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
+p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #----------------------------------------------------------------------
 #purpose
