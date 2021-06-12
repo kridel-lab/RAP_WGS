@@ -99,3 +99,7 @@ pair_tree_input_ssm = function(py_in, py_out){
   print("done!")
 
 }
+
+pair_tree_input_ssm(p001_pyclone_input, p001_pyclone_output)
+pair_tree_input_ssm(p002_pyclone_input, p002_pyclone_output)
+pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
