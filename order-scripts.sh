@@ -178,6 +178,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/001_crea
 #run pairtree with default parameters
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/002_run_Pairtree.sh
 
+#post pairtree
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/003_poss_pairtree_analysis.R
+
 #----Treeomics------------------------------------------------------------------
 
 #1. make patient specific bed files from which to pull mutations in vcf files for treeomics

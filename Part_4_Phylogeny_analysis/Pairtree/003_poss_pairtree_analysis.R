@@ -82,7 +82,7 @@ pair_tree_input_ssm = function(py_in, py_out){
   t$cluster_id = as.numeric(t$cluster_id)
 
   patient = as.character(dat$sample_id[1])
-  patient = paste(unlist(strsplit(x,"_"))[1:3], collapse="_")
+  patient = paste(unlist(strsplit(patient,"_"))[1:3], collapse="_")
 
   #merge with mutation info
   mut_info_pat = filter(mut_info, STUDY_PATIENT_ID == patient)
