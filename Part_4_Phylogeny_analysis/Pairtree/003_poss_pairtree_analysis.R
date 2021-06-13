@@ -92,6 +92,17 @@ pair_tree_input_ssm = function(py_in, py_out){
   muts_keep = merge(muts_keep, mut_info_pat, by=c("Sample", "mut_id"))
   muts_keep = merge(muts_keep, t, by="cluster_id")
 
+  #find genes that are convergent (mutated across multiple clones)
+  just_coding = filter(muts_keep, biotype == "protein_coding", !(AAChange.ensGene == "."), !(ExonicFunc.ensGene == "synonymous_SNV"))
+  tt = as.data.table(table(just_coding$symbol, just_coding$pairtree_cluster_name)) %>% filter(N > 0)
+  colnames(tt) = c("gene", "cluster", "N")
+  conv_genes = as.data.table(table(tt$gene)) %>% filter(N > 1)
+  tt= filter(tt, gene %in% conv_genes$V1)
+  just_coding = filter(just_coding, symbol %in% tt$gene)
+  muts_keep$convergent = ""
+  z = which(muts_keep$mut_id %in% just_coding$mut_id)
+  muts_keep$convergent[z] = "convergent"
+
   #write results
   library(openxlsx)
   write.xlsx(muts_keep, paste(patient, date, "all_muts", 'Pyclone-VI-pairtree-results.xlsx', sep="_"))
