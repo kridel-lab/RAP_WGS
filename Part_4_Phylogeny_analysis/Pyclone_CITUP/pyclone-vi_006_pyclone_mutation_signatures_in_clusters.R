@@ -29,6 +29,7 @@ library(ggplot2)
 library(gridExtra)
 library(BSgenome.Hsapiens.UCSC.hg19)
 hg19 <- BSgenome.Hsapiens.UCSC.hg19
+library(ggpubr)
 
 # Load mutSignatures
 #library(mutSignatures)
@@ -106,7 +107,7 @@ get_mut_signatures = function(patient, pyclone_output){
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
-  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
   colnames(mut.merged)[1] = "mutation_id"
 
@@ -117,6 +118,20 @@ get_mut_signatures = function(patient, pyclone_output){
   colnames(mut.merged)[7] = "chr"
   colnames(mut.merged)[8] = "Hugo_Symbol"
   mut.merged$Tumor_Sample_Barcode = patient
+
+  #how many cosmic mutations across clones
+  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68))
+  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68, mut.merged$Hugo_Symbol)) %>% filter(N >0, !(V2 == "."))
+  cos_sum = as.data.table(table(cos$V1))
+  colnames(cos_sum) = c("Pairtree_cluster", "Number_cosmic_mutations")
+
+  pdf("cosmic_muts_across_clones.pdf", width=5, height=4)
+  g = ggbarplot(cos_sum, x = "Pairtree_cluster", y="Number_cosmic_mutations")+
+  xlab("Pairtree Clone") + ylab("# of COSMIC mutations")
+  print(g)
+  dev.off()
+
+  print(cos)
 
   #use Mutational Patterns
   grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="pairtree_cluster_name", seqnames.field = "chr",
