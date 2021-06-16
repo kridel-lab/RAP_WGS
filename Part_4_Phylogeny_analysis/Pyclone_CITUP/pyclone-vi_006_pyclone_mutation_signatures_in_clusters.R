@@ -107,7 +107,7 @@ get_mut_signatures = function(patient, pyclone_output){
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
-  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68")])
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
   colnames(mut.merged)[1] = "mutation_id"
 
@@ -119,32 +119,27 @@ get_mut_signatures = function(patient, pyclone_output){
   colnames(mut.merged)[8] = "Hugo_Symbol"
   mut.merged$Tumor_Sample_Barcode = patient
 
-  #how many cosmic mutations across clones
-  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68))
-  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68, mut.merged$Hugo_Symbol)) %>% filter(N >0, !(V2 == "."))
-  cos_sum = as.data.table(table(cos$V1))
-  colnames(cos_sum) = c("Pairtree_cluster", "Number_cosmic_mutations")
+  print("pass")
 
-  pdf("cosmic_muts_across_clones.pdf", width=4, height=6)
-  g = ggbarplot(cos_sum, x = "Pairtree_cluster", y="Number_cosmic_mutations")+
-  xlab("Pairtree Clone") + ylab("# of COSMIC mutations")+theme_classic()+
-  theme(axis.text = element_text(size = 12, color="black"))
-  print(g)
-  dev.off()
-
-  print(cos)
-
-  mut.merged$cosmic68 = NULL
   #use Mutational Patterns
   grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="pairtree_cluster_name", seqnames.field = "chr",
   start.field = "start", end.field = "end", keep.extra.columns=TRUE)
+
+  print("pass2")
+
   mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
 
+  print("pass3")
+
   merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.5)
+
+  print("pass4")
 
   #Fit mutation matrix to the COSMIC mutational signatures:
   strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.008)
   fit_res_strict <- strict_refit$fit_res
+
+  print("pass4")
 
   pdf("mutation_signature_analysis_plots.pdf", width=9, height=6)
   p1 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE,
@@ -160,11 +155,15 @@ get_mut_signatures = function(patient, pyclone_output){
 
   dev.off()
 
+  print("pass5")
+
   all_clusts = as.data.frame(fit_res_strict$contribution)
   all_clusts$signature = rownames(all_clusts)
   all_clusts=melt(as.data.table(all_clusts))
   all_clusts$patient = patient
   all_clusts = as.data.table(all_clusts)[order(-value)]
+
+  print("pass6")
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
   return(all_clusts)

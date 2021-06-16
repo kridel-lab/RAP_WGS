@@ -76,7 +76,7 @@ p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-b
 #analysis
 #----------------------------------------------------------------------
 
-get_mapscape_input = function(patient, pyclone_output){
+get_mut_signatures = function(patient, pyclone_output){
 
   #read in mutation data for each cluster as obtained from pyclone
   muts <- pyclone_output
@@ -85,7 +85,7 @@ get_mapscape_input = function(patient, pyclone_output){
   clusters = unique(muts$cluster_id)
 
   #make folder to store plots for patient
-  mainDir <- "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/mapscape"
+  mainDir <- "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/clusters_mutation_signatures"
   subDir <- patient
 
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
@@ -94,7 +94,7 @@ get_mapscape_input = function(patient, pyclone_output){
   #for each cluster gather mutations and their details from main mutation
   #file
 
-  cluster_muts = unique(muts[,c("sample_id", "mutation_id", "cluster_id", "cellular_prevalence")])
+  cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
 
   t = as.data.table(table(cluster_muts$cluster_id))
   t = filter(t, N >30)
@@ -104,33 +104,93 @@ get_mapscape_input = function(patient, pyclone_output){
   colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
   t$cluster_id = as.numeric(t$cluster_id)
   muts_keep = merge(muts_keep, t, by="cluster_id")
-  muts_keep = unique(muts_keep[,c("sample_id", "pairtree_cluster_name", "cellular_prevalence")])
-  colnames(muts_keep) = c("sample_id", "clone_id", "clonal_prev")
 
-  #figure out prevalence of "normal clone - 0"
-  samples = unique(muts_keep$sample_id)
-  zeroes = as.data.frame(matrix(nrow=1, ncol=3))
-  colnames(zeroes) = c("sample_id", "clone_id", "clonal_prev")
-  for(i in 1:length(samples)){
-    clusts = filter(muts_keep, sample_id == samples[i])
-    row = c(samples[i], 0, 1)
-    zeroes = rbind(zeroes,row)
-  }
+  mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
+  mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68")])
+  mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
+  colnames(mut.merged)[1] = "mutation_id"
 
-  zeroes = zeroes[-1,]
-  muts_keep = rbind(muts_keep, zeroes)
-  muts_keep$clone_id = as.numeric(muts_keep$clone_id)
-  muts_keep$clonal_prev = as.numeric(muts_keep$clonal_prev)
+  mut.merged = merge(muts_keep, mut.merged, by="mutation_id")
 
-  write.table(muts_keep, file="mapscape_input_from_pairtree_pyclonevi.txt", quote=F, row.names=F, sep="\t")
+  colnames(mut.merged)[6] = "start"
+  mut.merged$end = mut.merged$start
+  colnames(mut.merged)[7] = "chr"
+  colnames(mut.merged)[8] = "Hugo_Symbol"
+  mut.merged$Tumor_Sample_Barcode = patient
+
+  #how many cosmic mutations across clones
+  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68))
+  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68, mut.merged$Hugo_Symbol)) %>% filter(N >0, !(V2 == "."))
+  cos_sum = as.data.table(table(cos$V1))
+  colnames(cos_sum) = c("Pairtree_cluster", "Number_cosmic_mutations")
+
+  pdf("cosmic_muts_across_clones.pdf", width=4, height=6)
+  g = ggbarplot(cos_sum, x = "Pairtree_cluster", y="Number_cosmic_mutations")+
+  xlab("Pairtree Clone") + ylab("# of COSMIC mutations")+theme_classic()+
+  theme(axis.text = element_text(size = 12, color="black"))
+  print(g)
+  dev.off()
+
+  print(cos)
+  print("pass")
+
+  mut.merged$cosmic68 = NULL
+  #use Mutational Patterns
+  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="pairtree_cluster_name", seqnames.field = "chr",
+  start.field = "start", end.field = "end", keep.extra.columns=TRUE)
+
+  print("pass2")
+
+  mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
+
+  print("pass3")
+
+  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.5)
+
+  print("pass4")
+
+  #Fit mutation matrix to the COSMIC mutational signatures:
+  strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.008)
+  fit_res_strict <- strict_refit$fit_res
+
+  print("pass4")
+
+  pdf("mutation_signature_analysis_plots.pdf", width=9, height=6)
+  p1 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE,
+    signatures = merged_signatures, mode = "absolute")+
+  theme(legend.title=element_text(size=5),
+    legend.text=element_text(size=5))
+  print(p1)
+
+  p2 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE)+
+  theme(legend.title=element_text(size=5),
+    legend.text=element_text(size=5))
+  print(p2)
+
+  dev.off()
+
+  print("pass5")
+
+  all_clusts = as.data.frame(fit_res_strict$contribution)
+  all_clusts$signature = rownames(all_clusts)
+  all_clusts=melt(as.data.table(all_clusts))
+  all_clusts$patient = patient
+  all_clusts = as.data.table(all_clusts)[order(-value)]
+
+  print("pass6")
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
-  print("done")
+  return(all_clusts)
 }
 
-get_mapscape_input("LY_RAP_0001", p001_pyclone_output)
-get_mapscape_input("LY_RAP_0002", p002_pyclone_output)
-get_mapscape_input("LY_RAP_0003", p003_pyclone_output)
+p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output)
+p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output)
+p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output)
+
+#combine all results
+all_results = rbind(p001, p002, p003)
+saveRDS(all_results, file="all_pyclone_clusters_signatures_results.rds")
 
 #-----
 #DONE-
