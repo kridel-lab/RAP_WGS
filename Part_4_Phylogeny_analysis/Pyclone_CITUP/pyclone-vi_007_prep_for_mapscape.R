@@ -96,7 +96,8 @@ get_mapscape_input = function(patient, pyclone_output){
 
   cluster_muts = unique(muts[,c("sample_id", "mutation_id", "cluster_id", "cellular_prevalence")])
 
-  t = as.data.table(table(cluster_muts$cluster_id))
+  tt = unique(muts[,c("mutation_id", "cluster_id")])
+  t = as.data.table(table(tt$cluster_id))
   t = filter(t, N >30)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
 

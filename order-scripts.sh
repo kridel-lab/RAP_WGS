@@ -170,6 +170,9 @@ sbatch $pyclone_folder/pyclone-vi_005_run_main_program_all_muts.sh
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_006_pyclone_mutation_signatures_in_clusters.R
 
+#prepare input for mapscape (edges are prepared manually seperatley and locally)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_007_prep_for_mapscape.R
+
 #----Pairtree------------------------------------------------------------------
 
 #generate input files for pairtree using pyclone input and output files
