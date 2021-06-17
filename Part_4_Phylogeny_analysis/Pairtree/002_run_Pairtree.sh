@@ -34,7 +34,7 @@ cd results
 $PTDIR/bin/pairtree --params $input_files/p001_input.params.json $input_files/p001_ssm_input.ssm p001.results.npz --seed 123 --trees-per-chain 4000
 
 # Plot best tree results in an HTML file.
-$PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz p001.results.html
+$PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz p001.results.html --reorder-subclones --remove-normal
 
 #plot all posteriors
 $PTDIR/bin/summposterior --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz p001.posterior_plots.html
@@ -49,7 +49,7 @@ $PTDIR/bin/summposterior --runid p001 $input_files/p001_ssm_input.ssm $input_fil
 $PTDIR/bin/pairtree --params $input_files/p002_input.params.json $input_files/p002_ssm_input.ssm p002.results.npz --seed 123 --trees-per-chain 4000
 
 # Plot best tree results in an HTML file.
-$PTDIR/bin/plottree --runid p002 $input_files/p002_ssm_input.ssm $input_files/p002_input.params.json p002.results.npz p002.results.html
+$PTDIR/bin/plottree --runid p002 $input_files/p002_ssm_input.ssm $input_files/p002_input.params.json p002.results.npz p002.results.html --reorder-subclones --remove-normal
 
 #plot all posteriors
 $PTDIR/bin/summposterior --runid p002 $input_files/p002_ssm_input.ssm $input_files/p002_input.params.json p002.results.npz p002.posterior_plots.html
@@ -64,7 +64,7 @@ $PTDIR/bin/summposterior --runid p002 $input_files/p002_ssm_input.ssm $input_fil
 $PTDIR/bin/pairtree --params $input_files/p003_input.params.json $input_files/p003_ssm_input.ssm p003.results.npz --seed 123 --trees-per-chain 4000
 
 # Plot best tree results in an HTML file.
-$PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html
+$PTDIR/bin/plottree --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.results.html --reorder-subclones --remove-normal
 
 #plot all posteriors
 $PTDIR/bin/summposterior --runid p003 $input_files/p003_ssm_input.ssm $input_files/p003_input.params.json p003.results.npz p003.posterior_plots.html
