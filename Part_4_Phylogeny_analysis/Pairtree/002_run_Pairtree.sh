@@ -21,8 +21,8 @@ cd $input_files
 
 #set-up pairtree
 PTDIR=$HOME/pairtree
-mkdir results
-cd results
+mkdir results2
+cd results2
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #P001+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
