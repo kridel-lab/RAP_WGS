@@ -61,6 +61,11 @@ p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-b
 p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
 p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
+#pairtree clusters - files made manually
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p003_pairtree_clones.txt")
+
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
@@ -76,7 +81,7 @@ p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-b
 #analysis
 #----------------------------------------------------------------------
 
-get_mut_signatures = function(patient, pyclone_output){
+get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
   #read in mutation data for each cluster as obtained from pyclone
   muts <- pyclone_output
@@ -99,10 +104,16 @@ get_mut_signatures = function(patient, pyclone_output){
   t = as.data.table(table(cluster_muts$cluster_id))
   t = filter(t, N >30)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
+  colnames(t)= c("cluster_id", "num_muts")
 
-  t$new_order = 1:(nrow(t))
-  colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
+  if(patient == "LY_RAP_0003"){
+    t$num_muts[t$cluster_id == 4] = 93
+  }
+
+  t=merge(t, pairtree_cluster)
+  colnames(t)[3] = "pairtree_cluster_name"
   t$cluster_id = as.numeric(t$cluster_id)
+
   muts_keep = merge(muts_keep, t, by="cluster_id")
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
@@ -126,8 +137,33 @@ get_mut_signatures = function(patient, pyclone_output){
   start.field = "start", end.field = "end", keep.extra.columns=TRUE)
 
   print("pass2")
+  type_occurrences <- mut_type_occurrences(grl_my, ref_genome)
+  clones = as.numeric(rownames(type_occurrences))
+
+  p_spec = plot_spectrum(type_occurrences, by = clones, CT = TRUE, legend = FALSE)
+
+  pdf("mut_sigs_plot_spectrum.pdf", width=3, height=4)
+  print(p_spec +
+  theme(axis.text.x = element_text(size=4),
+          axis.text.y = element_text(size=4),
+          strip.text = element_text(size=4),
+          panel.spacing = unit(.05, 'pt'),
+          axis.title = element_text(size = 4),
+        strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))))
+  dev.off()
 
   mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
+
+  pdf("mut_sigs_plot_96_profiles.pdf", width=4, height=4)
+  p = plot_96_profile(mut_mat)
+  print(p+
+  theme(axis.text.x = element_text(size=4),
+          axis.text.y = element_text(size=4),
+          strip.text = element_text(size=4),
+          panel.spacing = unit(.05, 'pt'),
+          axis.title = element_text(size = 4),
+        strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))))
+  dev.off()
 
   print("pass3")
 
@@ -169,9 +205,9 @@ get_mut_signatures = function(patient, pyclone_output){
   return(all_clusts)
 }
 
-p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output)
-p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output)
-p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output)
+p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
+p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
+p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #combine all results
 all_results = rbind(p001, p002, p003)
