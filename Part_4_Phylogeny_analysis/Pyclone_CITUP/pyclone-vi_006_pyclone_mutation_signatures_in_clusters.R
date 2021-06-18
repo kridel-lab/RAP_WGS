@@ -142,10 +142,10 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
   p_spec = plot_spectrum(type_occurrences, by = clones, CT = TRUE, legend = FALSE)
 
-  pdf("mut_sigs_plot_spectrum.pdf", width=3, height=4)
+  pdf("mut_sigs_plot_spectrum.pdf", width=4, height=4)
   print(p_spec +
   theme(axis.text.x = element_text(size=4),
-          axis.text.y = element_text(size=4),
+          axis.text.y = element_text(size=5),
           strip.text = element_text(size=4),
           panel.spacing = unit(.05, 'pt'),
           axis.title = element_text(size = 4),
