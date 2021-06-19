@@ -61,6 +61,11 @@ p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-b
 p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
 p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
+#pairtree clusters - files made manually
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p003_pairtree_clones.txt")
+
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
@@ -76,7 +81,7 @@ p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-b
 #analysis
 #----------------------------------------------------------------------
 
-get_mapscape_input = function(patient, pyclone_output){
+get_mapscape_input = function(patient, pyclone_output, pairtree_cluster){
 
   #read in mutation data for each cluster as obtained from pyclone
   muts <- pyclone_output
@@ -100,9 +105,14 @@ get_mapscape_input = function(patient, pyclone_output){
   t = as.data.table(table(tt$cluster_id))
   t = filter(t, N >30)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
+  colnames(t)= c("cluster_id", "num_muts")
 
-  t$new_order = 1:(nrow(t))
-  colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
+  if(patient == "LY_RAP_0003"){
+    t$num_muts[t$cluster_id == 4] = 93
+  }
+
+  t=merge(t, pairtree_cluster)
+  colnames(t)[3] = "pairtree_cluster_name"
   t$cluster_id = as.numeric(t$cluster_id)
   muts_keep = merge(muts_keep, t, by="cluster_id")
   muts_keep = unique(muts_keep[,c("sample_id", "pairtree_cluster_name", "cellular_prevalence")])
@@ -129,9 +139,9 @@ get_mapscape_input = function(patient, pyclone_output){
   print("done")
 }
 
-get_mapscape_input("LY_RAP_0001", p001_pyclone_output)
-get_mapscape_input("LY_RAP_0002", p002_pyclone_output)
-get_mapscape_input("LY_RAP_0003", p003_pyclone_output)
+get_mapscape_input("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
+get_mapscape_input("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
+get_mapscape_input("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #-----
 #DONE-
