@@ -34,6 +34,7 @@ reddy$type = "DLBCL"
 treeomics_driver_3 = reddy[,1]
 colnames(treeomics_driver_3)[1] = "Gene_Symbol"
 write.csv(treeomics_driver_3, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p003_drivers.csv", quote=F, row.names=F)
+reddy$patient = "LY_RAP_0003"
 
 #PMBCL genes
 pmbcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/PMBCL_genes.xlsx"))
@@ -42,6 +43,7 @@ pmbcl = unique(pmbcl)
 treeomics_driver_2 = pmbcl[,1]
 colnames(treeomics_driver_2)[1] = "Gene_Symbol"
 write.csv(treeomics_driver_2, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p002_drivers.csv", quote=F, row.names=F)
+pmbcl$patient = "LY_RAP_0002"
 
 #MCL genes
 mcl = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/MCL_genes.xlsx"))
@@ -50,6 +52,7 @@ mcl = unique(mcl)
 treeomics_driver_1 = mcl[,1]
 colnames(treeomics_driver_1)[1] = "Gene_Symbol"
 write.csv(treeomics_driver_1, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/p001_drivers.csv", quote=F, row.names=F)
+mcl$patient = "LY_RAP_0001"
 
 all_drivers = rbind(reddy, pmbcl, mcl)
 

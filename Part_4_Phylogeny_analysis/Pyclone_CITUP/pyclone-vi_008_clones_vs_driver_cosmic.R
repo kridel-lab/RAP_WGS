@@ -61,6 +61,11 @@ p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-b
 p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
 p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
+#pairtree clusters - files made manually
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p003_pairtree_clones.txt")
+
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
@@ -76,7 +81,7 @@ p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-b
 #analysis
 #----------------------------------------------------------------------
 
-get_mut_signatures = function(patient, pyclone_output){
+get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
   #read in mutation data for each cluster as obtained from pyclone
   muts <- pyclone_output
@@ -99,10 +104,16 @@ get_mut_signatures = function(patient, pyclone_output){
   t = as.data.table(table(cluster_muts$cluster_id))
   t = filter(t, N >30)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
+  colnames(t)= c("cluster_id", "num_muts")
 
-  t$new_order = 1:(nrow(t))
-  colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
+  if(patient == "LY_RAP_0003"){
+    t$num_muts[t$cluster_id == 4] = 93
+  }
+
+  t=merge(t, pairtree_cluster)
+  colnames(t)[3] = "pairtree_cluster_name"
   t$cluster_id = as.numeric(t$cluster_id)
+
   muts_keep = merge(muts_keep, t, by="cluster_id")
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
@@ -131,66 +142,71 @@ get_mut_signatures = function(patient, pyclone_output){
   theme(axis.text = element_text(size = 12, color="black"))
   print(g)
   dev.off()
-
   print(cos)
   print("pass")
 
-  mut.merged$cosmic68 = NULL
-  #use Mutational Patterns
-  grl_my = makeGRangesListFromDataFrame(mut.merged, split.field ="pairtree_cluster_name", seqnames.field = "chr",
-  start.field = "start", end.field = "end", keep.extra.columns=TRUE)
+  #which driver gene mutations in which clones
+  mut.merged$driver = ""
+  z1 = which(mut.merged$Hugo_Symbol %in% all_drivers$Gene[all_drivers$patient == patient])
+  z2 = which((mut.merged$Func.ensGene %in% c("exonic", "splicing", "exonic\\x3bsplicing")) &
+  (mut.merged$ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain",
+  "frameshift_deletion", "frameshift_insertion", "stoploss", ".")))
+  z = z2[which(z2 %in% z1)]
+  mut.merged$driver[z] = "driver"
+  mut.merged$cosmic[!(mut.merged$cosmic68 == ".")] = "cosmic"
+  mut.merged = unique(mut.merged[,c("pairtree_cluster_name", "Hugo_Symbol", "driver", "cosmic")]) %>%
+      filter(!(driver=="") | !(cosmic=="."))
+  missing_clones = t$pairtree_cluster_name[which(!(t$pairtree_cluster_name %in% mut.merged$pairtree_cluster_name))]
+  add_clones = as.data.frame(matrix(nrow=length(missing_clones), ncol=4))
+  colnames(add_clones) = colnames(mut.merged)
+  add_clones$pairtree_cluster_name = missing_clones
+  mut.merged = rbind(mut.merged, add_clones)
+  mut.merged$Hugo_Symbol[is.na(mut.merged$Hugo_Symbol)] = mut.merged$Hugo_Symbol[!(is.na(mut.merged$Hugo_Symbol))][1]
 
-  print("pass2")
+  gg=as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$Hugo_Symbol))
+  colnames(gg) = c("pairtree_cluster_name", "Hugo_Symbol", "num_muts_in_genes")
+  gg$pairtree_cluster_name = as.numeric(gg$pairtree_cluster_name)
 
-  mut_mat <- mut_matrix(vcf_list = grl_my, ref_genome = ref_genome)
+  mut.merged = merge(mut.merged, gg, by=c("pairtree_cluster_name", "Hugo_Symbol"))
 
-  print("pass3")
+  mut.merged = mut.merged[order(pairtree_cluster_name)]
+  mut.merged$pairtree_cluster_name = factor(mut.merged$pairtree_cluster_name, levels=unique(mut.merged$pairtree_cluster_name))
 
-  merged_signatures <- merge_signatures(signatures, cos_sim_cutoff = 0.5)
+  mut.merged$driver[mut.merged$driver == ""] = NA
+  mut.merged$driver = factor(mut.merged$driver, levels=c("driver", NA))
 
-  print("pass4")
+  mut.merged$cosmic[mut.merged$cosmic == ""] = NA
+  mut.merged$cosmic = factor(mut.merged$cosmic, levels=c("cosmic", NA))
 
-  #Fit mutation matrix to the COSMIC mutational signatures:
-  strict_refit <- fit_to_signatures_strict(mut_mat, merged_signatures, max_delta = 0.008)
-  fit_res_strict <- strict_refit$fit_res
+  mut.merged$num_muts_in_genes[is.na(mut.merged$driver) & is.na(mut.merged$cosmic)] = ""
 
-  print("pass4")
+  genes_order = filter(mut.merged, !(num_muts_in_genes==""))
+  genes_order = as.data.table(table(genes_order$Hugo_Symbol))
+  genes_order = genes_order[order(-N)]
+  mut.merged$Hugo_Symbol = factor(mut.merged$Hugo_Symbol, levels=genes_order$V1)
 
-  pdf("mutation_signature_analysis_plots.pdf", width=9, height=6)
-  p1 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE,
-    signatures = merged_signatures, mode = "absolute")+
-  theme(legend.title=element_text(size=5),
-    legend.text=element_text(size=5))
-  print(p1)
+  pdf("cosmic_drivers_muts_across_clones.pdf", width=6, height=6)
+  g = ggplot(mut.merged, aes(x=pairtree_cluster_name, y=Hugo_Symbol)) +
+  theme_bw()+
+  geom_tile(aes(fill=cosmic,width=0.75, height=0.75, color=driver),size=0.55) +
+  geom_text(aes(label=num_muts_in_genes))+
+     xlab("Pairtree clone")+
+     scale_colour_manual(values = c("black", "grey"),
+       na.value="transparent")+
+       scale_fill_manual(values = c("orange", "white"),
+       na.value="transparent")
 
-  p2 = plot_contribution(fit_res_strict$contribution, palette=mypal, coord_flip=TRUE)+
-  theme(legend.title=element_text(size=5),
-    legend.text=element_text(size=5))
-  print(p2)
-
+  g= ggpar(g,legend ="bottom")
+  print(g)
   dev.off()
-
-  print("pass5")
-
-  all_clusts = as.data.frame(fit_res_strict$contribution)
-  all_clusts$signature = rownames(all_clusts)
-  all_clusts=melt(as.data.table(all_clusts))
-  all_clusts$patient = patient
-  all_clusts = as.data.table(all_clusts)[order(-value)]
-
-  print("pass6")
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
   return(all_clusts)
 }
 
-p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output)
-p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output)
-p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output)
-
-#combine all results
-all_results = rbind(p001, p002, p003)
-saveRDS(all_results, file="all_pyclone_clusters_signatures_results.rds")
+p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
+p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
+p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #-----
 #DONE-
