@@ -201,7 +201,6 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   dev.off()
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
-  return(all_clusts)
 }
 
 p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
