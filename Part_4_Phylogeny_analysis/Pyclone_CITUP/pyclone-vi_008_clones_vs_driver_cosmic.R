@@ -77,6 +77,37 @@ p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairt
 #data
 #----------------------------------------------------------------------
 
+#add categories for CNAs
+read_only$CNA = ""
+
+#LOH
+z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot >= 2))
+read_only$CNA[z] = "Somatic LOH"
+
+#Neutral
+z = which((read_only$ntot !=  read_only$Nmaj) & (read_only$ntot == 2))
+read_only$CNA[z] = "Neutral"
+
+#Deletions
+z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 0))
+read_only$CNA[z] = "Homozygous Del"
+
+z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 1))
+read_only$CNA[z] = "Hemizygous Del"
+
+#Amplications
+z = which((read_only$CNA == "") & (read_only$ntot > 5))
+read_only$CNA[z] = ">5_N_Gain"
+
+z = which(read_only$CNA == "")
+read_only$CNA[z] = paste(read_only$ntot[z], "_N_", "Gain", sep="")
+
+z = which(is.na(read_only$ntot))
+if(!(length(z) == 0)){
+  read_only=read_only[-z,]
+}
+
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
@@ -118,7 +149,7 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
-  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68")])
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68", "gt_AF", "CNA")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
   colnames(mut.merged)[1] = "mutation_id"
 

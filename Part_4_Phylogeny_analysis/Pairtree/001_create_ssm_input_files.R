@@ -68,10 +68,10 @@ pair_tree_input_ssm = function(py_in, py_out){
   dat = dat[,c("name", "var_reads", "total_reads", "var_read_prob", "sample_id")]
   dat$sample_id = factor(dat$sample_id, levels=unique(dat$sample_id))
 
-  #keep only mutations in clusters with at least 30 mutations
+  #keep only mutations in clusters with at least 50 mutations
   clusts_muts = unique(py_out[,c("cluster_id", "mutation_id")])
   t = as.data.table(table(clusts_muts$cluster_id))
-  t = filter(t, N >30)
+  t = filter(t, N >50)
   muts_keep = filter(py_out, cluster_id %in% t$V1)
   #muts_keep = py_out
 
