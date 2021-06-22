@@ -107,6 +107,10 @@ if(!(length(z) == 0)){
   read_only=read_only[-z,]
 }
 
+#test
+patient = patients[1]
+pyclone_output = p001_pyclone_output
+pairtree_cluster = p001_pairtree
 
 #----------------------------------------------------------------------
 #analysis
