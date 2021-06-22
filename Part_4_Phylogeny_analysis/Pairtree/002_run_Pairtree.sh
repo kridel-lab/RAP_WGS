@@ -14,15 +14,15 @@ source /cluster/home/kisaev/.bashrc
 source activate pairtree
 
 #set up input files
-input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-21_input_files
+input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-22_input_files
 cd $input_files
 
 #don't forget to manually edit input *params.json files to remove the "" in the garbage []
 
 #set-up pairtree
 PTDIR=$HOME/pairtree
-mkdir min150_muts
-cd min150_muts
+mkdir min100_muts
+cd min100_muts
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #P001+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -31,7 +31,7 @@ cd min150_muts
 #nano  $input_files/p001_input.params.json to remove "" from garabge variable
 
 # Run Pairtree.
-$PTDIR/bin/pairtree --params $input_files/p001_input.params.json $input_files/p001_ssm_input.ssm p001.results.npz --seed 900 --trees-per-chain 7000 --tree-chains 50 
+$PTDIR/bin/pairtree --params $input_files/p001_input.params.json $input_files/p001_ssm_input.ssm p001.results.npz --seed 900 --trees-per-chain 7000 --tree-chains 50
 
 # Plot best tree results in an HTML file.
 $PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz p001.results.html --reorder-subclones
