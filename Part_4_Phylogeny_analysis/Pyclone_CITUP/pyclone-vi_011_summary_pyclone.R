@@ -111,6 +111,10 @@ if(!(length(z) == 0)){
 #analysis
 #----------------------------------------------------------------------
 
+patient= patients[3]
+pyclone_output = p003_pyclone_output
+pairtree_cluster = p003_pairtree
+
 get_pyclone_summ = function(patient, pyclone_output, pairtree_cluster){
 
   #read in mutation data for each cluster as obtained from pyclone
@@ -139,24 +143,15 @@ get_pyclone_summ = function(patient, pyclone_output, pairtree_cluster){
 
   muts_keep = merge(muts_keep, t, by="cluster_id")
 
-  muts = unique(muts[,c("sample_id", "cluster_id", "cellular_prevalence")])
+  muts = unique(muts[,c("sample_id", "mutation_id", "cluster_id", "cellular_prevalence")])
   muts = merge(muts, t, by="cluster_id")
 
-  pdf(paste(patient, 'all_pyclone_cell_prev.pdf', sep="_"), width = 10, height = 6, useDingbats = FALSE)
-  p = ggplot(muts, aes(x=pairtree_cluster_name, y=cellular_prevalence, group=sample_id)) +
-    geom_line(aes(color=sample_id))+
-    geom_point(aes(color=sample_id))
-  p = p + theme_minimal()
-  p = p + theme(legend.position="bottom")+ theme(legend.text=element_text(size=4))
-  print(p)
-  dev.off()
+  colnames(muts)[2:3] = c("Sample", "mut_id")
+  muts = merge(muts, read_only, by=c("Sample", "mut_id"))
+  muts = unique(muts[,c("Sample", "mut_id", "pairtree_cluster_name", "cellular_prevalence",
+"gt_AF", "Nmin", "Nmaj", "Ploidy", "Purity", "Tissue_Site")])
 
-  #geom tile
-  pdf(paste(patient, "summary_all_list_pyclone_cell_prev_tiles.pdf", sep="_"), width=9, height=6)
-  g = ggplot(muts, aes(x=pairtree_cluster_name, y=sample_id)) +
-  geom_tile(aes(fill=cellular_prevalence,width=0.75, height=0.75),size=0.55, colour = "black")+
-  scale_fill_gradient(low = "grey", high = "purple", na.value = 'white')
-  print(g)
-  dev.off()
+  ggdensity(muts, x = "gt_AF",
+ color = "Sample", palette = mypal, facet.by="pairtree_cluster_name")
 
 }

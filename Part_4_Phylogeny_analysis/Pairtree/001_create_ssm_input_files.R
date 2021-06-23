@@ -49,6 +49,10 @@ p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap
 p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
 p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
+#test
+py_in = p003_pyclone_input
+py_out = p003_pyclone_output
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
