@@ -25,6 +25,7 @@ source("/cluster/home/kisaev/RAP_WGS/config-file.R")
 #library(clonevol)
 library("gplots")
 library(threadr)
+library(rjson)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 
@@ -49,12 +50,14 @@ p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap
 p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-
-#clone    num_muts
-#1    1089
 p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
 p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
 p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
+
+#pairtree results json files
+p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_solution.json")
+p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
+p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
@@ -66,11 +69,12 @@ mut_info = unique(read_only[,c("mut_id", "REF", "ALT", "symbol", "STUDY_PATIENT_
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree")
 
 #test
-#py_in=p002_pyclone_input
-#py_out=p002_pyclone_output
-#pairtree_cluster=p002_pairtree
+py_in=p002_pyclone_input
+py_out=p002_pyclone_output
+pairtree_cluster=p002_pairtree
+pairtree_results=p002_pairtree_json
 
-pairtree_summary = function(py_in, py_out, pairtree_cluster){
+pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
 
   #this is what it needs to look like:
   #id	name	var_reads	total_reads	var_read_prob
@@ -119,6 +123,25 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster){
   z = which(muts_keep$mut_id %in% just_coding$mut_id)
   muts_keep$convergent[z] = "convergent"
 
+  #add info about pairtree clusters/prevalences
+  samples = as.data.table(pairtree_results$samples)
+
+  subclonefreq = as.data.table(pairtree_results$phi)
+  subclonefreq$samples = samples$V1
+  subclonefreq = melt(subclonefreq)
+  colnames(subclonefreq)[3] = "pairtree_subclone_freq"
+
+  subpopfreq = as.data.table(pairtree_results$eta)
+  subpopfreq$samples = samples$V1
+  subpopfreq = melt(subpopfreq)
+  colnames(subpopfreq)[3] = "pairtree_subpop_freq"
+
+  pairtree_res = merge(subclonefreq, subpopfreq, by=c("samples", "variable"))
+  pairtree_res$variable = as.character(pairtree_res$variable)
+  pairtree_res$variable = sapply(pairtree_res$variable, function(x){as.numeric(unlist(strsplit(x, "V"))[2])})
+  colnames(pairtree_res)[1:2] = c("Sample", "pairtree_cluster_name")
+  muts_keep = merge(pairtree_res, muts_keep, by = c("Sample", "pairtree_cluster_name"))
+
   #write results
   library(openxlsx)
   write.xlsx(muts_keep, paste(patient, date, "all_muts", 'Pyclone-VI-pairtree-results.xlsx', sep="_"))
@@ -127,6 +150,6 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster){
 
 }
 
-pairtree_summary(p001_pyclone_input, p001_pyclone_output, p001_pairtree)
-pairtree_summary(p002_pyclone_input, p002_pyclone_output, p002_pairtree)
-pairtree_summary(p003_pyclone_input, p003_pyclone_output, p003_pairtree)
+pairtree_summary(p001_pyclone_input, p001_pyclone_output, p001_pairtree, p001_pairtree_json)
+pairtree_summary(p002_pyclone_input, p002_pyclone_output, p002_pairtree, p002_pairtree_json)
+pairtree_summary(p003_pyclone_input, p003_pyclone_output, p003_pairtree, p003_pairtree_json)
