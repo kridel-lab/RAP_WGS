@@ -43,10 +43,18 @@ p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv"
 p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/10-06-2021")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
 p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
 p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
 p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+
+#pairtree clusters - files made manually
+
+#clone    num_muts
+#1    1089
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
@@ -57,7 +65,12 @@ mut_info = unique(read_only[,c("mut_id", "REF", "ALT", "symbol", "STUDY_PATIENT_
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree")
 
-pair_tree_input_ssm = function(py_in, py_out){
+#test
+py_in=p002_pyclone_input
+py_out=p002_pyclone_output
+pairtree_cluster=p002_pairtree
+
+pairtree_summary = function(py_in, py_out, pairtree_cluster){
 
   #this is what it needs to look like:
   #id	name	var_reads	total_reads	var_read_prob
@@ -74,11 +87,15 @@ pair_tree_input_ssm = function(py_in, py_out){
   #keep only mutations in clusters with at least 20 mutations
   clusts_muts = unique(py_out[,c("cluster_id", "mutation_id")])
   t = as.data.table(table(clusts_muts$cluster_id))
-  t = filter(t, N >30)
+  t = filter(t, N >100)
   muts_keep = filter(py_out, cluster_id %in% t$V1)
 
-  t$new_order = 1:(nrow(t))
-  colnames(t)= c("cluster_id", "num_muts_in_cluster", "pairtree_cluster_name")
+  colnames(t)= c("cluster_id", "num_muts")
+  t=merge(t, pairtree_cluster)
+  colnames(t)[3] = "pairtree_cluster_name"
+  t$cluster_id = as.numeric(t$cluster_id)
+
+  muts_keep = merge(muts_keep, t, by="cluster_id")
   t$cluster_id = as.numeric(t$cluster_id)
 
   patient = as.character(dat$sample_id[1])
@@ -90,7 +107,6 @@ pair_tree_input_ssm = function(py_in, py_out){
   colnames(muts_keep)[which(colnames(muts_keep) == "mutation_id")] = "mut_id"
 
   muts_keep = merge(muts_keep, mut_info_pat, by=c("Sample", "mut_id"))
-  muts_keep = merge(muts_keep, t, by="cluster_id")
 
   #find genes that are convergent (mutated across multiple clones)
   just_coding = filter(muts_keep, biotype == "protein_coding", !(AAChange.ensGene == "."), !(ExonicFunc.ensGene == "synonymous_SNV"))
@@ -111,6 +127,6 @@ pair_tree_input_ssm = function(py_in, py_out){
 
 }
 
-pair_tree_input_ssm(p001_pyclone_input, p001_pyclone_output)
-pair_tree_input_ssm(p002_pyclone_input, p002_pyclone_output)
-pair_tree_input_ssm(p003_pyclone_input, p003_pyclone_output)
+pairtree_summary(p001_pyclone_input, p001_pyclone_output, p001_pairtree)
+pairtree_summary(p002_pyclone_input, p002_pyclone_output, p002_pairtree)
+pairtree_summary(p003_pyclone_input, p003_pyclone_output, p003_pairtree)

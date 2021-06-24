@@ -181,8 +181,11 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/001_crea
 #run pairtree with default parameters
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/002_run_Pairtree.sh
 
+#run pairtree on specific tree ID chosen as model
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/003_run_Pairtree_choose_tree_model.sh
+
 #post pairtree
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/003_poss_pairtree_analysis.R
+Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/004_poss_pairtree_analysis.R
 
 #----Treeomics------------------------------------------------------------------
 

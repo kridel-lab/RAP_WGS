@@ -137,7 +137,7 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
 
   t = as.data.table(table(cluster_muts$cluster_id))
-  t = filter(t, N >30)
+  t = filter(t, N >100)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
   colnames(t)= c("cluster_id", "num_muts")
 
