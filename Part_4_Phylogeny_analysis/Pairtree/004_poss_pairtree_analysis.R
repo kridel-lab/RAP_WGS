@@ -66,9 +66,9 @@ mut_info = unique(read_only[,c("mut_id", "REF", "ALT", "symbol", "STUDY_PATIENT_
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree")
 
 #test
-py_in=p002_pyclone_input
-py_out=p002_pyclone_output
-pairtree_cluster=p002_pairtree
+#py_in=p002_pyclone_input
+#py_out=p002_pyclone_output
+#pairtree_cluster=p002_pairtree
 
 pairtree_summary = function(py_in, py_out, pairtree_cluster){
 

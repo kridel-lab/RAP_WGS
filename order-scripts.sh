@@ -185,6 +185,8 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/002_run_P
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/003_run_Pairtree_choose_tree_model.sh
 
 #post pairtree
+module purge
+module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/004_poss_pairtree_analysis.R
 
 #----Treeomics------------------------------------------------------------------
