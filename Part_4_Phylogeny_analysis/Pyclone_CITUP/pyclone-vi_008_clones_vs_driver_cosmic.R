@@ -109,9 +109,9 @@ if(!(length(z) == 0)){
 }
 
 #test
-patient = patients[2]
-pyclone_output = p002_pyclone_output
-pairtree_cluster = p002_pairtree
+#patient = patients[2]
+#pyclone_output = p002_pyclone_output
+#pairtree_cluster = p002_pairtree
 
 #----------------------------------------------------------------------
 #analysis
