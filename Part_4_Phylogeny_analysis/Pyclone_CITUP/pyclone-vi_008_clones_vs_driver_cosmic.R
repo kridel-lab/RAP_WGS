@@ -192,6 +192,7 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   cos = cos[order(Pairtree_cluster)]
   cos$Pairtree_cluster = factor(cos$Pairtree_cluster, levels=unique(cos$Pairtree_cluster))
   cos$Variable = paste(cos$Cosmic, cos$Driver)
+  cos$Variable = factor(cos$Variable, levels = c(".", ". driver", "cosmic", "cosmic driver"))
 
   pdf("cosmic_muts_across_clones.pdf", width=5, height=6)
   g = ggbarplot(cos, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
