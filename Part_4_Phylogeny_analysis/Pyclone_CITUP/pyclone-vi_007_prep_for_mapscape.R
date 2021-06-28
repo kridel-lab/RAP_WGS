@@ -30,6 +30,7 @@ library(gridExtra)
 library(BSgenome.Hsapiens.UCSC.hg19)
 hg19 <- BSgenome.Hsapiens.UCSC.hg19
 library(ggpubr)
+library(rjson)
 
 # Load mutSignatures
 #library(mutSignatures)
@@ -57,14 +58,20 @@ p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv"
 p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
+p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
+p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p001_pairtree_clones.txt")
-p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p002_pairtree_clones.txt")
-p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p003_pairtree_clones.txt")
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
+
+#pairtree results json files
+p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_solution.json")
+p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
+p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
 
 #----------------------------------------------------------------------
 #purpose
@@ -77,11 +84,17 @@ p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairt
 #data
 #----------------------------------------------------------------------
 
+#test
+patient=patients[2]
+pyclone_output=p002_pyclone_output
+pairtree_cluster=p002_pairtree
+pairtree_results=p002_pairtree_json
+
 #----------------------------------------------------------------------
 #analysis
 #----------------------------------------------------------------------
 
-get_mapscape_input = function(patient, pyclone_output, pairtree_cluster){
+get_mapscape_input = function(patient, pyclone_output, pairtree_cluster, pairtree_results){
 
   #read in mutation data for each cluster as obtained from pyclone
   muts <- pyclone_output
@@ -103,33 +116,30 @@ get_mapscape_input = function(patient, pyclone_output, pairtree_cluster){
 
   tt = unique(muts[,c("mutation_id", "cluster_id")])
   t = as.data.table(table(tt$cluster_id))
-  t = filter(t, N >30)
+  t = filter(t, N >100)
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
   colnames(t)= c("cluster_id", "num_muts")
-
-  if(patient == "LY_RAP_0003"){
-    t$num_muts[t$cluster_id == 4] = 93
-  }
 
   t=merge(t, pairtree_cluster)
   colnames(t)[3] = "pairtree_cluster_name"
   t$cluster_id = as.numeric(t$cluster_id)
   muts_keep = merge(muts_keep, t, by="cluster_id")
-  muts_keep = unique(muts_keep[,c("sample_id", "pairtree_cluster_name", "cellular_prevalence")])
+
+  #add info about pairtree clusters/prevalences
+  samples = as.data.table(pairtree_results$samples)
+
+  subclonefreq = as.data.table(pairtree_results$phi)
+  subclonefreq$samples = samples$V1
+  subclonefreq = melt(subclonefreq)
+  colnames(subclonefreq)[3] = "pairtree_subclone_freq"
+  subclonefreq$variable = as.character(subclonefreq$variable)
+  subclonefreq$variable = sapply(subclonefreq$variable, function(x){as.numeric(unlist(strsplit(x, "V"))[2])})
+  colnames(subclonefreq)[1:2] = c("sample_id", "pairtree_cluster_name")
+
+  muts_keep = merge(muts_keep, subclonefreq, by=c("sample_id", "pairtree_cluster_name"))
+  muts_keep = unique(muts_keep[,c("sample_id", "pairtree_cluster_name", "pairtree_subclone_freq")])
   colnames(muts_keep) = c("sample_id", "clone_id", "clonal_prev")
 
-  #figure out prevalence of "normal clone - 0"
-  samples = unique(muts_keep$sample_id)
-  zeroes = as.data.frame(matrix(nrow=1, ncol=3))
-  colnames(zeroes) = c("sample_id", "clone_id", "clonal_prev")
-  for(i in 1:length(samples)){
-    clusts = filter(muts_keep, sample_id == samples[i])
-    row = c(samples[i], 0, 1)
-    zeroes = rbind(zeroes,row)
-  }
-
-  zeroes = zeroes[-1,]
-  muts_keep = rbind(muts_keep, zeroes)
   muts_keep$clone_id = as.numeric(muts_keep$clone_id)
   muts_keep$clonal_prev = as.numeric(muts_keep$clonal_prev)
 
@@ -139,9 +149,9 @@ get_mapscape_input = function(patient, pyclone_output, pairtree_cluster){
   print("done")
 }
 
-get_mapscape_input("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
-get_mapscape_input("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
-get_mapscape_input("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
+get_mapscape_input("LY_RAP_0001", p001_pyclone_output, p001_pairtree, p001_pairtree_json)
+get_mapscape_input("LY_RAP_0002", p002_pyclone_output, p002_pairtree, p002_pairtree_json)
+get_mapscape_input("LY_RAP_0003", p003_pyclone_output, p003_pairtree, p003_pairtree_json)
 
 #-----
 #DONE-
