@@ -89,9 +89,9 @@ p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/A
 #----------------------------------------------------------------------
 
 #test
-patient = patients[2]
-pyclone_output = p002_pyclone_output
-pairtree_cluster = p002_pairtree
+#patient = patients[2]
+#pyclone_output = p002_pyclone_output
+#pairtree_cluster = p002_pairtree
 
 get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
