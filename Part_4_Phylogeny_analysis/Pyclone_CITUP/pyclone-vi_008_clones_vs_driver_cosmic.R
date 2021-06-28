@@ -57,14 +57,15 @@ p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv"
 p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-p001_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("10-06-2021/all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
+p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
+p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p001_pairtree_clones.txt")
-p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p002_pairtree_clones.txt")
-p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-11_input_files/results2/p003_pairtree_clones.txt")
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #----------------------------------------------------------------------
 #purpose
@@ -108,9 +109,9 @@ if(!(length(z) == 0)){
 }
 
 #test
-patient = patients[1]
-pyclone_output = p001_pyclone_output
-pairtree_cluster = p001_pairtree
+patient = patients[2]
+pyclone_output = p002_pyclone_output
+pairtree_cluster = p002_pairtree
 
 #----------------------------------------------------------------------
 #analysis
@@ -141,10 +142,6 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
   colnames(t)= c("cluster_id", "num_muts")
 
-  if(patient == "LY_RAP_0003"){
-    t$num_muts[t$cluster_id == 4] = 93
-  }
-
   t=merge(t, pairtree_cluster)
   colnames(t)[3] = "pairtree_cluster_name"
   t$cluster_id = as.numeric(t$cluster_id)
@@ -153,7 +150,7 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
   mut.merged = as.data.table(filter(read_only, STUDY_PATIENT_ID == patient, mut_id %in% cluster_muts$mutation_id))
   mut.merged = unique(mut.merged[,c("mut_id", "ensgene", "POS", "CHROM", "symbol", "REF","ALT",
-  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68", "gt_AF", "CNA")])
+  "Gene.ensGene", "GeneDetail.ensGene", "ExonicFunc.ensGene", "Func.ensGene", "cosmic68")])
   mut.merged$Variant_Classification = paste(mut.merged$Func.ensGene, mut.merged$ExonicFunc.ensGene)
   colnames(mut.merged)[1] = "mutation_id"
 
@@ -165,21 +162,6 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   colnames(mut.merged)[8] = "Hugo_Symbol"
   mut.merged$Tumor_Sample_Barcode = patient
 
-  #how many cosmic mutations across clones
-  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68))
-  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic68, mut.merged$Hugo_Symbol)) %>% filter(N >0, !(V2 == "."))
-  cos_sum = as.data.table(table(cos$V1))
-  colnames(cos_sum) = c("Pairtree_cluster", "Number_cosmic_mutations")
-
-  pdf("cosmic_muts_across_clones.pdf", width=4, height=6)
-  g = ggbarplot(cos_sum, x = "Pairtree_cluster", y="Number_cosmic_mutations")+
-  xlab("Pairtree Clone") + ylab("# of COSMIC mutations")+theme_classic()+
-  theme(axis.text = element_text(size = 12, color="black"))
-  print(g)
-  dev.off()
-  print(cos)
-  print("pass")
-
   #which driver gene mutations in which clones
   mut.merged$driver = ""
   z1 = which(mut.merged$Hugo_Symbol %in% all_drivers$Gene[all_drivers$patient == patient])
@@ -189,6 +171,37 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   z = z2[which(z2 %in% z1)]
   mut.merged$driver[z] = "driver"
   mut.merged$cosmic[!(mut.merged$cosmic68 == ".")] = "cosmic"
+
+  #how many cosmic mutations across clones
+  cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic, mut.merged$driver))
+  cos = cos %>% filter(N >0, !((V2 == ".") & (V3=="")))
+  colnames(cos) = c("Pairtree_cluster", "Cosmic", "Driver", "Number_of_mutations")
+  cos$Pairtree_cluster = as.numeric(cos$Pairtree_cluster)
+  z = which(!(t$pairtree_cluster_name %in% cos$Pairtree_cluster))
+  if(!(length(z)==0)){
+  missing = t$pairtree_cluster_name[z]
+  missing_mat = as.data.frame(matrix(ncol=4, nrow=length(missing)))
+  missing_mat$V1 = missing
+  missing_mat$V2 = "."
+  missing_mat$V3 = ""
+  missing_mat$V4 = 0
+  colnames(missing_mat) = colnames(cos)
+  cos = as.data.table(rbind(missing_mat, cos))
+  }
+
+  cos = cos[order(Pairtree_cluster)]
+  cos$Pairtree_cluster = factor(cos$Pairtree_cluster, levels=unique(cos$Pairtree_cluster))
+  cos$Variable = paste(cos$Cosmic, cos$Driver)
+
+  pdf("cosmic_muts_across_clones.pdf", width=5, height=6)
+  g = ggbarplot(cos, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
+  xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
+  theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")
+  print(g)
+  dev.off()
+  print(cos)
+  print("pass")
+
   mut.merged = unique(mut.merged[,c("pairtree_cluster_name", "Hugo_Symbol", "driver", "cosmic")]) %>%
       filter(!(driver=="") | !(cosmic=="."))
   missing_clones = t$pairtree_cluster_name[which(!(t$pairtree_cluster_name %in% mut.merged$pairtree_cluster_name))]
