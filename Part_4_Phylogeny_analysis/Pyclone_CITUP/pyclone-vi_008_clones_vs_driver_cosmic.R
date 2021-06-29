@@ -234,7 +234,7 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   genes_order = genes_order[order(-N)]
   mut.merged$Hugo_Symbol = factor(mut.merged$Hugo_Symbol, levels=genes_order$V1)
 
-  pdf("cosmic_drivers_muts_across_clones.pdf", width=6, height=6)
+  #pdf("cosmic_drivers_muts_across_clones.pdf", width=6, height=6)
   g = ggplot(mut.merged, aes(x=pairtree_cluster_name, y=Hugo_Symbol)) +
   theme_bw()+
   geom_tile(aes(fill=cosmic,width=0.75, height=0.75, color=driver),size=0.55) +
@@ -246,8 +246,8 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
        na.value="transparent")
 
   g= ggpar(g,legend ="bottom")
-  print(g)
-  dev.off()
+  return(g)
+  #dev.off()
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 }
@@ -259,3 +259,5 @@ p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 #-----
 #DONE-
 #-----
+
+#combine into one row plot 
