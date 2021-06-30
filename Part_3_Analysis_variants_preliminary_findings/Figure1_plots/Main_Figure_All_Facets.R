@@ -12,6 +12,7 @@ library(plyr)
 require(gridExtra)
 library(cowplot)
 library(ggforce)
+library(wesanderson)
 
 options(scipen=999)
 date=Sys.Date()
@@ -70,13 +71,13 @@ cnas$perc_genome = cnas$num_of_muts/cnas$sum
 #All genomewide SNVs + Indels -----------------------------------------
 
 full_snvs_indels = ggplot(data=snvs_all, aes(x=Sample, y=num_of_muts, fill=Patient)) +
-  geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
+  geom_bar(stat="identity")+theme_bw()+#+ggtitle("Number of mutations per sample")+
 	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=5),
   axis.text.y = element_text(size=4),
   legend.position = "right") +
 	ylab("Mutation count")+xlab("")+
   ggforce::facet_row(. ~ Patient, scales="free", space='free')+
-	theme(
+	theme(legend.title=element_text(size=2),
     axis.title=element_text(size=6),
     legend.key.size = unit(0.3, "cm"),
   strip.background = element_blank(),
@@ -85,19 +86,19 @@ full_snvs_indels = ggplot(data=snvs_all, aes(x=Sample, y=num_of_muts, fill=Patie
         axis.ticks.x=element_blank(),
 	legend.text = element_text(size=6))+
 	#scale_y_continuous(breaks=seq(0, 400000, by = 50000))+
-  scale_fill_manual(values=c("#00AFBB", "#E7B800", "#FC4E07"))
+  scale_fill_manual(values=c("snow4", "steelblue4", "rosybrown4"))
 
 
 #Coding only SNVs + Indels ------------------------------------------
 
 coding_snvs_indels = ggplot(data=snvs_coding, aes(x=Sample, y=num_of_muts, fill=mut_type)) +
-  geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
+  geom_bar(stat="identity")+theme_bw()+#+ggtitle("Number of mutations per sample")+
 	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=5),
   axis.text.y = element_text(size=4),
   legend.position = "right") +
 	ylab("Coding Mutation count")+xlab("")+
 	ggforce::facet_row(. ~ Patient, scales="free", space='free')+
-	theme(
+	theme(legend.title=element_text(size=2),
     axis.title=element_text(size=6),
   legend.key.size = unit(0.3, "cm"),
   strip.background = element_blank(),
@@ -106,18 +107,21 @@ coding_snvs_indels = ggplot(data=snvs_coding, aes(x=Sample, y=num_of_muts, fill=
         axis.ticks.x=element_blank(),
 	legend.text = element_text(size=6))+
 	#scale_y_continuous(breaks=seq(0, 3000, by = 300))+
-  scale_fill_brewer(palette="Dark2")
+  scale_fill_manual(values = wes_palette("Rushmore1", n = 5))
 
 #CNAs ----------------------------------------------------------------
 
+cnas$type_CNA = factor(cnas$type_CNA, levels=c(">5_N_Gain", "5_N_Gain",
+"4_N_Gain", "3_N_Gain", "Neutral", "Somatic LOH", "Hemizygous Del", "Homozygous Del"))
+
 cnas_plot = ggplot(data=cnas, aes(x=Sample, y=perc_genome, fill=type_CNA)) +
-    geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
+    geom_bar(stat="identity")+theme_bw()+#+ggtitle("Number of mutations per sample")+
   	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
     axis.text.y = element_text(size=4),
     legend.position = "right") +
   	ylab("CNA % of genome")+xlab("")+
     ggforce::facet_row(. ~ Patient, scales="free", space='free')+
-  	theme(
+  	theme(legend.title=element_text(size=2),
       axis.title=element_text(size=6),
     legend.key.size = unit(0.3, "cm"),
     strip.background = element_blank(),
@@ -126,18 +130,18 @@ cnas_plot = ggplot(data=cnas, aes(x=Sample, y=perc_genome, fill=type_CNA)) +
           axis.ticks.x=element_blank(),
   	legend.text = element_text(size=6))+
 #  	scale_y_continuous(breaks=seq(0, 4000, by = 200))+
-scale_fill_brewer(palette="Set1")
+scale_fill_brewer(palette="RdYlBu")
 
 #SVs -----------------------------------------------------------------
 
 svs_plot = ggplot(data=svs, aes(x=Sample, y=num_of_muts, fill=type_SV)) +
-  geom_bar(stat="identity")+theme_classic()+#+ggtitle("Number of mutations per sample")+
+  geom_bar(stat="identity")+theme_bw()+#+ggtitle("Number of mutations per sample")+
 	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
   axis.text.y = element_text(size=4),
   legend.position = "right") + xlab("Sample")+
 	ylab("Structural variants count")+xlab("")+
 	ggforce::facet_row(. ~ Patient, scales="free", space='free')+
-	theme(
+	theme(legend.title=element_text(size=2),
     axis.title=element_text(size=4),
     legend.key.size = unit(0.3, "cm"),
   strip.background = element_blank(),
@@ -146,7 +150,7 @@ svs_plot = ggplot(data=svs, aes(x=Sample, y=num_of_muts, fill=type_SV)) +
         axis.ticks.x=element_blank(),
 	legend.text = element_text(size=6))+
 	#scale_y_continuous(breaks=seq(0, 200, by = 20))+
-  scale_fill_brewer(palette="Set2")
+  scale_fill_manual(values = wes_palette("Moonrise2", n = 4))
 
 
 #Ploidy and Purity ----------------------------------------------------
@@ -154,7 +158,7 @@ svs_plot = ggplot(data=svs, aes(x=Sample, y=num_of_muts, fill=type_SV)) +
 ploidy = melt(ploidy)
 
 purity_plot = ggplot(filter(ploidy, variable == "Purity"), aes(Sample, variable)) +
- geom_raster(aes(fill = value))+theme_classic()+
+ geom_raster(aes(fill = value))+theme_bw()+
  theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
  axis.text.y = element_text(size=4),
   legend.position = "right") + xlab("Sample")+
@@ -167,11 +171,12 @@ purity_plot = ggplot(filter(ploidy, variable == "Purity"), aes(Sample, variable)
   strip.text.x = element_blank(),
   axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
+        legend.title=element_text(size=2),
  legend.text = element_text(size=2))+
   scale_fill_gradient(low = "yellow", high = "red")
 
 ploidy_plot = ggplot(filter(ploidy, variable == "Ploidy"), aes(Sample, variable)) +
-geom_raster(aes(fill = value))+theme_classic()+
+geom_raster(aes(fill = value))+theme_bw()+
 theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
 axis.text.y = element_text(size=4),
 legend.position = "right") + xlab("Sample")+
@@ -182,6 +187,7 @@ legend.position = "right") + xlab("Sample")+
       legend.key.size = unit(0.2, "cm"),
     strip.background = element_blank(),
     strip.text.x = element_blank(),
+    legend.title=element_text(size=2),
    legend.text = element_text(size=2))+
     scale_fill_gradient(low = "blue", high = "red")
 

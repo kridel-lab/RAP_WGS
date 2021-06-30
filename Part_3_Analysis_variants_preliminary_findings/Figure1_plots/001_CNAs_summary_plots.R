@@ -27,8 +27,12 @@ cnas$cna_id = paste(cnas$CHROM, cnas$Start, cnas$End, sep="_")
 #summarize number of mutations per sample
 z = which((cnas$Tissue_Site == "Adrenal gland, NOS") & (cnas$Patient == "LY_RAP_0003"))
 cnas$Tissue_Site[z] = "Adrenal gland"
+
 z = which((cnas$Tissue_Site == "Aorta, ascending, not specified \n\n") & (cnas$Patient == "LY_RAP_0001"))
 cnas$Tissue_Site[z] = "Aorta, ascending"
+
+z = which((cnas$Tissue_Site == "Kidney, NOS") & (cnas$Sample == "LY_RAP_0003_Aut_FzT_12"))
+cnas$Tissue_Site[z] = "Kidney, NOS 2"
 
 tum_info_save=unique(cnas[,c("Sample", "Patient", "Tissue_Site", "Ploidy", "Purity")])
 tum_info_save$Patient[tum_info_save$Patient == "LY_RAP_0001"] = "MCL blastoid stage IV"

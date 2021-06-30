@@ -79,34 +79,34 @@ p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairt
 #----------------------------------------------------------------------
 
 #add categories for CNAs
-read_only$CNA = ""
+#read_only$CNA = ""
 
 #LOH
-z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot >= 2))
-read_only$CNA[z] = "Somatic LOH"
+#z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot >= 2))
+#read_only$CNA[z] = "Somatic LOH"
 
 #Neutral
-z = which((read_only$ntot !=  read_only$Nmaj) & (read_only$ntot == 2))
-read_only$CNA[z] = "Neutral"
+#z = which((read_only$ntot !=  read_only$Nmaj) & (read_only$ntot == 2))
+#read_only$CNA[z] = "Neutral"
 
 #Deletions
-z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 0))
-read_only$CNA[z] = "Homozygous Del"
+#z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 0))
+#read_only$CNA[z] = "Homozygous Del"
 
-z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 1))
-read_only$CNA[z] = "Hemizygous Del"
+#z = which((read_only$ntot ==  read_only$Nmaj) & (read_only$ntot == 1))
+#read_only$CNA[z] = "Hemizygous Del"
 
 #Amplications
-z = which((read_only$CNA == "") & (read_only$ntot > 5))
-read_only$CNA[z] = ">5_N_Gain"
+#z = which((read_only$CNA == "") & (read_only$ntot > 5))
+#read_only$CNA[z] = ">5_N_Gain"
 
-z = which(read_only$CNA == "")
-read_only$CNA[z] = paste(read_only$ntot[z], "_N_", "Gain", sep="")
+#z = which(read_only$CNA == "")
+#read_only$CNA[z] = paste(read_only$ntot[z], "_N_", "Gain", sep="")
 
-z = which(is.na(read_only$ntot))
-if(!(length(z) == 0)){
-  read_only=read_only[-z,]
-}
+#z = which(is.na(read_only$ntot))
+#if(!(length(z) == 0)){
+#  read_only=read_only[-z,]
+#}
 
 #test
 #patient = patients[2]
@@ -194,59 +194,63 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   cos$Variable = paste(cos$Cosmic, cos$Driver)
   cos$Variable = factor(cos$Variable, levels = c(". ", ". driver", "cosmic ", "cosmic driver"))
 
-  pdf("cosmic_muts_across_clones.pdf", width=5, height=6)
-  g = ggbarplot(cos, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
-  xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
-  theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")
-  print(g)
-  dev.off()
-  print(cos)
-  print("pass")
+  #pdf("cosmic_muts_across_clones.pdf", width=5, height=6)
+  #g = ggbarplot(cos, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
+  #xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
+  #theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")
+  #print(g)
+  #dev.off()
+  #print(cos)
+  #print("pass")
 
-  mut.merged = unique(mut.merged[,c("pairtree_cluster_name", "Hugo_Symbol", "driver", "cosmic")]) %>%
-      filter(!(driver=="") | !(cosmic=="."))
-  missing_clones = t$pairtree_cluster_name[which(!(t$pairtree_cluster_name %in% mut.merged$pairtree_cluster_name))]
-  add_clones = as.data.frame(matrix(nrow=length(missing_clones), ncol=4))
-  colnames(add_clones) = colnames(mut.merged)
-  add_clones$pairtree_cluster_name = missing_clones
-  mut.merged = rbind(mut.merged, add_clones)
-  mut.merged$Hugo_Symbol[is.na(mut.merged$Hugo_Symbol)] = mut.merged$Hugo_Symbol[!(is.na(mut.merged$Hugo_Symbol))][1]
+  cos$patient = patient
 
-  gg=as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$Hugo_Symbol))
-  colnames(gg) = c("pairtree_cluster_name", "Hugo_Symbol", "num_muts_in_genes")
-  gg$pairtree_cluster_name = as.numeric(gg$pairtree_cluster_name)
+  #mut.merged = unique(mut.merged[,c("pairtree_cluster_name", "Hugo_Symbol", "driver", "cosmic")]) %>%
+  #    filter(!(driver=="") | !(cosmic=="."))
+  #missing_clones = t$pairtree_cluster_name[which(!(t$pairtree_cluster_name %in% mut.merged$pairtree_cluster_name))]
+  #add_clones = as.data.frame(matrix(nrow=length(missing_clones), ncol=4))
+  #colnames(add_clones) = colnames(mut.merged)
+  #add_clones$pairtree_cluster_name = missing_clones
+  #mut.merged = rbind(mut.merged, add_clones)
+  #mut.merged$Hugo_Symbol[is.na(mut.merged$Hugo_Symbol)] = mut.merged$Hugo_Symbol[!(is.na(mut.merged$Hugo_Symbol))][1]
 
-  mut.merged = merge(mut.merged, gg, by=c("pairtree_cluster_name", "Hugo_Symbol"))
+  #gg=as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$Hugo_Symbol))
+  #colnames(gg) = c("pairtree_cluster_name", "Hugo_Symbol", "num_muts_in_genes")
+  #gg$pairtree_cluster_name = as.numeric(gg$pairtree_cluster_name)
 
-  mut.merged = mut.merged[order(pairtree_cluster_name)]
-  mut.merged$pairtree_cluster_name = factor(mut.merged$pairtree_cluster_name, levels=unique(mut.merged$pairtree_cluster_name))
+  #mut.merged = merge(mut.merged, gg, by=c("pairtree_cluster_name", "Hugo_Symbol"))
 
-  mut.merged$driver[mut.merged$driver == ""] = NA
-  mut.merged$driver = factor(mut.merged$driver, levels=c("driver", NA))
+  #mut.merged = mut.merged[order(pairtree_cluster_name)]
+  #mut.merged$pairtree_cluster_name = factor(mut.merged$pairtree_cluster_name, levels=unique(mut.merged$pairtree_cluster_name))
 
-  mut.merged$cosmic[mut.merged$cosmic == ""] = NA
-  mut.merged$cosmic = factor(mut.merged$cosmic, levels=c("cosmic", NA))
+  #mut.merged$driver[mut.merged$driver == ""] = NA
+  #mut.merged$driver = factor(mut.merged$driver, levels=c("driver", NA))
 
-  mut.merged$num_muts_in_genes[is.na(mut.merged$driver) & is.na(mut.merged$cosmic)] = ""
+  #mut.merged$cosmic[mut.merged$cosmic == ""] = NA
+  #mut.merged$cosmic = factor(mut.merged$cosmic, levels=c("cosmic", NA))
 
-  genes_order = filter(mut.merged, !(num_muts_in_genes==""))
-  genes_order = as.data.table(table(genes_order$Hugo_Symbol))
-  genes_order = genes_order[order(-N)]
-  mut.merged$Hugo_Symbol = factor(mut.merged$Hugo_Symbol, levels=genes_order$V1)
+  #mut.merged$num_muts_in_genes[is.na(mut.merged$driver) & is.na(mut.merged$cosmic)] = ""
+
+  #genes_order = filter(mut.merged, !(num_muts_in_genes==""))
+  #genes_order = as.data.table(table(genes_order$Hugo_Symbol))
+  #genes_order = genes_order[order(-N)]
+  #mut.merged$Hugo_Symbol = factor(mut.merged$Hugo_Symbol, levels=genes_order$V1)
+  #mut.merged$patient = patient
 
   #pdf("cosmic_drivers_muts_across_clones.pdf", width=6, height=6)
-  g = ggplot(mut.merged, aes(x=pairtree_cluster_name, y=Hugo_Symbol)) +
-  theme_bw()+
-  geom_tile(aes(fill=cosmic,width=0.75, height=0.75, color=driver),size=0.55) +
-  geom_text(aes(label=num_muts_in_genes))+
-     xlab("Pairtree clone")+
-     scale_colour_manual(values = c("black", "grey"),
-       na.value="transparent")+
-       scale_fill_manual(values = c("orange", "white"),
-       na.value="transparent")
+  #g = ggplot(mut.merged, aes(x=pairtree_cluster_name, y=Hugo_Symbol)) +
+  #theme_bw()+
+  #geom_tile(aes(fill=cosmic,width=0.75, height=0.75, color=driver),size=0.55) +
+  #geom_text(aes(label=num_muts_in_genes))+
+  #   xlab("Pairtree clone")+
+  #   scale_colour_manual(values = c("black", "grey"),
+  #     na.value="transparent")+
+  #     scale_fill_manual(values = c("orange", "white"),
+  #     na.value="transparent")
 
-  g= ggpar(g,legend ="bottom")
-  return(g)
+  #g= ggpar(g,legend ="bottom")
+
+  return(cos)
   #dev.off()
 
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
@@ -256,8 +260,19 @@ p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
 p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
 p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
+#combine into one row plot
+all_pats = rbind(p001, p002, p003)
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
+
+pdf("cosmic_muts_across_clones.pdf", width=8, height=6)
+g = ggbarplot(all_pats, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
+xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
+theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")+
+ggforce::facet_row(. ~ patient, scales="free", space='free')
+print(g)
+dev.off()
+
 #-----
 #DONE-
 #-----
-
-#combine into one row plot 
