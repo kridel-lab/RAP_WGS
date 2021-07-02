@@ -171,7 +171,7 @@ generate_circos = function(patient){
   points_values = 0:4
 
   tracklist = BioCircosSNPTrack('mySNPTrack', points_chromosomes, points_coordinates,
-    points_values, colors = c("darkblue"), minRadius = 0.8, maxRadius = 0.95, size=1)
+    points_values, colors = c("black"), minRadius = 0.8, maxRadius = 0.95, size=)
 
   # Background are always placed below other tracks
   tracklist = tracklist + BioCircosBackgroundTrack("myBackgroundTrack",

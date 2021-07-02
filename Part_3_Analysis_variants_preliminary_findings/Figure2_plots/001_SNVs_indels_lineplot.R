@@ -34,6 +34,8 @@ barplot$patient = factor(barplot$patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 colnames(barplot)[2]="Patient"
 
+saveRDS(barplot, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure2_input_data_sample_dist_SNVindels.rds")
+
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/001_samples_per_mutation_lineplot.pdf",
 width=5, height=5)
 # Basic barplot

@@ -94,58 +94,40 @@ all_genes_cnas_samples = readRDS("cnas_across_hg19_genomes_all_samples.rds")
 #summarize mutation patterns across samples and driver genes
 #check which mutations occur in all samples versus only 1 or several
 
-dir.create(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
-setwd(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
+#dir.create(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
+#setwd(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
 
-t=as.data.table(table(all_genes_cnas_samples$symbol, all_genes_cnas_samples$Sample, all_genes_cnas_samples$Patient))
+t=as.data.table(table(all_genes_cnas_samples$symbol, all_genes_cnas_samples$CNA, all_genes_cnas_samples$Sample, all_genes_cnas_samples$Patient))
 t=filter(t, N >0)
-tt=as.data.table(table(t$V1, t$V3))
+tt=as.data.table(table(t$V1, t$V2, t$V4))
 tt=filter(tt, N>0)
 tt=tt[order(-N)]
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 samples_per_mut = tt
-colnames(samples_per_mut) = c("Gene", "Patient", "num_of_samples_with_CNAinGene")
-
-samples_per_mut$phylogeny = ""
-z = which(samples_per_mut$Patient == "LY_RAP_0001")
-LY_RAP_0001 = samples_per_mut[z,]
-LY_RAP_0001$phylogeny[LY_RAP_0001$num_of_samples_with_CNAinGene == 3] = "ancestor"
-LY_RAP_0001$phylogeny[LY_RAP_0001$num_of_samples_with_CNAinGene == 1] = "private"
-LY_RAP_0001$phylogeny[LY_RAP_0001$phylogeny == ""] = "shared"
-
-z = which(samples_per_mut$Patient == "LY_RAP_0002")
-LY_RAP_0002 = samples_per_mut[z,]
-LY_RAP_0002$phylogeny[LY_RAP_0002$num_of_samples_with_CNAinGene == 4] = "ancestor"
-LY_RAP_0002$phylogeny[LY_RAP_0002$num_of_samples_with_CNAinGene == 1] = "private"
-LY_RAP_0002$phylogeny[LY_RAP_0002$phylogeny == ""] = "shared"
-
-z = which(samples_per_mut$Patient == "LY_RAP_0003")
-LY_RAP_0003 = samples_per_mut[z,]
-LY_RAP_0003$phylogeny[LY_RAP_0003$num_of_samples_with_CNAinGene == 20] = "ancestor"
-LY_RAP_0003$phylogeny[LY_RAP_0003$num_of_samples_with_CNAinGene == 1] = "private"
-LY_RAP_0003$phylogeny[LY_RAP_0003$phylogeny == ""] = "shared"
-
-samples_per_mut = rbind(LY_RAP_0001, LY_RAP_0002, LY_RAP_0003)
+colnames(samples_per_mut) = c("Gene", "CNA", "Patient", "num_of_samples_with_CNAinGene")
 
 #data table for barplot
-barplot = as.data.table(table(samples_per_mut$num_of_samples_with_CNAinGene, samples_per_mut$Patient))
+barplot = as.data.table(table(samples_per_mut$num_of_samples_with_CNAinGene, samples_per_mut$CNA, samples_per_mut$Patient))
 barplot = as.data.table(filter(barplot, N >0))
-colnames(barplot) = c("num_of_samples_with_mut", "patient", "num_of_muts")
-barplot$num_of_samples_with_mut = factor(barplot$num_of_samples_with_mut, levels=unique(barplot$num_of_samples_with_mut))
+
+colnames(barplot) = c("num_of_samples_with_mut", "CNA", "patient", "num_of_muts")
+#barplot$num_of_samples_with_mut = factor(barplot$num_of_samples_with_mut, levels=unique(barplot$num_of_samples_with_mut))
 barplot$patient[barplot$patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
 barplot$patient[barplot$patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
 barplot$patient[barplot$patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
 barplot$patient = factor(barplot$patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
-colnames(barplot)[2]="Patient"
-pdf("001_samples_per_mutation_lineplot_CNAs.pdf", width=5, height=5)
+saveRDS(barplot, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure2_input_data_sample_dist_CNAs.rds")
+
+#colnames(barplot)[2]="Patient"
+#pdf("001_samples_per_mutation_lineplot_CNAs.pdf", width=5, height=5)
 # Basic barplot
-p<-ggline(barplot, x="num_of_samples_with_mut", y="num_of_muts",
-palette = c("#00AFBB", "#E7B800", "#FC4E07"), color="Patient")+
-xlab("# of samples sharing mutation") + ylab("CNAs count")#+
+#p<-ggline(barplot, x="num_of_samples_with_mut", y="num_of_muts",
+#palette = c("#00AFBB", "#E7B800", "#FC4E07"), color="Patient")+
+#xlab("# of samples sharing mutation") + ylab("CNAs count")#+
 #scale_y_continuous(breaks=seq(0,15000,1000))
-print(p)
-dev.off()
+#print(p)
+#dev.off()
