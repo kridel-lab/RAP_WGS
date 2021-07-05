@@ -34,10 +34,18 @@ tum=($(samtools view -H ${names[${SLURM_ARRAY_TASK_ID}]} | grep '^@RG' | sed "s/
 echo "${tum}"
 export tum
 
+cont_sample="${tum##*_}"
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
+normal_file=$(ls LY_RAP_${cont_sample}_Ctl*.bam)
+echo $normal_file
+
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing
+
 gatk Mutect2 \
 -R $fasta_file \
 -I ${names[${SLURM_ARRAY_TASK_ID}]} \
 -tumor ${tum} \
 -L $ints \
+-I /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/${normal_file} \
 -O $out_folder/Mutect2_VCF_output/${tum}.vcf.gz \
 --germline-resource /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz
