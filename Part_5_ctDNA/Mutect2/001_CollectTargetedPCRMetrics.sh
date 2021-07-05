@@ -48,7 +48,7 @@ amplicon_interval_list=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Conse
 #coordinates of targets (coding and non-coding) used as provided by IDT and Robert
 targets_interval_list=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/picard_tools_targets_input.bed
 
-#first create symbolic link for bam file so that can actually modify it and index it
+#first create symbolic link for bam file so that can index it
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus/$sample /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/$name.bam
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing
