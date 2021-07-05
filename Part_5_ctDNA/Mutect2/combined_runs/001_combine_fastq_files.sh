@@ -6,10 +6,10 @@
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
 
 #old files (May 2021)
-ls /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files
+ls -lt /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files
 
 #newer files (July 2021)
-ls /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload
+ls -lt /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload
 
 #mkdir RAP_ctDNA_combined_two_runs/fastq_files
 output_dir=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/RAP_ctDNA_combined_two_runs/fastq_files
