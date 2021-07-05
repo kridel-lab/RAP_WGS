@@ -27,6 +27,7 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consens
 
 #get list of sample bam files
 #ls */dcs_sc/*.dcs.sc.sorted.bam  > bam_files_for_mutect_all_samples.txt
+#ls */dcs/*.dcs.sorted.bam  > bam_files_for_mutect_all_samples.txt
 
 samples=bam_files_for_mutect_all_samples.txt
 names=($(cat $samples))

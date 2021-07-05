@@ -33,4 +33,4 @@ colnames(all_muts) = c("STUDY_PATIENT_ID", "Indiv", "Hugo_Symbol", "Chromosome",
 merged_muts = merge(ctDNA_muts, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2"))
 #merged_muts = filter(merged_muts, STUDY_PATIENT_ID == "LY_RAP_0002")
 merged_muts$mut_id = paste(merged_muts$Chromosome, merged_muts$Start_Position, sep="_")
-write.csv(merged_muts, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", quote=F, row.names=F)
+write.csv(merged_muts, paste(date, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", sep="_"), quote=F, row.names=F)
