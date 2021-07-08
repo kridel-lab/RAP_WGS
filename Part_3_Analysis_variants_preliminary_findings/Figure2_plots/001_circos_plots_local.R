@@ -89,13 +89,14 @@ generate_circos = function(patient){
 
   t=as.data.table(table(snps$mut_id)) %>% filter(N == num_check)
   snps = filter(snps, mut_id %in% t$V1)
+  snps = unique(snps[,c("CHROM", "POS")])
 
   # Chromosomes on which the points should be displayed
-  points_chromosomes = unique(snps$CHROM)
-  points_chromosomes = (sapply(points_chromosomes, function(x){unlist(strsplit(x, "chr"))[2]}))
+  points_chromosomes = snps$CHROM
+  points_chromosomes = sapply(points_chromosomes, function(x){unlist(strsplit(x, "chr"))[2]})
 
   # Coordinates on which the points should be displayed
-  points_coordinates = unique(snps$POS)
+  points_coordinates = snps$POS
 
   #2. SVs keep
 
@@ -104,16 +105,19 @@ generate_circos = function(patient){
   svs_keep$chr2 = sapply(svs_keep$id, function(x){unlist(strsplit(unlist(strsplit(x, "chr"))[3], "_"))[1]})
 
   z = which(svs_keep$chr1 %in% c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-"13", "14", "15", "16", "17", "18", "19", "20", "X", "Y"))
+"13", "14", "15", "16", "17", "18", "19", "20"))
   svs_keep = svs_keep[z,]
   z = which(svs_keep$chr2 %in% c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-"13", "14", "15", "16", "17", "18", "19", "20", "X", "Y"))
+"13", "14", "15", "16", "17", "18", "19", "20"))
   svs_keep = svs_keep[z,]
 
   svs_keep$gene1 = sapply(svs_keep$gene, function(x){unlist(strsplit(as.character(x), "_"))[1]})
   svs_keep$gene2 = sapply(svs_keep$gene, function(x){unlist(strsplit(as.character(x), "_"))[2]})
 
   svs_keep$new_id = paste(svs_keep$chr1, svs_keep$chr2, svs_keep$gene2, sep="_")
+  z = which(svs_keep$gene2 == "NA")
+  if(!(length(z)==0)){
+  svs_keep$new_id[z] = paste(svs_keep$chr1[z], svs_keep$chr2[z], svs_keep$gene1[z], sep="_")}
 
   t=as.data.table(table(svs_keep$new_id)) %>% filter(N >= num_check)
   svs_keep = filter(svs_keep, new_id %in% t$V1)
@@ -127,7 +131,7 @@ generate_circos = function(patient){
   links_labels = as.character(svs_keep$gene)
 
   #3. CNAs keep
-  cnas_pat = filter(cnas, Patient == patient, ntot > 2 | ntot < 2)
+  cnas_pat = filter(cnas, Patient == patient, ntot > 2 | ntot < 2, !(CHROM=="chrX"))
   cnas_pat = unique(cnas_pat[,c("CHROM", "Start", "End", "ntot", "Sample")])
 
   amps = filter(cnas_pat, ntot > 2)
@@ -170,7 +174,7 @@ generate_circos = function(patient){
   #first SNPs
   points_values = 0:4
 
-  tracklist = BioCircosSNPTrack('mySNPTrack', points_chromosomes, points_coordinates,
+  tracklist = BioCircosSNPTrack('mySNPTrack', as.numeric(points_chromosomes)-1, points_coordinates,
     points_values, colors = c("black"), minRadius = 0.8, maxRadius = 0.95, size=)
 
   # Background are always placed below other tracks
@@ -179,12 +183,12 @@ generate_circos = function(patient){
     borderColors = "#AAAAAA", borderSize = 0.6, fillColors = "#B3E6FF")
 
   #CNAs
-  tracklist = tracklist + BioCircosArcTrack('myArcTrack', arcs_chromosomes, arcs_begin, arcs_end,
+  tracklist = tracklist + BioCircosArcTrack('myArcTrack', as.numeric(arcs_chromosomes)-1, arcs_begin, arcs_end,
       minRadius = 0.68, maxRadius = 0.78, colors=arcs_cols)
 
   #SVs
-  tracklist = tracklist + BioCircosLinkTrack('myLinkTrack', links_chromosomes_1, links_pos_1,
-      links_pos_1 + 40000000, links_chromosomes_2, links_pos_2, links_pos_2 + 550000,
+  tracklist = tracklist + BioCircosLinkTrack('myLinkTrack', as.numeric(links_chromosomes_1)-1, links_pos_1,
+      links_pos_1 + 40000000, as.numeric(links_chromosomes_2)-1, links_pos_2, links_pos_2 + 550000,
       maxRadius = 0.65, color = "orange", labels = links_labels, labelSize=0.2,
       labelColor="blue", displayLabel=F)
 
@@ -192,8 +196,12 @@ generate_circos = function(patient){
           borderSize = 0, fillColors = "#EEFFEE")
 
   circosplot = BioCircos(tracklist, genomeFillColor = "YlGnBu",
-    displayGenomeBorder = TRUE, yChr =  FALSE,
-    chrPad = 0.03,
+    displayGenomeBorder = TRUE,
+    chrPad = 0.03, genome=c(248956422, 242193529, 198295559,
+    190214555, 181538259, 170805979, 159345973, 145138636,
+  138394717, 133797422, 135086622, 133275309, 114364328, 107043718,
+101991189, 90338345, 83257441, 80373285, 58617616, 64444167, 46709983,
+50818468),
        genomeTicksLen = 3, genomeTicksTextSize = 0,
        genomeTicksScale = 20000000,
        genomeLabelTextSize = 18, genomeLabelDy = 0, genomeBorderSize=0.7)
