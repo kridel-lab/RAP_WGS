@@ -41,7 +41,7 @@ driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/${pat}_drivers.csv
 python treeomics -d input/mutect2_strelka_pcgs_only/${pat} \
 -l 20 --wes_filtering \
 --driver_genes=$driver_genes \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_20_mp/${pat}
+-o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_pcgs_only_5_mp/${pat}
 
 #--include `cat treeomics_samples_include.txt` \
 #--purities `cat treeomics_samples_purities.txt` \
