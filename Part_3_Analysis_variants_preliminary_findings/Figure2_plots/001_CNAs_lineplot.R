@@ -11,9 +11,9 @@ library("ggsci")
 library(annotables)
 hg19_genes = as.data.table(grch37)
 #hg19_genes = filter(hg19_genes, biotype == "protein_coding")
-hg19_genes = unique(hg19_genes[,c("chr", "start", "end", "symbol")]) #22810 genes
-z = which(hg19_genes$chr %in% c(1:22, "X"))
-hg19_genes = hg19_genes[z,]
+hg19_genes = unique(hg19_genes[,c("chr", "start", "end", "symbol")])
+z = which(hg19_genes$chr %in% c(1:22))
+hg19_genes = hg19_genes[z,]#52955 genes
 
 #----------------------------------------------------------------------
 #overlap CNA calls with protein coding genes coordinates
@@ -57,22 +57,6 @@ overlap_genes_cnas = function(gene){
   #Then subset the original objects with the negative indices of the overlaps:
   hits <- findOverlaps(gene_cords_gr, cnas_gr, ignore.strand=TRUE)
   hits_overlap = cbind(gene_cords[queryHits(hits),], cnas[subjectHits(hits),])
-  #print(head(hits_overlap))
-  return(hits_overlap)
-}
-
-merge_cnas_in_patient = function(patient){
-  print(patient)
-  pat_coords = as.data.table(filter(cnas, Patient == patient))
-
-  grl_my = makeGRangesListFromDataFrame(pat_coords,
-    split.field ="Sample", seqnames.field = "CHROM",
-    start.field = "Start", end.field = "End", keep.extra.columns=TRUE)
-
-  #intersect them
-  #Then subset the original objects with the negative indices of the overlaps:
-  hits <- findOverlaps(grl_my, ignore.strand=TRUE)
-  hits_overlap = cbind(grl_my[queryHits(hits),], cnas[subjectHits(hits),])
   #print(head(hits_overlap))
   return(hits_overlap)
 }

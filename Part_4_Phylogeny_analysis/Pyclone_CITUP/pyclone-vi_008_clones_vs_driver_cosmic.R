@@ -172,6 +172,14 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   mut.merged$driver[z] = "driver"
   mut.merged$cosmic[!(mut.merged$cosmic68 == ".")] = "cosmic"
 
+  z3 = which((mut.merged$Func.ensGene %in% c("exonic", "splicing", "exonic\\x3bsplicing")) &
+  (mut.merged$ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain",
+  "frameshift_deletion", "frameshift_insertion", "stoploss", ".")))
+  mut.merged$coding = ""
+  mut.merged$coding[z3] = "coding"
+
+  print(table(mut.merged$coding, mut.merged$pairtree_cluster_name))
+
   #how many cosmic mutations across clones
   cos = as.data.table(table(mut.merged$pairtree_cluster_name, mut.merged$cosmic, mut.merged$driver))
   cos = cos %>% filter(N >0, !((V2 == ".") & (V3=="")))
@@ -262,6 +270,9 @@ p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #combine into one row plot
 all_pats = rbind(p001, p002, p003)
+
+write.table(all_pats, file=paste(date, "driver_cosmic_mutations_across_pyclone_pairtree_clones.txt", sep="_"),
+quote=F, row.names=F, sep="\t")
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 

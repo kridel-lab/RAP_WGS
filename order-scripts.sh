@@ -201,7 +201,7 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomic
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_001_B_rename_sample_names_in_VCF_file.sh
 
 #4. test run on small subset of protein coding genes
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only_all.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only.sh
 
 #----Palimpsest-----------------------------------------------------------------
 
