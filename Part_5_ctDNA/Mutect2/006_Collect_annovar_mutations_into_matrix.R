@@ -51,6 +51,11 @@ clean_up_001 = function(paired_vcf){
   gt = as.data.table(mutations_T1$gt)
   gt = merge(gt, chr_conv, by="ChromKey")
 
+	z = which(str_detect(gt$Indiv, "Ctl"))
+	if(!(length(z)==0)){
+		gt=gt[-z,]
+	}
+
   gt$mut_id = paste(gt$CHROM, gt$POS, sep="_")
   vcf$mut_id = paste(vcf$CHROM, vcf$POS, sep="_")
 
