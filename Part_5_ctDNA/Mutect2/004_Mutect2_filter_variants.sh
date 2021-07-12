@@ -10,7 +10,7 @@
 module load java/8  #8
 module load samtools
 module load python3
-module load gatk
+module load gatk/4.0.5.1
 module load annovar
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing

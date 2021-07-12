@@ -10,7 +10,7 @@
 module load java/8  #8
 module load samtools
 module load python3
-module load gatk
+module load gatk/4.0.5.1
 module load annovar
 module load tabix
 module load vt

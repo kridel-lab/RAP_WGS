@@ -15,7 +15,7 @@ module load STAR
 module load rsem
 module load perl
 module load python/2.7
-module load gatk
+module load gatk/4.0.5.1
 module load tabix
 module load vcftools
 
@@ -27,7 +27,6 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consens
 
 #get list of sample bam files
 #ls */dcs_sc/*.dcs.sc.sorted.bam  > bam_files_for_mutect_all_samples.txt
-#ls */dcs/*.dcs.sorted.bam  > bam_files_for_mutect_all_samples.txt
 
 samples=bam_files_for_mutect_all_samples.txt
 names=($(cat $samples))
