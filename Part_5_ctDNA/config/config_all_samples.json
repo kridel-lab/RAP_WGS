@@ -1,9 +1,9 @@
 {
     "fastqExtension": "fastq.gz",
-    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/RAP_ctDNA_combined_two_runs/fastq_files/",
-    "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/bamfiles/",
-    "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus/",
-    "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/",
-    "badbarcodeDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/bad_barcode/",
-    "barcodeDistDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/fastq_tag/barcode_dist/"
+    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/",
+    "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/bamfiles/",
+    "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/consensus/",
+    "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/fastq_tag/",
+    "badbarcodeDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/fastq_tag/bad_barcode/",
+    "barcodeDistDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/fastq_tag/barcode_dist/"
 }
