@@ -15,8 +15,9 @@ cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 #collect all control samples
 less all_control_samples.txt | wc -l
 
-#----run manta------------------------------------------------------------------
+#----run Manta------------------------------------------------------------------
 
+#Tool used to call translocations and large insertions and deletions
 #call SVs and indels
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
@@ -25,7 +26,6 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strel
 
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_008_processing_manta_results.R
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_009_processing_manta_results.R
-
 
 #----run strelka----------------------------------------------------------------
 
