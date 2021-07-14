@@ -14,9 +14,9 @@ module load gatk/4.0.5.1
 module load annovar
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing
-#ls *.bam > all_bam_files_RAP
+#ls *dcs.bam > all_dcs_bam_files_RAP
 
-samples=all_bam_files_RAP
+samples=all_dcs_bam_files_RAP
 names=($(cat $samples))
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 echo $sample
@@ -47,5 +47,5 @@ gatk Mutect2 \
 -tumor ${tum} \
 -L $ints \
 -I /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files/${normal_file} \
--O $out_folder/Mutect2_VCF_output/${tum}.vcf.gz \
+-O $out_folder/Mutect2_VCF_output/${tum}.dcs.vcf.gz \
 --germline-resource /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz
