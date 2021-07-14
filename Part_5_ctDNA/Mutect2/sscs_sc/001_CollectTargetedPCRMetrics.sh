@@ -26,9 +26,9 @@ module load vcftools
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus
 
 #get list of sample bam files
-#ls */dcs/*.dcs.sorted.bam  > dcs_bam_files_for_mutect_all_samples.txt
+#ls */sscs_sc/*.sscs.sc.sorted.bam  > sscs_sc_bam_files_for_mutect_all_samples.txt
 
-samples=dcs_bam_files_for_mutect_all_samples.txt
+samples=sscs_sc_bam_files_for_mutect_all_samples.txt
 names=($(cat $samples))
 
 #get sample file
@@ -50,9 +50,9 @@ targets_interval_list=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Consen
 
 #first create symbolic link for bam file so that can index it
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
-ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus/$sample /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/$name.dcs.bam
+ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus/$sample /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/$name.sscs.sc.bam
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing
-sample=$name.dcs.bam #linked bam file that we can use
+sample=$name.sscs.sc.bam #linked bam file that we can use
 
 #index BAM file
 samtools index $sample
@@ -63,22 +63,22 @@ samtools index $sample
 
 gatk BedToIntervalList \
       -I $amplicon_interval_list \
-      -O /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.dcs_amplicon.interval_list \
+      -O /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.sscs.sc_amplicon.interval_list \
       -SD $sample
 
 gatk BedToIntervalList \
       -I $targets_interval_list \
-      -O /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.dcs_targets.interval_list \
+      -O /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.sscs.sc_targets.interval_list \
       -SD $sample
 
 #save new interval lists as variables which will be used as input for final picard function
-amps=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.dcs_amplicon.interval_list
-ints=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.dcs_targets.interval_list
+amps=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.sscs.sc_amplicon.interval_list
+ints=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing/${name}.sscs.sc_targets.interval_list
 
 gatk CollectTargetedPcrMetrics \
        -I $sample \
-       -O ${out_folder}/${name}.dcs.output_pcr_metrics.txt \
+       -O ${out_folder}/${name}.sscs.sc.output_pcr_metrics.txt \
        -R $fasta_file \
-       --PER_TARGET_COVERAGE ${out_folder}/${name}.dcs.per_target_coverage.txt \
+       --PER_TARGET_COVERAGE ${out_folder}/${name}.sscs.sc.per_target_coverage.txt \
        --AMPLICON_INTERVALS $amps \
        --TARGET_INTERVALS $ints
