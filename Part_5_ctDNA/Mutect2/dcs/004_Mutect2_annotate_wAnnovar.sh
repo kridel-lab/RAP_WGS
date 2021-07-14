@@ -16,9 +16,9 @@ module load tabix
 module load vt
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/Mutect2_VCF_output
-#ls *filtered.vcf.gz > all_vcf_files #make once
+#ls *.dcs.filtered.vcf.gz > all_dcs_vcf_files #make once
 
-samples=all_vcf_files
+samples=all_dcs_vcf_files
 names=($(cat $samples))
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 echo $sample
@@ -36,7 +36,7 @@ anno_input=${sample}.normalized.vcf.gz
 out_folder=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/Mutect2_VCF_output/annovar
 
 #name
-name="${sample%%_filtered*}"
+name="${sample%%.filtered*}"
 echo $name
 
 table_annovar.pl --buildver hg19 ${anno_input} /cluster/tools/software/annovar/humandb \
