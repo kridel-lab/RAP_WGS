@@ -16,9 +16,9 @@ module load tabix
 module load vt
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/Mutect2_VCF_output
-#ls *.dcs.filtered.vcf.gz > all_dcs_vcf_files #make once
+#ls *.dcs.sc.filtered.vcf.gz > all_dcs_sc_vcf_files #make once
 
-samples=all_dcs_vcf_files
+samples=all_dcs_sc_vcf_files
 names=($(cat $samples))
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 echo $sample

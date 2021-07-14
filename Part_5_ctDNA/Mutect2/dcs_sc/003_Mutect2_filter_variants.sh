@@ -14,9 +14,9 @@ module load gatk/4.0.5.1
 module load annovar
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/processing
-#ls *dcs.bam > all_dcs_bam_files_RAP
+#ls *dcs.sc.bam > all_dcs_sc_bam_files_RAP
 
-samples=all_dcs_bam_files_RAP
+samples=all_dcs_sc_bam_files_RAP
 names=($(cat $samples))
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 echo $sample
@@ -38,11 +38,11 @@ gatk GetPileupSummaries \
   -I ${sample} \
   -V /cluster/projects/kridelgroup/RAP_ANALYSIS/af-only-gnomad.raw.sites.b37.vcf.gz \
   -L $ints \
-  -O $out_folder/${tum}.dcs_getpileupsummaries.table
+  -O $out_folder/${tum}.dcs.sc_getpileupsummaries.table
 
 gatk CalculateContamination \
-  -I $out_folder/${tum}.dcs_getpileupsummaries.table \
-  -O $out_folder/${tum}.dcs_calculatecontamination.table
+  -I $out_folder/${tum}.dcs.sc_getpileupsummaries.table \
+  -O $out_folder/${tum}.dcs.sc_calculatecontamination.table
 
 gatk FilterMutectCalls -R $fasta_file \
-  -V $out_folder/Mutect2_VCF_output/${tum}.dcs.vcf.gz -O $out_folder/Mutect2_VCF_output/${tum}.dcs.filtered.vcf.gz
+  -V $out_folder/Mutect2_VCF_output/${tum}.dcs.sc.vcf.gz -O $out_folder/Mutect2_VCF_output/${tum}.dcs.sc.filtered.vcf.gz
