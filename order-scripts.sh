@@ -1,19 +1,29 @@
-#!/bin/bash
-#
-#SBATCH -N 1 # Ensure that all cores are on one machine
-#SBATCH -p himem
-#SBATCH --mem=61440M
-#SBATCH -t 5-00:00 # Runtime in D-HH:MM
-#SBATCH -J run_all_scripts
+#Last updated: July 14th, 2021
+#By: Karin Isaev
+
+#READ ME
+#This file contains the order of scripts run by KI for all components of the Rapid autopsy project
+#if any questions please email: karin.isaev@gmail.com
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[1] prep raw data files
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #----navigate to main directory-------------------------------------------------
+
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
 #collect all sample BAM files into file
 #ls */*/*recal.cram* > all_bam_files_raw.txt #with some manual clean up to only include tumour cram files
 
+less all_bam_files_raw.txt | wc -l #this file contains the path to the 27 tumour CRAM files
+
 #collect all control samples
-less all_control_samples.txt | wc -l
+less all_control_samples.txt | wc -l #this file contains the path to the 3 control sample files
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[2] run strelka and manta on WGS tumour samples with normal controls
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #----run Manta------------------------------------------------------------------
 
