@@ -23,7 +23,7 @@
 options(stringsAsFactors=F)
 date=Sys.Date()
 
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/Uncollapse_BAMs_coverage")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
 
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust", "data.table",
@@ -64,7 +64,9 @@ all_res = list.files(pattern="per_target_coverage.txt")
 
 #read in all files and append sample names
 read_file = function(file_name){
-  f = fread(file_name)
+
+  f = paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/", file_name, sep="")
+  f = fread(f)
   sample = unlist(strsplit(file_name, ".per"))[1]
   f$Library = sample
   return(f)
