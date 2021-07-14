@@ -23,7 +23,7 @@ module load vcftools
 #prepare using the bed files made by this script:
 #https://github.com/kridel-lab/ctdna/blob/main/Analysis/mutect2_prep/001_Prepare_Amplicons_Targets.R
 
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/bamfiles
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/bamfiles
 
 #get list of sample bam files
 #ls *.sorted.bam  > bam_files_for_mutect_all_samples.txt
@@ -42,7 +42,7 @@ echo $name
 #prepare files and folders required for analysis and storage of downstream files
 fasta_file=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta
 #where to store output (summary of coverage and pcr metrics from each bam file)
-out_folder=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Uncollapse_BAMs_coverage
+out_folder=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/Uncollapse_BAMs_coverage
 #coordinates of probes (coding and non-coding) used as provided by IDT and Robert
 amplicon_interval_list=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/picard_tools_amps_input.bed
 #coordinates of targets (coding and non-coding) used as provided by IDT and Robert
@@ -50,7 +50,7 @@ targets_interval_list=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Consen
 
 #first create symbolic link for bam file so that can index it
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
-ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/bamfiles/$sample ${out_folder}/$name.bam
+ln -s /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/bamfiles/$sample ${out_folder}/$name.bam
 cd $out_folder
 sample=$name.bam #linked bam file that we can use
 
