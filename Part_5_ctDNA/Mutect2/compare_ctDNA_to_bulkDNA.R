@@ -66,7 +66,7 @@ make_venn = function(patient, mut_data, type_analysis){
   #myCol
   mycol = c("#B3E2CD" ,"#FDCDAC" ,"#CBD5E8" ,"#F4CAE4")
 
-  if(!(length(sscs)==0)){
+  if(!(length(dcs_sc)==0)){
 
   # Chart
   venn.diagram(
