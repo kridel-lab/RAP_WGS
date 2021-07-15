@@ -10,10 +10,11 @@ print(date)
 options(stringsAsFactors=F)
 #load packages and data
 source("/cluster/home/kisaev/RAP_WGS/config-file.R")
-#library(clonevol)
 library("gplots")
 library(threadr)
 library(GenomicRanges)
+library(VennDiagram)
+library(UpSetR)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
 
@@ -34,35 +35,73 @@ ctDNA_muts = unique(ctDNA[,c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "S
 "FILTER", "Tumor_Sample_Barcode", "correction_type", "DP")])
 ctDNA_muts = filter(ctDNA_muts, !(Chromosome == "X"))
 ctDNA_muts$Chromosome = as.numeric(ctDNA_muts$Chromosome)
-ctDNA_muts=filter(ctDNA_muts, FILTER=="PASS")
-ctDNA_muts$mut_id = paste(ctDNA_muts$Chromosome, ctDNA_muts$Start_Position, sep="_")
+ctDNA_muts=filter(ctDNA_muts, FILTER=="PASS", DP > 100)
+ctDNA_muts$mut_id = paste(ctDNA_muts$Chromosome, ctDNA_muts$Start_Position, sep="_") #949 entries
 
-#targets list for 46 genes
-targets_pcg = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/my-targets.bed")
-targets_pcg$V1 = sapply(targets_pcg$V1, function(x){unlist(strsplit(x, "chr"))[2]})
-targets_pcg = unique(targets_pcg[,c(1:4)]) #571 targets
-colnames(targets_pcg) = c("Chr", "Start", "Stop", "Target")
-targets_pcg$type = "46_genes"
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Find overlap of mutations across Consensus Cruncher corrections
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#targets list for additional 152 regions
-target_regs = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/NGS-Targets.xlsx"))
-target_regs = target_regs[,c("Chr", "Start", "Stop", "Target")] #1,675 baits including 38 which correspond to the Agena sample identity probes (TargetNN)
-target_regs$type = "other_regions"
-all_targets = rbind(targets_pcg, target_regs)
+#sscs_NA is just sscs and dcs_NA is just dcs
 
-colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
+#make venn diagram
+patients = c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
+make_venn = function(patient){
+
+  #make folder to store plots for patient
+  mainDir <- getwd()
+  subDir <- paste("mutations_overlap_corrections", date, patient, sep="_")
+
+  dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+  setwd(file.path(mainDir, subDir))
+
+  sscs = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "sscs_NA")$mut_id)
+  sscs_sc = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "sscs_sc")$mut_id)
+  dcs = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "dcs_NA")$mut_id)
+  dcs_sc = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "dcs_sc")$mut_id)
+
+  #myCol
+  mycol = c("#B3E2CD" ,"#FDCDAC" ,"#CBD5E8" ,"#F4CAE4")
+
+  # Chart
+  venn.diagram(
+  x = list(sscs, sscs_sc, dcs, dcs_sc),
+  category.names = c("sscs" , "sscs_sc", "dcs", "dcs_sc"),
+  filename = paste(patient, "venn_diagram_consensus_cruncher_mutations.png", sep="_"),
+  output=TRUE,
+  # Circles
+  lwd = 2,
+  lty = 'blank',
+  fill = mycol)
+
+  #make barplot summary of venn diagram
+  listInput <- list(sscs = sscs, sscs_sc = sscs_sc,
+    dcs = dcs, dcs_sc=dcs_sc)
+
+  pdf(paste(patient, "venn_diagram_barplot_consensus_cruncher_mutations.pdf", sep="_"))
+  print(upset(fromList(listInput), order.by = "freq"))
+  dev.off()
+
+  print("done plots")
+  setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
+}
+
+llply(patients, make_venn)
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #RAP mutations
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 all_muts = unique(read_only[,c("STUDY_PATIENT_ID", "Indiv", "symbol", "chr", "POS", "REF", "ALT", "gt_AF", "DP")])
 colnames(all_muts) = c("STUDY_PATIENT_ID", "Indiv", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2", "RAP_AF", "RAP_DP")
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #Merge mutations
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 merged_muts = merge(ctDNA_muts, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2"))
 write.csv(merged_muts, paste(date, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", sep="_"), quote=F, row.names=F)
 
-#save targeted regions coverage summary (only those > 100)
-#write.csv(cov_sum, paste(date, "Final_regions_evaluated_mean_targeted_coverage.csv", sep="_"), quote=F, row.names=F)
-
 #save coordinates of regions evaluated in the end
-#all_targets = filter(all_targets, target_gene %in% cov_sum$target_gene)
 write.csv(all_targets, paste(date, "Final_regions_evaluated_mean_targeted_coordinates.csv", sep="_"), quote=F, row.names=F)
