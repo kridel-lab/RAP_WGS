@@ -23,7 +23,9 @@ ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0001"] = "LY_RAP_0001"
 ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0002"] = "LY_RAP_0002"
 ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0003"] = "LY_RAP_0003"
 
-ctDNA_muts = unique(ctDNA[,c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Variant_Classification", "Var_Freq", "FILTER", "Tumor_Sample_Barcode", "correction_type")])
+ctDNA_muts = unique(ctDNA[,c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position",
+"Reference_Allele", "Tumor_Seq_Allele2", "Variant_Classification", "Var_Freq",
+"FILTER", "Tumor_Sample_Barcode", "correction_type", "DP")])
 ctDNA_muts = filter(ctDNA_muts, !(Chromosome == "X"))
 ctDNA_muts$Chromosome = as.numeric(ctDNA_muts$Chromosome)
 ctDNA_muts=filter(ctDNA_muts, FILTER=="PASS")
@@ -87,8 +89,8 @@ merged_muts = merge(ctDNA_muts, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbo
 write.csv(merged_muts, paste(date, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", sep="_"), quote=F, row.names=F)
 
 #save targeted regions coverage summary (only those > 100)
-write.csv(cov_sum, paste(date, "Final_regions_evaluated_mean_targeted_coverage.csv", sep="_"), quote=F, row.names=F)
+#write.csv(cov_sum, paste(date, "Final_regions_evaluated_mean_targeted_coverage.csv", sep="_"), quote=F, row.names=F)
 
 #save coordinates of regions evaluated in the end
-all_targets = filter(all_targets, target_gene %in% cov_sum$target_gene)
+#all_targets = filter(all_targets, target_gene %in% cov_sum$target_gene)
 write.csv(all_targets, paste(date, "Final_regions_evaluated_mean_targeted_coordinates.csv", sep="_"), quote=F, row.names=F)

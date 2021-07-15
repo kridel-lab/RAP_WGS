@@ -250,5 +250,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 #cleanest
 
 #4. Combine mutations into one file and clean up output from Annovar
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/Collect_annovar_mutations_into_matrix.R
 
 #DONE
