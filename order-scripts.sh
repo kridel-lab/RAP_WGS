@@ -28,16 +28,22 @@ less all_control_samples.txt | wc -l #this file contains the path to the 3 contr
 #----run Manta------------------------------------------------------------------
 
 #Tool used to call translocations and large insertions and deletions
-#call SVs and indels
+
+#[1] Run Manta
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_001_manta.sh
 
-#process and summmarize manta results
+#[2] Next process and summmarize manta results
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_007_processing_manta_results.sh
 
+#[3] Combine all SV calls from all samples into one file
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_008_processing_manta_results.R
+
+#[4] Clean up SV calls and sample names so it's more readable
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_009_processing_manta_results.R
 
-#----run strelka----------------------------------------------------------------
+#----run Strelka----------------------------------------------------------------
+
+#Tool uses to call SNVs and indels
 
 #1. call variants
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
@@ -58,7 +64,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/stre
 #6. prepare bed files to merge with Mutect2 (indels)
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files_indels.R
 
-#----run mutect2----------------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[3] run Mutect2 on WGS tumour samples with normal controls
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #1. first split normal samples by chromosomes
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits_normal.sh
@@ -98,7 +106,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipe
 #12. soft filtering of mutect2 variants in R before merging with strelka (indels)
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_007_soft_filtering_mutect2_filtered_variants_indels.R
 
-#----merge variants from strelka and mutect2------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[4] merge variants from Strelka and Mutect2
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #1. get list of mutations called by both tools
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_001_evaluating_overlap_between_callers.R
@@ -136,28 +146,14 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_using_sequenza.R
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_indels_using_sequenza.R
 
-#----Hatchet--------------------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[5] Run Sequenza
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#1. get BAM files for patients 001 and 002
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/001_p001_p002_get_BAM_files.sh
 
-#2. run first part of Hatchet on patient 003 on the cluster (BAM files were already generated previously)
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/p003_hatchet_cluster_run.sh
-
-#3. run first part of Hatchet on patient 001 on the cluster
-
-#4. run first part of Hatchet on patient 002 on the cluster
-
-#5. run second part of Hatchet on patient 001 locally using Gurobi
-
-#6. run second part of Hatchet on patient 002 locally using Gurobi
-
-#7. run second part of Hatchet on patient 003 locally using Gurobi
-
-#8. prepare SNVs for each patient to be used for Hatchet provided explainMutationsCCF script
-Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/Hatchet/prep_SNVs_for_CCF_calculation.R
-
-#----Pyclone-VI-----------------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[6] Run Pyclone-VI
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 pyclone_folder=/cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP
 
@@ -183,7 +179,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyc
 #prepare input for mapscape (edges are prepared manually seperatley and locally)
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP/pyclone-vi_007_prep_for_mapscape.R
 
-#----Pairtree------------------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[7] Run Pairtree
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #generate input files for pairtree using pyclone input and output files
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/001_create_ssm_input_files.R
@@ -199,7 +197,9 @@ module purge
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pairtree/004_poss_pairtree_analysis.R
 
-#----Treeomics------------------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[8] Run Treeomics
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #1. make patient specific bed files from which to pull mutations in vcf files for treeomics
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_treeomics_prepare_bed_files_to_fillter_VCFs_by_soft_filters.R
@@ -213,29 +213,9 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomic
 #4. test run on small subset of protein coding genes
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only.sh
 
-#----Palimpsest-----------------------------------------------------------------
-
-#prepare samples
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_annot_input_Palimpsest.R
-
-#prepare CNAs
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_CNA_input_Palimpsest.R
-
-#prepare SNVs
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/prepare_SNV_input_Palimpsest.R
-
-#run palimpsest
-module load R/4.0.0
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0001
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0002
-Rscript /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Palimpsest/Running_Palimpsest.R LY_RAP_0003
-
-#----Summary-Plots--------------------------------------------------------------
-
-#zoom in on DLBCL driver genes and how they are mutated
-Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_007_summary_driver_genes_across_samples.R
-
-#----Staudt-classifier----------------------------------------------------------
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[9] Run Lymphgen Staudt Classifier
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #1. set up sample file
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/001_setting_up_sample_annotation_file.R
@@ -248,5 +228,27 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 
 #4. summarize results from Staudt classifier
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Staudt_subtyping_samples/004_summarize_LymphGen_results.R
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[10] ctDNA analysis
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#1. Run Consensus Cruncher
+#NOTE: the pipeline (snakemake) in the RAP directory isn't the most up to date
+#pipeline that Gabrielle has worked on. Once her pipeline is fully tested and
+#complete you could replace the one I used with hers and re-run the analysis that way
+
+#2. Run Picard tools to get coverage across targets
+#NOTE: here you can run these scripts on the uncollapsed BAM files and also the
+#BAM files produced with the different corrections (SSCS vs DCS for example)
+
+#3. Run Mutect2 on each type of BAM files
+#NOTE: here I ran the scripts related to mutation calling and annotation
+#seperatley for each of the four corrections but if you run Gabrielle's latest
+#pipeline it will automaitcally run Mutect2 on all 4 corrections... I just
+#didn't have that much time and set it up this way but it's definitely not the
+#cleanest
+
+#4. Combine mutations into one file and clean up output from Annovar
 
 #DONE

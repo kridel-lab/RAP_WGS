@@ -23,7 +23,8 @@ ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0001"] = "LY_RAP_0001"
 ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0002"] = "LY_RAP_0002"
 ctDNA$STUDY_PATIENT_ID[ctDNA$Tumor_Sample_Barcode == "LY_0003"] = "LY_RAP_0003"
 
-ctDNA_muts = unique(ctDNA[,c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Variant_Classification", "Var_Freq", "FILTER", "Tumor_Sample_Barcode")])
+ctDNA_muts = unique(ctDNA[,c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2", "Variant_Classification", "Var_Freq", "FILTER", "Tumor_Sample_Barcode", "correction_type")])
+ctDNA_muts = filter(ctDNA_muts, !(Chromosome == "X"))
 ctDNA_muts$Chromosome = as.numeric(ctDNA_muts$Chromosome)
 ctDNA_muts=filter(ctDNA_muts, FILTER=="PASS")
 ctDNA_muts$mut_id = paste(ctDNA_muts$Chromosome, ctDNA_muts$Start_Position, sep="_")
@@ -43,8 +44,8 @@ all_targets = rbind(targets_pcg, target_regs)
 
 colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
 
-cov_sum = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/2021-07-12_target_based_coverage_summary.csv")
-cov_sum = filter(cov_sum, mean_cov > 100) #1400/1905 records
+#cov_sum = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/2021-07-12_target_based_coverage_summary.csv")
+#cov_sum = filter(cov_sum, mean_cov > 100) #1400/1905 records
 
 #for each patient figure out regions that passed and intersect with mutation calls
 get_muts_targets = function(patient){
@@ -74,15 +75,15 @@ get_muts_targets = function(patient){
 }
 
 #get ctDNA mutations in regions with at least 100x coverage
-patients = c("LY_0001", "LY_0002", "LY_0003")
-ctDNA_muts_pass = as.data.table(ldply(llply(patients, get_muts_targets)))
+#patients = c("LY_0001", "LY_0002", "LY_0003")
+#ctDNA_muts_pass = as.data.table(ldply(llply(patients, get_muts_targets)))
 
 #RAP mutations
 all_muts = unique(read_only[,c("STUDY_PATIENT_ID", "Indiv", "symbol", "chr", "POS", "REF", "ALT", "gt_AF", "DP")])
 colnames(all_muts) = c("STUDY_PATIENT_ID", "Indiv", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2", "RAP_AF", "RAP_DP")
 
 #Merge mutations
-merged_muts = merge(ctDNA_muts_pass, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2"))
+merged_muts = merge(ctDNA_muts, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2"))
 write.csv(merged_muts, paste(date, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", sep="_"), quote=F, row.names=F)
 
 #save targeted regions coverage summary (only those > 100)

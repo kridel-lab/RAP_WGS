@@ -59,41 +59,20 @@ clean_up_001 = function(paired_vcf){
   gt$mut_id = paste(gt$CHROM, gt$POS, sep="_")
   vcf$mut_id = paste(vcf$CHROM, vcf$POS, sep="_")
 
-  #1. keep only the ones that passed default mutect2 filter
-  #vcf = as.data.table(filter(vcf, FILTER=="PASS"))
-  #print(paste("number of variants that passed filtering=", dim(vcf)[1]))
-
-	#2. combine vcf and gt info
+	#1. combine vcf and gt info
   cols = colnames(gt)[which(colnames(gt) %in% colnames(vcf))]
   gt = merge(gt, vcf, by= cols)
 
-	#3. get hugo gene names
+	#2. get hugo gene names
   gt = merge(gt, genes, by= "Gene.ensGene")
   print(paste("number of variants that passed gene merge", dim(gt)[1]))
 
-  #4. filter by coverage
-  #try 30X
-#  vcf = as.data.table(filter(vcf, DP >=10))
-#  print(paste("number of variants that passed coverage=", dim(vcf)[1]))
+  #3. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
+  pat_name = unlist(strsplit(paired_vcf, "_annovar"))[1]
+	pat = unlist(strsplit(pat_name, "\\."))[1]
 
-  #5. keep only those with population allele frequency < 0.001
-#  gt$controls_AF_popmax = as.numeric(gt$controls_AF_popmax)
-#  gt = as.data.table(filter(gt, (controls_AF_popmax < 0.001 | is.na(controls_AF_popmax))))
-#  print(paste("number of variants that passed controls_AF_popmax=", dim(gt)[1]))
-
-  #6. keep only mutations where t2 VAF > 0.1
-	#gt$gt_AF = as.numeric(gt$gt_AF)
-	#gt = as.data.table(filter(gt, gt_AF >= 0.1))
-#	print(paste("number of variants that passed vaf >= 0.1=", dim(gt)[1]))
-
-	#7. keep only muts affecting pcg regions
-#	gt = as.data.table(filter(gt, !(ExonicFunc.ensGene == "."),
-#	!(ExonicFunc.ensGene == "synonymous_SNV")))
-#	print(paste("number of variants that passed pcg muts only", dim(gt)[1]))
-
-  #8. generate bed file - summary of mutation and coordinates to intersect with cnvkit output
-  pat = unlist(strsplit(paired_vcf, "_annovar"))[1]
 	gt$sample=pat
+	gt$correction_type = paste(unlist(strsplit(pat_name, "\\."))[2:3], collapse="_")
 
 	colnames(gt)[which(colnames(gt)=="symbol")] = "Hugo_Symbol"
 	gt$End_Position = gt$POS
@@ -108,7 +87,7 @@ clean_up_001 = function(paired_vcf){
 
 	gt = gt[,c("Hugo_Symbol", "Chromosome", "Start_Position", "End_Position", "Reference_Allele",
 	"Tumor_Seq_Allele2", "avsnp142", "cosmic68", "AAChange.ensGene",
-	"Variant_Classification", "Variant_Type", "Tumor_Sample_Barcode", "Var_Freq", "FILTER")]
+	"Variant_Classification", "Variant_Type", "Tumor_Sample_Barcode", "Var_Freq", "FILTER", "correction_type", "DP")]
 
 	return(gt)
 
