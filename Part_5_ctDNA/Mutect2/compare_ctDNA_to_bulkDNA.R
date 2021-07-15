@@ -47,7 +47,9 @@ ctDNA_muts$mut_id = paste(ctDNA_muts$Chromosome, ctDNA_muts$Start_Position, sep=
 #make venn diagram
 patients = c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
-make_venn = function(patient){
+make_venn = function(patient, mut_data, type_analysis){
+
+  print(type_analysis)
 
   #make folder to store plots for patient
   mainDir <- getwd()
@@ -56,19 +58,21 @@ make_venn = function(patient){
   dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
   setwd(file.path(mainDir, subDir))
 
-  sscs = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "sscs_NA")$mut_id)
-  sscs_sc = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "sscs_sc")$mut_id)
-  dcs = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "dcs_NA")$mut_id)
-  dcs_sc = unique(filter(ctDNA_muts, STUDY_PATIENT_ID == patient, correction_type == "dcs_sc")$mut_id)
+  sscs = unique(filter(mut_data, STUDY_PATIENT_ID == patient, correction_type == "sscs_NA")$mut_id)
+  sscs_sc = unique(filter(mut_data, STUDY_PATIENT_ID == patient, correction_type == "sscs_sc")$mut_id)
+  dcs = unique(filter(mut_data, STUDY_PATIENT_ID == patient, correction_type == "dcs_NA")$mut_id)
+  dcs_sc = unique(filter(mut_data, STUDY_PATIENT_ID == patient, correction_type == "dcs_sc")$mut_id)
 
   #myCol
   mycol = c("#B3E2CD" ,"#FDCDAC" ,"#CBD5E8" ,"#F4CAE4")
+
+  if(!(length(sscs)==0)){
 
   # Chart
   venn.diagram(
   x = list(sscs, sscs_sc, dcs, dcs_sc),
   category.names = c("sscs" , "sscs_sc", "dcs", "dcs_sc"),
-  filename = paste(patient, "venn_diagram_consensus_cruncher_mutations.png", sep="_"),
+  filename = paste(patient, type_analysis, "venn_diagram_consensus_cruncher_mutations.png", sep="_"),
   output=TRUE,
   # Circles
   lwd = 2,
@@ -79,15 +83,16 @@ make_venn = function(patient){
   listInput <- list(sscs = sscs, sscs_sc = sscs_sc,
     dcs = dcs, dcs_sc=dcs_sc)
 
-  pdf(paste(patient, "venn_diagram_barplot_consensus_cruncher_mutations.pdf", sep="_"))
+  pdf(paste(patient, type_analysis, "venn_diagram_barplot_consensus_cruncher_mutations.pdf", sep="_"))
   print(upset(fromList(listInput), order.by = "freq"))
   dev.off()
 
   print("done plots")
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
 }
+}
 
-llply(patients, make_venn)
+llply(patients, make_venn, ctDNA_muts, "ctDNA_only")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #RAP mutations
@@ -102,6 +107,9 @@ colnames(all_muts) = c("STUDY_PATIENT_ID", "Indiv", "Hugo_Symbol", "Chromosome",
 
 merged_muts = merge(ctDNA_muts, all_muts, by = c("STUDY_PATIENT_ID", "Hugo_Symbol", "Chromosome", "Start_Position", "Reference_Allele", "Tumor_Seq_Allele2"))
 write.csv(merged_muts, paste(date, "All_samples_mutations_found_in_ctDNA_and_autopsy_samples.csv", sep="_"), quote=F, row.names=F)
+
+#get venn diagram for how many mutations of those merged appeared in each correction
+llply(patients, make_venn, merged_muts, "merged_with_RAP")
 
 #save coordinates of regions evaluated in the end
 write.csv(all_targets, paste(date, "Final_regions_evaluated_mean_targeted_coordinates.csv", sep="_"), quote=F, row.names=F)

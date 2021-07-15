@@ -253,4 +253,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/Collect_annovar_mutations_into_matrix.R
 
+#5. Look at overlap of mutations across different corrections and also with RAP
+#samples
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/compare_ctDNA_to_bulkDNA.R
+
 #DONE
