@@ -1,5 +1,9 @@
 #compare ctDNA mutations to bulk DNA sequencing from tumour samples
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Load libraries and data from RAP samples
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 date = Sys.Date()
 print(date)
 
@@ -13,7 +17,9 @@ library(GenomicRanges)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
 
-#Data++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#ctDNA data load
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ctDNA = list.files(pattern="_Mutect2_annovar_mutations_all.rds")[length(list.files(pattern="_Mutect2_annovar_mutations_all.rds"))]
 ctDNA = readRDS(ctDNA)
@@ -45,40 +51,6 @@ target_regs$type = "other_regions"
 all_targets = rbind(targets_pcg, target_regs)
 
 colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
-
-#cov_sum = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls/2021-07-12_target_based_coverage_summary.csv")
-#cov_sum = filter(cov_sum, mean_cov > 100) #1400/1905 records
-
-#for each patient figure out regions that passed and intersect with mutation calls
-get_muts_targets = function(patient){
-
-  cov_sum_pat = filter(cov_sum, Library == patient)
-
-  #keep only ctDNA mutations in targeted regions with enough coverage
-  pat_targs = filter(all_targets, target_gene %in% cov_sum_pat$target_gene)
-  pat_targs_gr = makeGRangesFromDataFrame(pat_targs, keep.extra.columns=TRUE)
-
-  #get mutations coordinates
-  ctdna_mut_pat = filter(ctDNA_muts, Tumor_Sample_Barcode == patient)
-  ctdna_mut_pat = ctdna_mut_pat[,c("Chromosome", "Start_Position", "Reference_Allele", "mut_id")]
-  ctdna_mut_pat$Reference_Allele = ctdna_mut_pat$Start_Position
-  colnames(ctdna_mut_pat) = c("chr", "start", "end", "mut_id")
-  ctdna_mut_pat_gr = makeGRangesFromDataFrame(ctdna_mut_pat, keep.extra.columns=TRUE)
-  print(paste("num mutations originally = ", dim(ctdna_mut_pat)[1]))
-
-  hits <- findOverlaps(ctdna_mut_pat_gr, pat_targs_gr, ignore.strand=TRUE)
-  hits_overlap = cbind(ctdna_mut_pat[queryHits(hits),], pat_targs[subjectHits(hits),])
-
-  mutations_keep = hits_overlap$mut_id
-  patient_mutations_keep = filter(ctDNA_muts, Tumor_Sample_Barcode == patient, mut_id %in% mutations_keep)
-  print(paste("num mutations after taget filter = ", dim(patient_mutations_keep)[1]))
-
-  return(patient_mutations_keep)
-}
-
-#get ctDNA mutations in regions with at least 100x coverage
-#patients = c("LY_0001", "LY_0002", "LY_0003")
-#ctDNA_muts_pass = as.data.table(ldply(llply(patients, get_muts_targets)))
 
 #RAP mutations
 all_muts = unique(read_only[,c("STUDY_PATIENT_ID", "Indiv", "symbol", "chr", "POS", "REF", "ALT", "gt_AF", "DP")])

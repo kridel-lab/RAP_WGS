@@ -130,6 +130,24 @@ samples_per_mut = rbind(LY_RAP_0001, LY_RAP_0002, LY_RAP_0003)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+#ctDNA targeted regions
+#targets list for 46 genes
+targets_pcg = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/my-targets.bed")
+targets_pcg$V1 = sapply(targets_pcg$V1, function(x){unlist(strsplit(x, "chr"))[2]})
+targets_pcg = unique(targets_pcg[,c(1:4)]) #571 targets
+colnames(targets_pcg) = c("Chr", "Start", "Stop", "Target")
+targets_pcg$type = "46_genes"
+
+#targets list for additional 152 regions
+target_regs = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/probe_coords/NGS-Targets.xlsx"))
+target_regs = target_regs[,c("Chr", "Start", "Stop", "Target")] #1,675 baits including 38 which correspond to the Agena sample identity probes (TargetNN)
+target_regs$type = "other_regions"
+all_targets = rbind(targets_pcg, target_regs)
+
+colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 signatures = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/known_signatures_MutationalPatterns.rds")
 
 fit_to_signatures_strict <- function(mut_matrix, signatures, max_delta = 0.004) {
