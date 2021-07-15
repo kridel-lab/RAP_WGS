@@ -234,9 +234,28 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #1. Run Consensus Cruncher
-#NOTE: the pipeline (snakemake) in the RAP directory isn't the most up to date
+#NOTE 1: the pipeline (snakemake) in the RAP directory isn't the most up to date
 #pipeline that Gabrielle has worked on. Once her pipeline is fully tested and
 #complete you could replace the one I used with hers and re-run the analysis that way
+#the way mine is currently set up should also be appropriate to use
+#NOTE 2: also note that the final data used for ctDNA includes fastq files
+#from two different lanes that were combined more details are available
+#in the README file on the cluster
+
+#First combine fastq files from the first upload of data and the
+#second upload of data
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/combined_runs/001_combine_fastq_files.sh
+
+#Now set up config file to indicate where the fastq files are
+#edit this file locally and push changes /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples.json
+
+#Now edit output destination in the snakemake itself and submit script to run
+#snakemake pipeline for first steps of consensuscruncher
+
+#edit this file if needed to change output folders:
+# /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline.snakefile
+
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/snakemake_submit.sh
 
 #2. Run Picard tools to get coverage across targets
 #NOTE: here you can run these scripts on the uncollapsed BAM files and also the
