@@ -14,6 +14,35 @@ module load tabix
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
 
+#nano sequenza_input_bam_files_tum.txt
+#LY_RAP_0001_Aut_FzT_02.bam
+#LY_RAP_0001_Aut_FzT_05.bam
+#LY_RAP_0001_Aut_FzT_08.bam
+#LY_RAP_0002_Aut_FzT_02.bam
+#LY_RAP_0002_Aut_FzT_03.bam
+#LY_RAP_0002_Aut_FzT_14.bam
+#LY_RAP_0002_Aut_FzT_15.bam
+#LY_RAP_0003_Aut_FzT_01.bam
+#LY_RAP_0003_Aut_FzT_02.bam
+#LY_RAP_0003_Aut_FzT_03.bam
+#LY_RAP_0003_Aut_FzT_04.bam
+#LY_RAP_0003_Aut_FzT_05.bam
+#LY_RAP_0003_Aut_FzT_06.bam
+#LY_RAP_0003_Aut_FzT_07.bam
+#LY_RAP_0003_Aut_FzT_09.bam
+#LY_RAP_0003_Aut_FzT_10.bam
+#LY_RAP_0003_Aut_FzT_11.bam
+#LY_RAP_0003_Aut_FzT_12.bam
+#LY_RAP_0003_Aut_FzT_13.bam
+#LY_RAP_0003_Aut_FzT_14.bam
+#LY_RAP_0003_Aut_FzT_15.bam
+#LY_RAP_0003_Aut_FzT_16.bam
+#LY_RAP_0003_Aut_FzT_17.bam
+#LY_RAP_0003_Aut_FzT_18.bam
+#LY_RAP_0003_Dia_FoT_01.bam
+#LY_RAP_0003_Dia_FoT_03.bam
+#LY_RAP_0003_Dia_FoT_05.bam
+
 names=($(cat sequenza_input_bam_files_tum.txt))
 echo ${names[${SLURM_ARRAY_TASK_ID}]}
 
@@ -38,7 +67,10 @@ tumor=$MYVAR
 sample=$tum_name
 out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
 
-#2.
+#2. submitted job with this command and after it was run successfully I commented
+#it out to run the next command (I deleted the files produced by this command as
+#they were taking up a lot of space)
+
 #sequenza-utils bam2seqz --normal $normal --tumor $tumor \
 #    --fasta $fasta -gc ${out_folder}/hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.test.seqz.gz
 

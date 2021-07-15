@@ -87,9 +87,9 @@ make_venn = function(patient, mut_data, type_analysis){
   print(upset(fromList(listInput), order.by = "freq"))
   dev.off()
 
-  print("done plots")
+  print("done plots")}
+
   setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/Mutect2/mutation_calls")
-}
 }
 
 llply(patients, make_venn, ctDNA_muts, "ctDNA_only")
