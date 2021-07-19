@@ -22,26 +22,9 @@ names=($(cat /cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_treomics_pats.t
 pat=${names[${SLURM_ARRAY_TASK_ID}]}
 echo $pat
 
-#normal=LY_RAP_0003_Ctl_FzG_01.hc.vqsr.vcf.gz #4,763,150 predicted germline variants
-
-#purity_info=/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2/annotation_data_palimpsest_input.txt
-
-#remove header/column names from purity file
-#tail -n +2 $purity_info > purities_no_cols.txt
-
-#sample names
-#awk -F"\t" '{print $1}' purities_no_cols.txt > treeomics_samples_include.txt
-
-#purities
-#awk -F"\t" '{print $3}' purities_no_cols.txt > treeomics_samples_purities.txt
-
 driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/${pat}_drivers.csv
 
 #RUN
 python treeomics -d input/mutect2_strelka_all_muts/${pat} \
 -l 5 --driver_genes=$driver_genes \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS/${pat}
-
-#--wes_filtering \
-#--include `cat treeomics_samples_include.txt` \
-#--purities `cat treeomics_samples_purities.txt` \
+-o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
