@@ -45,23 +45,19 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Stre
 
 #Tool uses to call SNVs and indels
 
-#1. call variants
+#[1] call variants
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_002_strelka.sh
 
-#2. select variants that pass filters
+#[2] select variants that pass filters
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka.sh
 
-#3. select variants that pass filters (indels)
+#[3] select variants that pass filters (indels)
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/Strelka_003_SelectVariants_post_strelka_indels.sh
 
-#4. #mutationmapper
-module load R/4.0.0
-Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/strelka_filtering_summary_mutationampper.R
-
-#5. prepare bed files to merge with Mutect2
+#[4] prepare bed files to merge with Mutect2
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files.R
 
-#6. prepare bed files to merge with Mutect2 (indels)
+#[5] prepare bed files to merge with Mutect2 (indels)
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Strelka/strelka_prepare_bed_files_indels.R
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -261,12 +257,32 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/snakemake_submit.sh
 #NOTE: here you can run these scripts on the uncollapsed BAM files and also the
 #BAM files produced with the different corrections (SSCS vs DCS for example)
 
+#for collapsed bam files (in the end we use the dcs_sc correction)
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs_sc/001_CollectTargetsPCRMetrics.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/sscs/001_CollectTargetsPCRMetrics.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/ssc_sc/001_CollectTargetsPCRMetrics.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs/001_CollectTargetsPCRMetrics.sh
+
 #3. Run Mutect2 on each type of BAM files
 #NOTE: here I ran the scripts related to mutation calling and annotation
 #seperatley for each of the four corrections but if you run Gabrielle's latest
 #pipeline it will automaitcally run Mutect2 on all 4 corrections... I just
 #didn't have that much time and set it up this way but it's definitely not the
 #cleanest
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs_sc/002_run_Mutect2.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/sscs/002_run_Mutect2.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/ssc_sc/002_run_Mutect2.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs/002_run_Mutect2.sh
+
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs_sc/003_Mutect2_filter_variants.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/sscs/003_Mutect2_filter_variants.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/ssc_sc/003_Mutect2_filter_variants.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs/003_Mutect2_filter_variants.sh
+
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs_sc/004_Mutect2_annotate_wAnnovar.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/sscs/004_Mutect2_annotate_wAnnovar.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/ssc_sc/004_Mutect2_annotate_wAnnovar.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/dcs/004_Mutect2_annotate_wAnnovar.sh
 
 #4. Combine mutations into one file and clean up output from Annovar
 module load R/4.0.0
@@ -276,5 +292,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/Collect_annovar_mutati
 #samples
 module load R/4.0.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/compare_ctDNA_to_bulkDNA.R
+
+#6. Summarize mutations called in ctDNA and make a plot
 
 #DONE

@@ -23,9 +23,11 @@ module load vcftools
 #prepare using the bed files made by this script:
 #https://github.com/kridel-lab/ctdna/blob/main/Analysis/mutect2_prep/001_Prepare_Amplicons_Targets.R
 
-cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/consensus_output/consensus
+#note that path may change depending on which ConsensusCruncher results you are using
+#the path now is set to where the results for the combined runs data is (March 2021+June 2021 data)
+cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/RAP_ctDNA_combined_two_runs/consensus_output/consensus
 
-#get list of sample bam files
+#get list of sample bam files (run once then comment out)
 #ls */dcs_sc/*.dcs.sc.sorted.bam  > dcs_sc_bam_files_for_mutect_all_samples.txt
 
 samples=dcs_sc_bam_files_for_mutect_all_samples.txt
