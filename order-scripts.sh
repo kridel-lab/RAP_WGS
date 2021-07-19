@@ -69,6 +69,8 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipel
 
 #2. split bam files by chromosomes
 #requested temp dirctory for running mutect2
+#can do this by emailing Zhibin and he can give you temporary project
+#space for two weeks for example
 sbatch /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Mutect2/pipeline_001_start_running_bam_splits.sh
 
 #3. run mutect2 mutation calling on individual chr based bam files
@@ -137,7 +139,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 #between our gene mutations and several gene panels
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_004_additional_soft_filters_applied.R
 
-#9. intersect mutations with CNAs and prepare for pyclone
+#9. intersect mutations with CNAs and prepare for BamReadCount + Pyclone-VI
 #prepare mutations for bamreadcount
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_using_sequenza.R
 Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Variant_Callers/Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_indels_using_sequenza.R
@@ -150,6 +152,9 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_1_Somatic_variant_calling/Merged_Varia
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #[6] Run Pyclone-VI
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#NOTE: the script above (Merged_005_prepare_bed_files_to_fillter_VCFs_by_soft_filters_using_sequenza.R)
+#prepares mutations for this part of the analysis 
 
 pyclone_folder=/cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Pyclone_CITUP
 
@@ -206,8 +211,8 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomic
 #3. change VCF file names in treeomics input to sample origin / organ
 sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_001_B_rename_sample_names_in_VCF_file.sh
 
-#4. test run on small subset of protein coding genes
-sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only.sh
+#4. Run without wes filtering
+sbatch /cluster/home/kisaev/RAP_WGS/Part_4_Phylogeny_analysis/Treeomics/treeomics_002_PCG_mutations_only_all.sh
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #[9] Run Lymphgen Staudt Classifier

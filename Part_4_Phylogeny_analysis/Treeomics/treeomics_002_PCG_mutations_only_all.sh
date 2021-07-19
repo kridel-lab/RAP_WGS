@@ -24,7 +24,16 @@ echo $pat
 
 driver_genes=/cluster/projects/kridelgroup/RAP_ANALYSIS/data/${pat}_drivers.csv
 
-#RUN
-python treeomics -d input/mutect2_strelka_all_muts/${pat} \
--l 5 --driver_genes=$driver_genes \
--o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
+str="p001"
+
+if [ "$pat" == "$str" ]; then
+  #RUN
+  python treeomics -d input/mutect2_strelka_all_muts/${pat} \
+  -l 5 --driver_genes=$driver_genes \
+  -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
+else
+  #RUN
+  python treeomics -d input/mutect2_strelka_all_muts/${pat} \
+  -l 5 --driver_genes=$driver_genes --wes_filtering \
+  -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
+fi
