@@ -10,9 +10,6 @@ print(index)
 data.file <-  index
 print(data.file)
 
-#testing
-#data.file="LY_RAP_0003_Aut_FzT_02.small.seqz.gz"
-
 #1. sequenza.extract: process seqz data, normalization and segmentation
 test <- sequenza.extract(data.file, verbose = TRUE)
 

@@ -33,7 +33,7 @@ if [ "$pat" == "$str" ]; then
   -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
 else
   #RUN
-  python treeomics -d input/mutect2_strelka_all_muts/${pat} \
+  python treeomics -d input/mutect2_strelka_pcgs_only/${pat} \
   -l 5 --driver_genes=$driver_genes --wes_filtering \
   -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Treeomics/Treeomics_WGS_5_mp/${pat}
 fi

@@ -14,6 +14,9 @@ module load tabix
 
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
 
+#Once all CRAM files are converted to BAM files and moved to this folder
+#can generate file with all file names
+
 #nano sequenza_input_bam_files_tum.txt
 #LY_RAP_0001_Aut_FzT_02.bam
 #LY_RAP_0001_Aut_FzT_05.bam

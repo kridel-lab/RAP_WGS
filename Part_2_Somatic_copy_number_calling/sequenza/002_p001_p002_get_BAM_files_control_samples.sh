@@ -40,3 +40,5 @@ bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
 
 samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} > ${tum_name}.bam
 samtools index ${tum_name}.bam
+
+#then BAM files were moved into /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files
