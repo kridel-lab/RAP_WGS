@@ -329,6 +329,14 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/compare_ctDNA_to_bulkD
 
 #Figure 1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+#1. prep CNAs for Figure 1 barplot (on the cluster)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_CNAs_summary_plots.R
+
+#2. prep SNVs and indels for Figure 1 barplot (on the cluster)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SNVs_indels_summary.R
+
+#3. prep Structural Variants (SVs) for Figure 1 barplot (on the cluster)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SVs_summary_plots.R
 
 #Supp Figure 1A+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SNVs_indels_private_vs_purity.R

@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
-#Merged_007_summary_driver_genes_across_samples.R
-#Karin Isaev
-#Monday January 18th, 2020
+#001_SVs_summary_plots.R
+#This script preps a summary of SV for the main Figure 1 barplot
 #-------------------------------------------------------------------------------
 
 #load packages and data

@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
-#Merged_007_summary_driver_genes_across_samples.R
-#Karin Isaev
-#Monday January 18th, 2020
+#001_SNVs_indels_summary.R
+#This scripts preps mutations summary for Figure 1 barplot
 #-------------------------------------------------------------------------------
 
 #load packages and data
