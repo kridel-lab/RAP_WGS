@@ -48,6 +48,7 @@ read_files = function(seq_file){
 }
 
 all_segs_dt = as.data.table(ldply(llply(all_segs, read_files)))
+all_segs_dt = filter(all_segs_dt, !(chromosome == "X"))
 
 samps = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/copy_RAP_masterlist_samples.rds")
 colnames(samps)[4] ="Sample"
@@ -57,7 +58,7 @@ print(head(all_segs_dt))
 
 #purity and ploidy info
 purities = as.data.table(read_excel("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Purity_Ploidy_Results_Hatchet_Sequenza.xlsx")) %>%
-	filter(Tool == "Sequenza") %>% select(Patient, Sample, Purity, Ploidy)
+	select(Patient, Sample, Purity, Ploidy)
 purities$Sample = paste(purities$Patient, purities$Sample, sep="_")
 all_segs_dt = merge(all_segs_dt, purities, by="Sample")
 
@@ -74,10 +75,3 @@ colnames(all_cnas)[10] = c("ntot")
 print(head(all_cnas))
 
 saveRDS(all_cnas, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
-
-all_cnas_palimpsest = all_cnas[,c("Sample", "CHROM", "Start", "End",
-"depth.ratio", "Nmin", "Nmaj",
-"ntot", "Ploidy")]
-colnames(all_cnas_palimpsest) = c("Sample", "CHROM", "POS_START",
-"POS_END", "LogR", "Nmin", "Nmaj", "ntot", "Ploidy")
-write.table(all_cnas_palimpsest, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Palimpsest/input/copy_number_alteration_data_via_Sequenza_palimpsest_input.txt", quote=F, row.names=F, sep="\t")

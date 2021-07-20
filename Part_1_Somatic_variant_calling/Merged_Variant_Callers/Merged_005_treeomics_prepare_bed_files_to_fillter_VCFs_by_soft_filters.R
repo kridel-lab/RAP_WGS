@@ -78,6 +78,7 @@ llply(pats, get_pat_treeomics_muts, treeomics_input, "pcgs_only")
 
 #+++++ ALL mutations +++++++++++++++++++++++++++++++++++++++++++++++++
 
+#all but intronic 
 treeomics_input = as.data.table(filter(read_only,
 !(Func.ensGene %in% c("intronic"))))
 

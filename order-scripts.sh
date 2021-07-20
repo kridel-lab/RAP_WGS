@@ -166,7 +166,8 @@ sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/sequenza/
 sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/sequenza/003_R_script_job_submission.sh
 
 #5. Assemble all Sequenza output together
-sbatch /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/sequenza/prepare_Sequenza_CNA_input_Palimpsest.R
+module load R/4.0.0
+Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/sequenza/prepare_Sequenza_CNA_input_Palimpsest.R
 
 #6. intersect mutations with CNAs - the output from these files get read in
 #by config-file.R to generate the final mutation file
