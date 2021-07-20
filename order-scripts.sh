@@ -340,11 +340,19 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 
 #4. compile final plot for Figure 1B summarizing all events (locally using files
 #on UHN teams downloaded from previous scripts output, directory is in the scripts)
-Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/Main_Figure_All_Facets.R
+Rscript /Users/kisaev/github/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/Main_Figure_All_Facets.R
 
 #Supp Figure 1A+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SNVs_indels_private_vs_purity.R
+
+#Figure 2+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#1. make circos plots (easier to run this script in Rstudio interactively in
+#order to save the plot produced by the function)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/001_circos_plots_local.R
+
+#2. Prepare data for Figure 2 D, E, F
 
 
 #DONE

@@ -37,7 +37,7 @@ cp.plot.contours(CP, add = TRUE,
 dev.off()
 
 #Chromosome view
-#Chromosome view is the visualization that displays chromosome by crhosome,
+#Chromosome view is the visualization that displays chromosome by chromosome,
 #mutations, B-allele frequency and depth-ratio.
 #The visualization makes it easier to inspect the segmentation results,
 #comparing to a binned profile of the raw data. It also visualize the copy

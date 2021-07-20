@@ -5,7 +5,6 @@
 #SBATCH --mem=61440M
 #SBATCH -t 5-00:00 # Runtime in D-HH:MM
 #SBATCH -J merging_vars
-#SBATCH --array=0-6 # job array index
 
 module load java/8  #8
 module load samtools
@@ -19,11 +18,7 @@ module load bam-readcount
 #pwd
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS
 
-#pwd
-names=($(cat p001_p002_cram_files_list.txt))
-echo ${names[${SLURM_ARRAY_TASK_ID}]}
-
-MYVAR=${names[${SLURM_ARRAY_TASK_ID}]}
+MYVAR=LY_RAP_0001_Aut_FzT_05_files/gatk/LY_RAP_0001_Aut_FzT_05.sorted.dup.recal.cram
 tum_loc=${MYVAR%/*}
 MYVAR=${MYVAR##*/}
 tum_name=${MYVAR%.sorted.dup.recal.cram*}
@@ -39,12 +34,8 @@ fi
 fasta=/cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta #from gatk resource bundle
 
 #sample CRAM file
-bam_file=${names[${SLURM_ARRAY_TASK_ID}]}
-
-samtools view -T $fasta -bh ${names[${SLURM_ARRAY_TASK_ID}]} > ${tum_name}.bam
-
-#samtools view -T $fasta -bh $bam_file > ${tum_name}.bam
-
+bam_file=LY_RAP_0001_Aut_FzT_05_files/gatk/LY_RAP_0001_Aut_FzT_05.sorted.dup.recal.cram
+samtools view -T $fasta -bh $bam_file > ${tum_name}.bam
 samtools index ${tum_name}.bam
 
 #then BAM files were moved into /cluster/projects/kridelgroup/RAP_ANALYSIS/CRAM_to_BAM_converted_files

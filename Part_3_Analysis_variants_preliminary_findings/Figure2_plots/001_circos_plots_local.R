@@ -31,6 +31,17 @@ cnas$Patient = sapply(cnas$Sample, function(x){paste(unlist(strsplit(x, "_"))[1:
 cnas$cna_id = paste(cnas$CHROM, cnas$Start, cnas$End, sep="_")
 cnas$width = cnas$End - cnas$Start
 
+#make some test CNA bed files to view in IGV to confirm
+#if regions are merging properly
+
+p1_02=filter(cnas, Sample == "LY_RAP_0001_Aut_FzT_02", ntot > 2)[,c("CHROM", "Start", "End")]
+p1_05=filter(cnas, Sample == "LY_RAP_0001_Aut_FzT_05", ntot > 2)[,c("CHROM", "Start", "End")]
+p1_08=filter(cnas, Sample == "LY_RAP_0001_Aut_FzT_08", ntot > 2)[,c("CHROM", "Start", "End")]
+
+write.table(p1_02, file="p1_02_CNAs.bed", quote=F, row.names=F, sep="\t", col.names=F)
+write.table(p1_05, file="p1_05_CNAs.bed", quote=F, row.names=F, sep="\t", col.names=F)
+write.table(p1_08, file="p1_08_CNAs.bed", quote=F, row.names=F, sep="\t", col.names=F)
+
 #function to merge CNAs
 UnifyPeaks = function (object.list, mode = "reduce"){
     peak.ranges <- list()

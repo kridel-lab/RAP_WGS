@@ -75,12 +75,6 @@ all_genes_cnas_samples = readRDS("cnas_across_hg19_genomes_all_samples.rds")
 #Analysis
 #----------------------------------------------------------------------
 
-#summarize mutation patterns across samples and driver genes
-#check which mutations occur in all samples versus only 1 or several
-
-#dir.create(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
-#setwd(file.path("/cluster/projects/kridelgroup/RAP_ANALYSIS/plots", date))
-
 t=as.data.table(table(all_genes_cnas_samples$symbol, all_genes_cnas_samples$CNA, all_genes_cnas_samples$Sample, all_genes_cnas_samples$Patient))
 t=filter(t, N >0)
 tt=as.data.table(table(t$V1, t$V2, t$V4))
@@ -105,13 +99,3 @@ barplot$patient = factor(barplot$patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
 saveRDS(barplot, file="/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure2_input_data_sample_dist_CNAs.rds")
-
-#colnames(barplot)[2]="Patient"
-#pdf("001_samples_per_mutation_lineplot_CNAs.pdf", width=5, height=5)
-# Basic barplot
-#p<-ggline(barplot, x="num_of_samples_with_mut", y="num_of_muts",
-#palette = c("#00AFBB", "#E7B800", "#FC4E07"), color="Patient")+
-#xlab("# of samples sharing mutation") + ylab("CNAs count")#+
-#scale_y_continuous(breaks=seq(0,15000,1000))
-#print(p)
-#dev.off()
