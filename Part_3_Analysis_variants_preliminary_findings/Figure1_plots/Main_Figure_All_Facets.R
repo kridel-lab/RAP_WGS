@@ -29,6 +29,15 @@ svs = fread("Figure1_MAIN_SVs.txt")
 cnas = fread("Figure1_MAIN_CNAs_ALL.txt")
 samples_order = fread("Figure1_MAIN_sample_order.txt", sep="")
 ploidy = fread("Figure1_MAIN_purity_ploidy.txt")
+
+#add tissue side to cnas
+cnas = merge(cnas, ploidy, by=c("Sample", "Patient"))
+cnas$Sample=NULL
+cnas$Sample = cnas$Tissue_Site
+cnas$Ploidy = NULL
+cnas$Purity = NULL
+cnas$perc_genome = cnas$tot_bps_cna / cnas$sum_widths
+
 ploidy$Sample = NULL
 ploidy$Sample = ploidy$Tissue_Site
 
@@ -52,17 +61,11 @@ ploidy$Sample = factor(ploidy$Sample, levels=samples_order$x)
 ploidy$Patient = factor(ploidy$Patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
-#get percentages for cnas
-total_cnas = as.data.table(cnas %>% group_by(Patient, Sample) %>% dplyr::summarize(sum=sum(num_of_muts)))
-cnas = merge(cnas, total_cnas, by = c("Patient", "Sample"))
-cnas$perc_genome = cnas$num_of_muts/cnas$sum
-
 #----------------------------------------------------------------------
 #purpose
 #----------------------------------------------------------------------
 
-#summarize mutation patterns across samples and driver genes
-#check which mutations occur in all samples versus only 1 or several
+#Main barplot summarizing all somatic events across each sample
 
 #----------------------------------------------------------------------
 #Analysis
@@ -111,10 +114,10 @@ coding_snvs_indels = ggplot(data=snvs_coding, aes(x=Sample, y=num_of_muts, fill=
 
 #CNAs ----------------------------------------------------------------
 
-cnas$type_CNA = factor(cnas$type_CNA, levels=c(">5_N_Gain", "5_N_Gain",
+cnas$CNA = factor(cnas$CNA, levels=c(">5_N_Gain", "5_N_Gain",
 "4_N_Gain", "3_N_Gain", "Neutral", "Somatic LOH", "Hemizygous Del", "Homozygous Del"))
 
-cnas_plot = ggplot(data=cnas, aes(x=Sample, y=perc_genome, fill=type_CNA)) +
+cnas_plot = ggplot(data=cnas, aes(x=Sample, y=perc_genome, fill=CNA)) +
     geom_bar(stat="identity")+theme_bw()+#+ggtitle("Number of mutations per sample")+
   	theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5, size=4),
     axis.text.y = element_text(size=4),

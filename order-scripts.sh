@@ -338,7 +338,12 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 #3. prep Structural Variants (SVs) for Figure 1 barplot (on the cluster)
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SVs_summary_plots.R
 
+#4. compile final plot for Figure 1B summarizing all events (locally using files
+#on UHN teams downloaded from previous scripts output, directory is in the scripts)
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/Main_Figure_All_Facets.R
+
 #Supp Figure 1A+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SNVs_indels_private_vs_purity.R
 
 
