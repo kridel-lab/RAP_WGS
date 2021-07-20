@@ -1,0 +1,9 @@
+{
+    "fastqExtension": "fastq.gz",
+    "fastqDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/",
+    "bamDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/bamfiles/",
+    "consensusDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/consensus/",
+    "fastqtagDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/fastq_tag/",
+    "badbarcodeDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/fastq_tag/bad_barcode/",
+    "barcodeDistDir": "/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/fastq_tag/barcode_dist/"
+}

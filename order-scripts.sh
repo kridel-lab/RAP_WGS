@@ -270,13 +270,12 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/combined_runs/001_combine_fastq_files.sh
 
 #Now set up config file to indicate where the fastq files are
-#edit this file locally and push changes /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples.json
+#edit this file locally and push changes /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples_combined.json
 
 #Now edit output destination in the snakemake itself and submit script to run
 #snakemake pipeline for first steps of consensuscruncher
-
 #edit this file if needed to change output folders:
-# /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline.snakefile
+# /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline_Combined.snakefile
 
 sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/snakemake_submit.sh
 

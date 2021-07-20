@@ -18,4 +18,5 @@ echo ${names[${SLURM_ARRAY_TASK_ID}]}
 sample=${names[${SLURM_ARRAY_TASK_ID}]}
 
 #Run Rscript to get output files for each sample
+module load R/3.5.0
 Rscript /cluster/home/kisaev/RAP_WGS/Part_2_Somatic_copy_number_calling/sequenza/003_R_script_processing.R $sample
