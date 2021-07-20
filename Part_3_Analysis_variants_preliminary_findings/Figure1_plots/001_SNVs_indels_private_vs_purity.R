@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
-#Merged_007_summary_driver_genes_across_samples.R
-#Karin Isaev
-#Monday January 18th, 2020
+#001_SNVs_indels_private_vs_purity.R
+#This script compares the number of mutations that are labelled
+#private to the predicted purity of each sample
 #-------------------------------------------------------------------------------
 
 #load packages and data

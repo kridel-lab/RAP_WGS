@@ -322,4 +322,16 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/compare_ctDNA_to_bulkD
 
 #6. Summarize mutations called in ctDNA and make a plot
 
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#[11] Scripts for figures in manuscript
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Figure 1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+#Supp Figure 1A+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/001_SNVs_indels_private_vs_purity.R
+
+
 #DONE

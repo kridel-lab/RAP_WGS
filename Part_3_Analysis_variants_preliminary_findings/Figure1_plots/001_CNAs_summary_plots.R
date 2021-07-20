@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
-#Merged_007_summary_driver_genes_across_samples.R
-#Karin Isaev
-#Monday January 18th, 2020
+#001_CNAs_summary_plots.R
+#This script preps the CNA data for Figure 1 plots
 #-------------------------------------------------------------------------------
 
 #load packages and data
@@ -12,7 +11,7 @@ library(annotables)
 hg19_genes = as.data.table(grch37)
 #hg19_genes = filter(hg19_genes, biotype == "protein_coding")
 hg19_genes = unique(hg19_genes[,c("chr", "start", "end", "symbol")]) #22810 genes
-z = which(hg19_genes$chr %in% c(1:22, "X"))
+z = which(hg19_genes$chr %in% c(1:22))
 hg19_genes = hg19_genes[z,]
 
 #----------------------------------------------------------------------
@@ -81,22 +80,19 @@ if(!(length(z) == 0)){
 }
 
 #prep data for plot
+cnas$width = cnas$End - cnas$Start
 
-muts_per_sample = as.data.table(table(cnas$Patient, cnas$Tissue_Site, cnas$CNA))
-muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
-muts_per_sample = muts_per_sample[order(-N)]
+#get total number of basepairs explored in each sample
+tot_widths = as.data.table(cnas %>% dplyr::group_by(Sample) %>% dplyr::summarize(sum_widths = sum(width)))
 
-colnames(muts_per_sample) = c("Patient", "Sample", "type_CNA", "num_of_muts")
-muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
-muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
-muts_per_sample$Patient[muts_per_sample$Patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
-muts_per_sample$Patient = factor(muts_per_sample$Patient, levels=c("MCL blastoid stage IV",
+#get total number Base Pairs affected by each category of CNAs
+cnas_by_widths = as.data.table(cnas %>% dplyr::group_by(Sample, CNA) %>% dplyr::summarize(tot_bps_cna = sum(width)))
+cnas_by_widths = merge(cnas_by_widths, tot_widths, by="Sample")
+cnas_by_widths$Patient = sapply(cnas_by_widths$Sample, function(x){paste(unlist(strsplit(x, "_"))[1:3], collapse="_")})
+cnas_by_widths$Patient[cnas_by_widths$Patient == "LY_RAP_0001"] = "MCL blastoid stage IV"
+cnas_by_widths$Patient[cnas_by_widths$Patient == "LY_RAP_0002"] = "PMBCL stage IV bulky B symptoms"
+cnas_by_widths$Patient[cnas_by_widths$Patient == "LY_RAP_0003"] = "DLCBL double hit stage IV"
+cnas_by_widths$Patient = factor(cnas_by_widths$Patient, levels=c("MCL blastoid stage IV",
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 
-#get order of samples for barplot
-t = as.data.table(table(cnas$Patient, cnas$Tissue_Site))
-t = as.data.table(filter(t, N >0))
-t = t[order(-N)]
-
-muts_per_sample$Sample = factor(muts_per_sample$Sample, levels=unique(t$V2))
-write.table(muts_per_sample, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure1_MAIN_CNAs_ALL.txt", quote=F, row.names=F, sep="\t")
+write.table(cnas_by_widths, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure1_MAIN_CNAs_ALL.txt", quote=F, row.names=F, sep="\t")
