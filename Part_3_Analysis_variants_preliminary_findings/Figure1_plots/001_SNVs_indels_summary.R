@@ -29,6 +29,12 @@ read_only$Tissue_Site[z] = "Adrenal gland"
 z = which((read_only$Tissue_Site == "Aorta, ascending, not specified \n\n") & (read_only$STUDY_PATIENT_ID == "LY_RAP_0001"))
 read_only$Tissue_Site[z] = "Aorta, ascending"
 
+#average number of SVs per sample/patient
+t=as.data.table(table(read_only$STUDY_PATIENT_ID, read_only$Sample))
+t=filter(t, N >0)
+t %>% group_by(V1) %>% dplyr::summarize(mean = mean(N))
+t %>% group_by(V1) %>% dplyr::summarize(sd = sd(N))
+
 muts_per_sample = as.data.table(table(read_only$STUDY_PATIENT_ID,read_only$Tissue_Site))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
 muts_per_sample = muts_per_sample[order(-N)]

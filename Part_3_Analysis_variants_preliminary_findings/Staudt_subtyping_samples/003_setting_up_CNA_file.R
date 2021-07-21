@@ -9,7 +9,7 @@
 date = Sys.Date()
 
 options(stringsAsFactors=F)
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/TITAN_CNA/results/titan/hmm/optimalClusterSolution_files/titanCNA_ploidy2")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS")
 
 #load libraries
 packages <- c("dplyr", "readr", "ggplot2", "vcfR", "tidyr", "mclust",
@@ -31,37 +31,21 @@ lapply(packages, require, character.only = TRUE)
 #data
 #----------------------------------------------------------------------
 
+cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
+cnas$Patient = sapply(cnas$Sample, function(x){paste(unlist(strsplit(x, "_"))[1:3], collapse="_")})
+cnas = filter(cnas, Patient == "LY_RAP_0003")
+
 #sample annotation
 samps = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/RAP_samples_information.txt")
 colnames(samps)[2] = "Sample"
 
 #cnas
 
-#output from TitanCNA, combine all samples into one dataframe
-#use optimalClusterSolution.txt file to identify optimal cluster for each sample
-#use sample to identifier conversion to get actual sample name
+#output from Sequenza, combine all samples into one dataframe
 
 #----------------------------------------------------------------------
 #data
 #----------------------------------------------------------------------
-
-#sample conversion
-samples = fread("cna_vcf_sample_conversion.csv")
-colnames(samples) = c("barcode", "Sample")
-
-#optimal clusters
-clusters = fread("optimalClusterSolution.txt")
-clusters= merge(samples, clusters, by = "barcode")
-
-#titanCNA results
-files = list.files(pattern="seg.txt")
-files = files[sapply(clusters$id, function(x){which(str_detect(files, x))})]
-
-#read in data files
-all_cnas = as.data.table(ldply(llply(files, function(x){fread(x)})))
-colnames(all_cnas)[1] = "barcode"
-all_cnas = merge(all_cnas, clusters, by = "barcode")
-all_cnas$CHROM = paste("chr", all_cnas$Chromosome, sep="")
 
 #entrez id conversion
 #gene annotations
@@ -74,22 +58,23 @@ genes = as.data.table(filter(genes, !(is.na(entrez))))
 genes_gr = genes[,c("chr", "start", "end", "strand", "entrez", "symbol")]
 genes_gr$strand = as.character(genes_gr$strand)
 genes_gr$strand = "*"
+genes_gr$chr = paste("chr", genes_gr$chr, sep="")
 genes_gr = makeGRangesFromDataFrame(genes_gr, keep.extra.columns=TRUE)
 
-all_cnas_gr = all_cnas[,c("Chromosome", "Start", "End", "numClust",
-"Sample", "TITAN_call")]
-all_cnas_gr$numClust = as.character(all_cnas_gr$numClust)
-all_cnas_gr$numClust = "*"
+all_cnas_gr = cnas[,c("CHROM", "Start", "End", "Nmin",
+"Sample", "Nmaj", "ntot")]
+all_cnas_gr$Nmin = as.character(all_cnas_gr$Nmin)
+all_cnas_gr$Nmin = "*"
 all_cnas_gr = makeGRangesFromDataFrame(all_cnas_gr, keep.extra.columns=TRUE)
 
 hits <- findOverlaps(all_cnas_gr, genes_gr, ignore.strand=TRUE)
-hits_overlap = cbind(all_cnas[queryHits(hits),], genes[subjectHits(hits),])
+hits_overlap = cbind(cnas[queryHits(hits),], genes[subjectHits(hits),])
 upload_onedrive = merge(hits_overlap, samps, by="Sample")
 write.table(upload_onedrive, file=paste(date,
   "all_CNAs_protein_coding_samples.txt", sep="_"), quote=F, row.names=F, sep="\t")
 
-hits_overlap = unique(hits_overlap[,c("Sample", "entrez", "TITAN_call")])
-colnames(hits_overlap)=c("Sample.ID", "ENTREZ.ID", "Type")
+hits_overlap = unique(hits_overlap[,c("Sample", "entrez", "ntot", "Nmaj")])
+colnames(hits_overlap)=c("Sample.ID", "ENTREZ.ID", "ntot", "Nmaj")
 
 #format file needs to be in
 #column1 - Sample.ID
@@ -97,11 +82,38 @@ colnames(hits_overlap)=c("Sample.ID", "ENTREZ.ID", "Type")
 #column3 - Type (GAIN (single copy increase), AMP (> 2 or more),
 #HETLOSS , HOMDEL)
 
-hits_overlap$Type[hits_overlap$Type == "ASCNA"] = "AMP"
-hits_overlap$Type[hits_overlap$Type == "BCNA"] = "AMP"
-hits_overlap$Type[hits_overlap$Type == "UBCNA"] = "AMP"
-hits_overlap$Type[hits_overlap$Type == "DLOH"] = "HETLOSS"
-hits_overlap$Type[hits_overlap$Type == "HOMD"] = "HOMDEL"
+hits_overlap$Type = ""
+
+#LOH
+z = which((hits_overlap$ntot ==  hits_overlap$Nmaj) & (hits_overlap$ntot == 2))
+hits_overlap$Type[z] = "HETLOSS"
+
+#Neutral
+z = which((hits_overlap$ntot !=  hits_overlap$Nmaj) & (hits_overlap$ntot == 2))
+hits_overlap$Type[z] = "Neutral"
+
+#Deletions
+z = which((hits_overlap$ntot ==  hits_overlap$Nmaj) & (hits_overlap$ntot == 0))
+hits_overlap$Type[z] = "HOMDEL"
+
+z = which((hits_overlap$ntot ==  hits_overlap$Nmaj) & (hits_overlap$ntot == 1))
+hits_overlap$Type[z] = "HETLOSS"
+
+#Amplications
+z = which((hits_overlap$Type == "") & (hits_overlap$ntot ==3))
+hits_overlap$Type[z] = "GAIN"
+
+z = which((hits_overlap$Type == "") & (hits_overlap$ntot > 3))
+hits_overlap$Type[z] = "AMP"
+
+z = which(is.na(hits_overlap$ntot))
+if(!(length(z) == 0)){
+  hits_overlap=hits_overlap[-z,]
+}
+
+hits_overlap = filter(hits_overlap, !(Type == "Neutral"))
+hits_overlap$ntot = NULL
+hits_overlap$Nmaj = NULL
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 

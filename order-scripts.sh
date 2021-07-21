@@ -352,6 +352,14 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/001_circos_plots_local.R
 
 #2. Prepare data for Figure 2 D, E, F
-
+#prep SNVs numbers for line plots
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/001_SNVs_indels_lineplot.R
+#prep CNAs summarize number of genes affected by CNAs in each sample
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/001_CNAs_lineplot.R
+#prep SVs summarize how many affected in each sample
+Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/001_SVs_summary_plots_lineplot.R
+#combine all together (run locally and download outputs from scripts above to
+#make final figure 2)
+Rscript /Users/kisaev/github/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure2_plots/Main_Figure_2.R
 
 #DONE
