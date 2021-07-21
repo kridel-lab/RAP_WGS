@@ -36,4 +36,4 @@ export TMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
 #ln -s ${input_folder}/KLCS_0086_Pl_n_PE_381_TS_210617_A00469_0183_AHCNJCDRXY_1_TGAGCTAG-GAACGGTT_R1.fastq.gz ${output_folder}/LY_0003_R1.fastq.gz
 #ln -s ${input_folder}/KLCS_0086_Pl_n_PE_381_TS_210617_A00469_0183_AHCNJCDRXY_1_TGAGCTAG-GAACGGTT_R2.fastq.gz ${output_folder}/LY_0003_R2.fastq.gz
 
-snakemake -s /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline.snakefile -j56 --latency-wait 432000 --cluster-config /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/cluster.yaml --cluster-sync "sbatch -p {cluster.partition} --mem={cluster.mem} -t {cluster.time} -c {cluster.ncpus} -o {cluster.out}" --rerun-incomplete --nolock
+snakemake -s /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Consensus_Cruncher_Pipeline_Combined.snakefile -j56 --latency-wait 432000 --cluster-config /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/cluster.yaml --cluster-sync "sbatch -p {cluster.partition} --mem={cluster.mem} -t {cluster.time} -c {cluster.ncpus} -o {cluster.out}" --rerun-incomplete --nolock

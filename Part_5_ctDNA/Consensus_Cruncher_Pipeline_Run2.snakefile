@@ -4,7 +4,7 @@ import subprocess
 from os.path import join
 
 configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/cluster.yaml"
-configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples.json"
+configfile: "/cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples_Run2.json"
 
 ### Globals ---------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ rule consensus_crunch_fastq2bam:
                 python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam \
                     --fastq1 {input.fq1}  \
                     --fastq2 {input.fq2}  \
-                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/RAP_ctDNA_combined_two_runs/consensus_output \
+                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher \
                     -r /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
                     -b /cluster/tools/software/bwa/0.7.15/bwa  \
                     -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools \
@@ -86,7 +86,7 @@ rule consensus_crunch_consensus:
                 python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus \
                     --bedfile /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher/hg19_cytoBand.txt \
                     -i {input.bam} \
-                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/RAP_ctDNA_combined_two_runs/consensus_output/consensus \
+                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload/ConsensusCruncher/consensus \
                     -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools \
                     -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
             """
