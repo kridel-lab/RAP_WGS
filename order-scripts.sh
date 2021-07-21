@@ -267,7 +267,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 
 #First combine fastq files from the first upload of data and the
 #second upload of data
-sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/Mutect2/combined_runs/001_combine_fastq_files.sh
+sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/001_combine_fastq_files.sh
 
 #Now set up config file to indicate where the fastq files are
 #edit this file locally and push changes /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/config/config_all_samples_combined.json

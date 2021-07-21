@@ -9,7 +9,7 @@ print(date)
 
 options(stringsAsFactors=F)
 #load packages and data
-source("/cluster/home/kisaev/RAP_WGS/config-file.R")
+source("/cluster/home/kisaev/RAP_WGS/config-file.R") #load all mutations
 library("gplots")
 library(threadr)
 library(GenomicRanges)

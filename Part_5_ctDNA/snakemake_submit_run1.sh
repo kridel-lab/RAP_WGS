@@ -24,6 +24,7 @@ export TMP=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher
 #one time make symlinks
 #manually renamed files using this conversion provided by Michael Hong
 #KLCS_0084=LY_RAP_0001, KLCS_0085=LY_RAP_0002, KLCS_0086=LY_RAP_0003
+
 #input_folder=/cluster/projects/kridelgroup/210617_A00469_0183_AHCNJCDRXY.KLCS.fastqs
 #output_folder=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/June30OICRupload
 
