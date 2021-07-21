@@ -145,6 +145,7 @@ target_regs$type = "other_regions"
 all_targets = rbind(targets_pcg, target_regs)
 
 colnames(all_targets)[1:5]=c("chr", "target_start", "target_stop", "target_gene", "type")
+write.csv(all_targets, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/clean_target_file_ctDNA_regions.csv", quote=F, row.names=F)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

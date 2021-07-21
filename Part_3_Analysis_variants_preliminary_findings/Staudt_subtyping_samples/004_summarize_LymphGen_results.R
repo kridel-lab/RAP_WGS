@@ -1,10 +1,14 @@
 #----------------------------------------------------------------------
-#001_setting_up_sample_annotation_file.R
+#004_summarize_LymphGen_result.R
 #----------------------------------------------------------------------
 
 #----------------------------------------------------------------------
 #load functions and libraries
 #----------------------------------------------------------------------
+
+#load packages and data
+source("/cluster/home/kisaev/RAP_WGS/config-file.R")
+library(ggpubr)
 
 date = Sys.Date()
 options(scipen=999) #no scientific notation
@@ -47,9 +51,7 @@ genes_sum=as.data.table(table(morin$Gene))
 genes_sum = as.data.table(filter(genes_sum, N > 5))
 colnames(genes_sum)=c("Gene", "num_samples_w_mut")
 
-#Our mutations
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/merged_MUTECT2_STRELKA/merged_variants_vcfs/vcf_summary_text")
-read_only = fread(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt")[length(list.files(pattern="READ_ONLY_ALL_MERGED_MUTS.txt"))])
+read_only = filter(read_only, STUDY_PATIENT_ID == "LY_RAP_0003")
 read_only$driver = ""
 read_only$driver[read_only$symbol %in% reddy$Gene] = "yes"
 read_only$driver[!(read_only$symbol %in% reddy$Gene)] = "no"
@@ -66,10 +68,9 @@ table(filter(read_only, biotype == "protein_coding")$driver, filter(read_only, b
 subtypes = as.data.table(filter(read_only, !(subtype=="")))
 subtypes = subtypes[order(subtype, symbol)]
 subtypes$symbol = factor(subtypes$symbol, levels=unique(subtypes$symbol))
-subtypes$id = factor(subtypes$id, levels=unique(subtypes$id))
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/summary_COO_genes_across_samples.pdf", width=6, height=6)
-p = ggplot(subtypes, aes(symbol, id)) +
+p = ggplot(subtypes, aes(symbol, Sample)) +
   geom_tile(aes(fill = subtype), colour = "grey50") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
    xlab("Gene") + ylab("Sample name") #+
@@ -82,10 +83,9 @@ dev.off()
 subtypes = as.data.table(filter(read_only, !(subtype==""), ExonicFunc.ensGene=="nonsynonymous_SNV"))
 subtypes = subtypes[order(subtype, symbol)]
 subtypes$symbol = factor(subtypes$symbol, levels=unique(subtypes$symbol))
-subtypes$id = factor(subtypes$id, levels=unique(subtypes$id))
 
 pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/summary_COO_genes_across_samples_nonsynonymous_only.pdf", width=6, height=6)
-p = ggplot(subtypes, aes(symbol, id)) +
+p = ggplot(subtypes, aes(symbol, Sample)) +
   geom_tile(aes(fill = subtype), colour = "grey50") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))+
    xlab("Gene") + ylab("Sample name") #+
@@ -94,37 +94,14 @@ p = ggplot(subtypes, aes(symbol, id)) +
 p
 dev.off()
 
-#summarize mutations in driver genes vs other genes
-pcg_only = as.data.table(table(filter(read_only, biotype == "protein_coding")$driver))
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/009_DLBCL_driver_muts_vs_not.pdf")
-# Basic barplot
-p<-ggplot(data=pcg_only, aes(x=V1, y=N)) +
-  geom_bar(stat="identity")+theme_minimal()+ggtitle("Number of mutations in DLBCL driver genes")+
-  xlab("DLBCL driver gene") + ylab("Number of mutations")
-print(p)
-dev.off()
-
-pcg_only_types = as.data.table(table(filter(read_only, biotype == "protein_coding")$driver, filter(read_only, biotype == "protein_coding")$Func.ensGene))
-pcg_only_types$V1 = factor(pcg_only_types$V1, levels = c("yes", "no"))
-pdf("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/010_DLBCL_driver_muts_vs_not_function.pdf")
-# Basic barplot
-p<-ggplot(data=pcg_only_types, aes(x=V2, y=N, fill=V1)) +
-  geom_bar(stat="identity", position=position_dodge())+theme_minimal()+ggtitle("Number of mutations in DLBCL driver genes")+
-  xlab("Function") + ylab("Number of mutations")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-  geom_text(aes(label=N), size=1)+
-    coord_flip()
-print(p)
-dev.off()
-
 #results files
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/LymphGen")
 
 #result
-res = fread("rap_wgs_Result.txt")
+res = fread("july2021_Result.txt")
 
 #compare
-comp = fread("rap_wgs_Compare.txt")
+comp = fread("july2021_Compare.txt")
 
 colnames(res)[1] = "Indiv"
 res = merge(res, samps, by="Indiv")
