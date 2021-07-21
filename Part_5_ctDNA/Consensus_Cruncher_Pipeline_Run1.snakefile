@@ -52,7 +52,7 @@ rule consensus_crunch_fastq2bam:
                 python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py fastq2bam \
                     --fastq1 {input.fq1}  \
                     --fastq2 {input.fq2}  \
-                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output \
+                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/April29OICRupload/consensus_output \
                     -r /cluster/projects/kridelgroup/RAP_ANALYSIS/human_g1k_v37_decoy.fasta \
                     -b /cluster/tools/software/bwa/0.7.15/bwa  \
                     -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools \
@@ -86,7 +86,7 @@ rule consensus_crunch_consensus:
                 python /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher.py consensus \
                     --bedfile /cluster/home/kisaev/ConsensusCruncher/ConsensusCruncher/hg19_cytoBand.txt \
                     -i {input.bam} \
-                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/test_files/consensus_output/consensus \
+                    -o /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/April29OICRupload/consensus_output/consensus \
                     -s /cluster/tools/software/centos7/samtools/1.10/bin/samtools \
                     -tmp /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/ConsensusCruncher/temp_files/
             """
