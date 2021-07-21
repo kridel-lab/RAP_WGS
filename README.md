@@ -27,10 +27,14 @@ https://github.com/kridel-lab/RAP_WGS/tree/master/Part_3_Analysis_variants_preli
 ## Part 4: Phylogeny analysis
 https://github.com/kridel-lab/RAP_WGS/tree/master/Part_4_Phylogeny_analysis
 - Treeomics
-- Pairtree
+- Pyclone-VI
 - Pairtree
 
 ## Part 5: ctDNA analysis
 https://github.com/kridel-lab/RAP_WGS/tree/master/Part_5_ctDNA
 - Ran ConsensusCruncher to process UMIs and generate BAM files
-- Ran Mutect2 in tumour only mode to detect SNVs in plasma ctDNA
+- Ran Mutect2 in tumour/normal mode to detect SNVs in plasma ctDNA (using WGS germline samples as controls)
+
+## Notes
+- To easily load processed mutation and CNA data to work with on the cluster, use this script: https://github.com/kridel-lab/RAP_WGS/blob/master/config-file.R 
+- Full order of scripts in which they were run is here: https://github.com/kridel-lab/RAP_WGS/blob/master/order-scripts.sh
