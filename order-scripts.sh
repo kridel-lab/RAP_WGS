@@ -265,8 +265,11 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 #from two different lanes that were combined more details are available
 #in the README file on the cluster
 
-#First combine fastq files from the first upload of data and the
-#second upload of data
+#generate symlinks for the raw data (just interactively ran these lines once)
+#Run through this once ---> /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/make_symlinks_to_raw_data.sh
+
+#Then combine fastq files from the first upload of data and the
+#second upload of data (I already did this so doesn't need to be repeated)
 sbatch /cluster/home/kisaev/RAP_WGS/Part_5_ctDNA/001_combine_fastq_files.sh
 
 #Now set up config file to indicate where the fastq files are
