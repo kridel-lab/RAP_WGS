@@ -33,7 +33,7 @@ colnames(targets_pcg) = c("Chr", "Start", "Stop")
 
 #targets list for additional 152 regions
 target_regs = as.data.table(read_excel("NGS-Targets.xlsx"))
-target_regs = target_regs[,c("Chr", "Start", "Stop")] #1,675 baits including 38 which correspond to the Agena sample identity probes (TargetNN)
+target_regs = target_regs[,c("Chr", "Start", "Stop")] 
 
 #combine targets
 all_targets = rbind(targets_pcg, target_regs) #723 total target regions
