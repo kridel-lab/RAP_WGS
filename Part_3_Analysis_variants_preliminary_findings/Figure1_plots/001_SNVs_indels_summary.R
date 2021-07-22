@@ -35,6 +35,10 @@ t=filter(t, N >0)
 t %>% group_by(V1) %>% dplyr::summarize(mean = mean(N))
 t %>% group_by(V1) %>% dplyr::summarize(sd = sd(N))
 
+#save full list of mutations (run once)
+#saveRDS(read_only, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/",
+#date, "_RAP_WGS_ALL_SNVs_indels.rds", sep=""))
+
 muts_per_sample = as.data.table(table(read_only$STUDY_PATIENT_ID,read_only$Tissue_Site))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
 muts_per_sample = muts_per_sample[order(-N)]
@@ -53,9 +57,16 @@ write.table(sample_order, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figur
 
 #Coding only--------------------------------------------------------------------
 
-#get only SNVs/indels in coding regions
-coding_only = filter(read_only, Func.ensGene %in% c("exonic", "splicing", "exonic\\x3bsplicing"),
-ExonicFunc.ensGene %in% c("nonsynonymous_SNV", "stopgain", "frameshift_deletion", "frameshift_insertion", "stoploss"))
+coding_only = filter(read_only,
+  (ExonicFunc.ensGene %in% c("frameshift_deletion", "frameshift_insertion",
+  "nonframeshift_deletion", "nonsynonymous_SNV", "stopgain",
+  "stoploss") | (Func.ensGene %in% c("splicing", "exonic\\x3bsplicing", "exonic"))),
+!(ExonicFunc.ensGene %in% c("synonymous_SNV", "unknown", "nonframeshift_insertion",
+"nonframeshift_deletion")))
+
+write.table(coding_only, file=paste("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/", date,
+"_all_protein_coding_exonic_splicing_nonsynonym_mutations.txt", sep=""),
+quote=F, row.names=F, sep="}")
 
 muts_per_sample = as.data.table(table(coding_only$STUDY_PATIENT_ID,coding_only$Tissue_Site, coding_only$ExonicFunc.ensGene))
 muts_per_sample = as.data.table(filter(muts_per_sample, N >0))
