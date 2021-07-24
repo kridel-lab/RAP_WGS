@@ -47,8 +47,8 @@ out_folder="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza"
 #it out to run the next command (I deleted the files produced by this command as
 #they were taking up a lot of space)
 
-sequenza-utils bam2seqz --normal $normal --tumor $tumor \
-    --fasta $fasta -gc ${out_folder}/hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.test.seqz.gz
+#sequenza-utils bam2seqz --normal $normal --tumor $tumor \
+#    --fasta $fasta -gc ${out_folder}/hg19.gc50Base.wig.gz --output ${out_folder}/${sample}.test.seqz.gz
 
 #3.
-#sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.test.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
+sequenza-utils seqz_binning --seqz ${out_folder}/${sample}.test.seqz.gz -o ${out_folder}/${sample}.small.seqz.gz
