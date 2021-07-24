@@ -16,14 +16,14 @@ print(data.file)
 test <- sequenza.extract(data.file, verbose = TRUE)
 
 #2. sequenza.fit: run grid-search approach to estimate cellularity and ploidy
-CP <- sequenza.fit(test)
+#CP <- sequenza.fit(test)
 
 #3. sequenza.results: write files and plots using suggested or selected solution
 sample_id = paste(unlist(strsplit(unlist(strsplit(data.file, ".small"))[1], "_"))[4:6], collapse="_")
 out_dir = unlist(strsplit(data.file, ".small"))[1]
 
 sequenza.results(sequenza.extract = test,
-    ploidy = 3.7, cellularity = NULL, sample.id = sample_id,
+    ploidy = 3.7, cellularity = 0.69, sample.id = sample_id,
     out.dir = out_dir)
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -31,12 +31,12 @@ sequenza.results(sequenza.extract = test,
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #Grid search maximum likelihood
-pdf(paste(out_dir, "/", "cp_plot.pdf", sep=""))
-cp.plot(CP)
-cp.plot.contours(CP, add = TRUE,
-   likThresh = c(0.999, 0.95),
-   col = c("lightsalmon", "red"), pch = 20)
-dev.off()
+#pdf(paste(out_dir, "/", "cp_plot.pdf", sep=""))
+#cp.plot(CP)
+#cp.plot.contours(CP, add = TRUE,
+#   likThresh = c(0.999, 0.95),
+#   col = c("lightsalmon", "red"), pch = 20)
+#dev.off()
 
 #Chromosome view
 #Chromosome view is the visualization that displays chromosome by chromosome,
