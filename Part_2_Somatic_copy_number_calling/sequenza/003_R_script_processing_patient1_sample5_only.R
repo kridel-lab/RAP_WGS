@@ -2,6 +2,8 @@ library(sequenza)
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza")
 
+print("hello")
+
 #get arguments
 args = commandArgs(trailingOnly = TRUE) #patient ID
 index = args[1]

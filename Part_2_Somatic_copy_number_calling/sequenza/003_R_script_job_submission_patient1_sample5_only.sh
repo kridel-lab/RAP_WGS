@@ -8,7 +8,6 @@
 #SBATCH -c 8
 #SBATCH --array=0 # job array index
 
-
 #get list of input .seqz files
 cd /cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Sequenza
 #ls *.small.seqz.gz > sequenza_small_seqz_files.txt
