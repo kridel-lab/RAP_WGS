@@ -79,5 +79,5 @@ muts_per_sample$Patient = factor(muts_per_sample$Patient, levels=c("MCL blastoid
 "PMBCL stage IV bulky B symptoms", "DLCBL double hit stage IV"))
 muts_per_sample$Sample = factor(muts_per_sample$Sample, levels=sample_order)
 muts_per_sample$N_trans = log1p(muts_per_sample$num_of_muts)
-
+muts_per_sample$mut_type[muts_per_sample$mut_type=="."] = "splicing"
 write.table(muts_per_sample, "/cluster/projects/kridelgroup/RAP_ANALYSIS/data/Figure1_MAIN_SNVs_Indels_CODING.txt", quote=F, row.names=F, sep="\t")
