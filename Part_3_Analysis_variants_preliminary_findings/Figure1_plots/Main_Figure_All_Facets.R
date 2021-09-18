@@ -31,6 +31,12 @@ cnas = fread("Figure1_MAIN_CNAs_ALL.txt")
 samples_order = fread("Figure1_MAIN_sample_order.txt", sep="")
 ploidy = fread("Figure1_MAIN_purity_ploidy.txt")
 
+z = which(ploidy$Tissue_Site == "Aorta, ascending")
+ploidy$Tissue_Site[z] = "Aorta, ascending, not specified"
+
+z = which(svs$Sample == "Aorta, ascending")
+svs$Sample[z] = "Aorta, ascending, not specified"
+
 #add tissue side to cnas
 cnas = merge(cnas, ploidy, by=c("Sample", "Patient"))
 cnas$Sample=NULL
@@ -111,7 +117,7 @@ coding_snvs_indels = ggplot(data=snvs_coding, aes(x=Sample, y=num_of_muts, fill=
         axis.ticks.x=element_blank(),
 	legend.text = element_text(size=6))+
 	#scale_y_continuous(breaks=seq(0, 3000, by = 300))+
-  scale_fill_manual(values = wes_palette("Rushmore1", n = 5))
+  scale_fill_brewer(palette="Set2")
 
 #CNAs ----------------------------------------------------------------
 

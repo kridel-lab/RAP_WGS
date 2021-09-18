@@ -342,7 +342,7 @@ Rscript /cluster/home/kisaev/RAP_WGS/Part_3_Analysis_variants_preliminary_findin
 
 #4. compile final plot for Figure 1B summarizing all events (locally using files
 #on UHN teams downloaded from previous scripts output, directory is in the scripts)
-Rscript /Users/kisaev/github/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/Main_Figure_All_Facets.R
+Rscript /Users/kerenisaev/github/RAP_WGS/Part_3_Analysis_variants_preliminary_findings/Figure1_plots/Main_Figure_All_Facets.R
 
 #Supp Figure 1A+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
