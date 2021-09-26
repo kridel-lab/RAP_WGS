@@ -17,7 +17,7 @@ library(wesanderson)
 options(scipen=999)
 date=Sys.Date()
 
-setwd("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/Data-Files/Figure2_MAIN")
+setwd("/Users/kerenisaev/Documents/UHN/kridel-lab - RAP_WGS/Data-Files/Figure2_MAIN")
 
 #----------------------------------------------------------------------
 #data

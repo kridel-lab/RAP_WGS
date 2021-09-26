@@ -12,7 +12,7 @@ library(plyr)
 library(Signac)
 library(GenomicRanges)
 
-setwd("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/Data-Files")
+setwd("/Users/kerenisaev/Documents/UHN/kridel-lab - RAP_WGS/Data-Files")
 
 #----------------------------------------------------------------------
 #data
@@ -22,7 +22,7 @@ setwd("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/Data-Files")
 #patient_id = patient[1]
 #print(patient_id)
 
-snvs = readRDS("SNVs/Mutect2_Strelka_merged_mutations_wCNA_status/2021-04-06_Mutect2_Strelka_merged_mutations_wCNA_status.rds")
+snvs = readRDS("SNVs/Full_list_SNVs/2021-09-25_Mutect2_Strelka_merged_mutations_wCNA_status.rds")
 svs = readRDS("SVs/2021-04-20_RAP_WGS_all_SVs_heatmap_plot.rds")
 nontransloc = fread("SVs/2021-05-17_RAP_WGS_nontranslocations_ONLY.txt", sep="}")
 cnas = readRDS("CNAs/all_CNAs_by_Sequenza.rds")
@@ -68,7 +68,7 @@ UnifyPeaks = function (object.list, mode = "reduce"){
 #check which mutations occur in all samples versus only 1 or several
 
 #dir.create(file.path("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/circos_plots"))
-setwd(file.path("/Users/kisaev/UHN/kridel-lab - Documents (1)/RAP_WGS/circos_plots"))
+setwd(file.path("/Users/kerenisaev/Documents/UHN/kridel-lab - RAP_WGS/circos_plots"))
 
 #patient = "LY_RAP_0001"
 

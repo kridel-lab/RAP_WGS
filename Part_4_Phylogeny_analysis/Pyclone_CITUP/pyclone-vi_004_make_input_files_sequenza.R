@@ -35,11 +35,22 @@ lapply(packages, require, character.only = TRUE)
 
 #Copy number data
 cnas = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/all_CNAs_by_Sequenza.rds")
+cnas_full = cnas
+colnames(cnas_full)[1]="samplename"
+
 cnas = unique(cnas[,c("Sample", "Tissue_Site", "Purity")])
 colnames(cnas)[1]="samplename"
 
 #save sample id versus sample name clean
 patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
+
+#all muts with CNA status
+all_muts = readRDS("/cluster/projects/kridelgroup/RAP_ANALYSIS/data/2021-09-25_Mutect2_Strelka_merged_mutations_wCNA_status.rds")
+
+#just keep patient 1 data, mut id, sample, CN major and CN minor
+all_muts = unique(all_muts %>% filter(STUDY_PATIENT_ID == "LY_RAP_0001") %>% select(Sample, mut_id, Nmin, Nmaj))
+colnames(all_muts)[1] = "samplename"
+colnames(all_muts)[2] = "id"
 
 #2. SNV/CNA input data for pyclone
 
@@ -54,9 +65,18 @@ make_input_pyclone = function(input_muts){
   #make sure mutations ordered in the same way in each sample specific file
 
   if(patient == "LY_RAP_0001"){
-  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==3)$V1}
+  muts_sum = filter(as.data.table(table(muts$mut_id)), N ==3)$V1
+  #fix major and minor CN status for mutations
+  muts = merge(muts, all_muts, by=c("samplename", "id"))
+  muts$MajorCN = muts$Nmaj
+  muts$MinorCN = muts$Nmin
+  muts$Nmaj = NULL
+  muts$Nmin = NULL
+  }
+
   if(patient == "LY_RAP_0002"){
   muts_sum = filter(as.data.table(table(muts$mut_id)), N ==4)$V1}
+
   if(patient == "LY_RAP_0003"){
   muts_sum = filter(as.data.table(table(muts$mut_id)), N ==20)$V1}
 
