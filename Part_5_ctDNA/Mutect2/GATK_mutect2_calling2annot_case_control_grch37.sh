@@ -136,7 +136,14 @@ gatk CalculateContamination \
 gatk FilterMutectCalls \
 -R "${gatk_bundle}/human_g1k_v37_decoy.fasta" \
 -V "${work_path}/VCFs/${prefix}.vcf.gz" \
--O "${work_path}/VCFs/${prefix}.filtered.vcf.gz"  && echo "** $prefix filtering VCFs done **"
+--contamination-table "${work_path}/VCFs/${prefix}.contamination.table" \
+-O "${work_path}/VCFs/${prefix}.un_filtered.vcf.gz"  && echo "** $prefix filtering VCFs done **"
+
+gatk SelectVariants \
+-R "${gatk_bundle}/human_g1k_v37_decoy.fasta" \
+-V "${work_path}/VCFs/${prefix}.un_filtered.vcf.gz" \
+--exclude-filtered \
+-O "${work_path}/VCFs/${prefix}.filtered.vcf.gz" && echo "** $prefix selectVariants done  **"
 
 #Normalizing and decomposing filtered VCF files
 vt normalize "${work_path}/VCFs/${prefix}.filtered.vcf.gz" -r "${gatk_bundle}/human_g1k_v37_decoy.fasta" -o "${work_path}/VCFs/${prefix}.filtered_norm.vcf.gz" && echo "** $prefix Normalizing done  **"
