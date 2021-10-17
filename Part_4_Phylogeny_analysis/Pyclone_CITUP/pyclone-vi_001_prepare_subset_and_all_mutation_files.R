@@ -76,13 +76,13 @@ get_pyclone_input = function(patient){
   #run one version of pyclone with all mutations
   #those with major copy number greater than 0
 
-  if(patient == "LY_RAP_0001"){
-  pyclone_full = as.data.table(filter(read_only_pat,
-  Nmaj > 0, ntot >=2))}
+  #if(patient == "LY_RAP_0001"){
+  #pyclone_full = as.data.table(filter(read_only_pat,
+  #Nmaj > 0, ntot >=2))}
 
-  if(!(patient == "LY_RAP_0001")){
+  #if(!(patient == "LY_RAP_0001")){
   pyclone_full = as.data.table(filter(read_only_pat,
-  Nmaj > 0, ntot >=2, !(mut_id %in% unique_rm), !(mut_id %in% pat_founds_rm)))}
+  Nmaj > 0, ntot >=2, !(mut_id %in% unique_rm), !(mut_id %in% pat_founds_rm)))#}
 
   print(table(as.data.table(table(pyclone_full$mut_id))$N))
 

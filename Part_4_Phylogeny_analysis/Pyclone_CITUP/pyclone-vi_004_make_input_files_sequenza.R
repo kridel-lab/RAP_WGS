@@ -66,13 +66,6 @@ make_input_pyclone = function(input_muts){
 
   if(patient == "LY_RAP_0001"){
   muts_sum = filter(as.data.table(table(muts$mut_id)), N ==3)$V1
-  #fix major and minor CN status for mutations
-  #*****need to fix this ********
-  #muts = merge(muts, all_muts, by=c("samplename", "id"))
-  #muts$MajorCN = muts$Nmaj
-  #muts$MinorCN = muts$Nmin
-  #muts$Nmaj = NULL
-  #muts$Nmin = NULL
   }
 
   if(patient == "LY_RAP_0002"){
