@@ -14,7 +14,7 @@ source /cluster/home/kisaev/.bashrc
 source activate pairtree
 
 #set up input files
-input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-09-26_input_files
+input_files=/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files
 cd $input_files
 
 #don't forget to manually edit input *params.json files to remove the "" in the garbage []
@@ -30,7 +30,7 @@ cd min100_muts
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Plot best tree results in an HTML file.
-$PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz final_chosen_tree/p001.results.html --reorder-subclones --tree-json final_chosen_tree/p001_solution.json --tree-index 2 --remove-normal
+$PTDIR/bin/plottree --runid p001 $input_files/p001_ssm_input.ssm $input_files/p001_input.params.json p001.results.npz final_chosen_tree/p001.results.html --reorder-subclones --tree-json final_chosen_tree/p001_solution.json --tree-index 1 --remove-normal
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #P002+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
