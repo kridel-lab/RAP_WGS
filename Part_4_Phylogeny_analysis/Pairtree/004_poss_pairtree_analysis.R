@@ -40,24 +40,26 @@ patients= c("LY_RAP_0001", "LY_RAP_0002", "LY_RAP_0003")
 
 #pyclone input files
 p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
-p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
-p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
+#p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
+#p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
+#setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
+#p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+#p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/18-10-2021")
 p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
-p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
-p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+#p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+#p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #pairtree results json files
 p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_solution.json")
-p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
-p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
+#p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
+#p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #prep everything
@@ -88,7 +90,7 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
   dat$var_read_prob = dat$major_cn/ (dat$major_cn + dat$minor_cn)
   dat = dat[,c("name", "var_reads", "total_reads", "var_read_prob", "sample_id")]
 
-  #keep only mutations in clusters with at least 20 mutations
+  #keep only mutations in clusters with at least 100 mutations
   clusts_muts = unique(py_out[,c("cluster_id", "mutation_id")])
   t = as.data.table(table(clusts_muts$cluster_id))
   t = filter(t, N >100)
@@ -151,5 +153,5 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
 }
 
 pairtree_summary(p001_pyclone_input, p001_pyclone_output, p001_pairtree, p001_pairtree_json)
-pairtree_summary(p002_pyclone_input, p002_pyclone_output, p002_pairtree, p002_pairtree_json)
-pairtree_summary(p003_pyclone_input, p003_pyclone_output, p003_pairtree, p003_pairtree_json)
+#pairtree_summary(p002_pyclone_input, p002_pyclone_output, p002_pairtree, p002_pairtree_json)
+#pairtree_summary(p003_pyclone_input, p003_pyclone_output, p003_pairtree, p003_pairtree_json)
