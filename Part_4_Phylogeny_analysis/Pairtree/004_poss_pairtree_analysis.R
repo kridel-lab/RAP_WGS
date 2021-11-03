@@ -57,7 +57,7 @@ p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairt
 #p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #pairtree results json files
-p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_solution.json")
+p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files/min100_muts/final_chosen_tree/p001_solution.json")
 #p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
 #p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
 
@@ -71,10 +71,10 @@ mut_info = unique(read_only[,c("mut_id", "REF", "ALT", "symbol", "STUDY_PATIENT_
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree")
 
 #test
-#py_in=p002_pyclone_input
-#py_out=p002_pyclone_output
-#pairtree_cluster=p002_pairtree
-#pairtree_results=p002_pairtree_json
+#py_in=p001_pyclone_input
+#py_out=p001_pyclone_output
+#pairtree_cluster=p001_pairtree
+#pairtree_results=p001_pairtree_json
 
 pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
 
@@ -83,6 +83,9 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
   #s0	S_0	54,175,196	1000,1000,1000	0.5,0.5,0.5
   dat = py_in
   dat = as.data.table(filter(dat, mutation_id %in% py_out$mutation_id))
+
+  pat = as.character( dat$sample_id[1])
+  pat = paste(unlist(strsplit(pat, "_"))[1:3], collapse="_")
 
   dat$name = dat$mutation_id
   dat$var_reads = dat$alt_counts
@@ -93,7 +96,14 @@ pairtree_summary = function(py_in, py_out, pairtree_cluster, pairtree_results){
   #keep only mutations in clusters with at least 100 mutations
   clusts_muts = unique(py_out[,c("cluster_id", "mutation_id")])
   t = as.data.table(table(clusts_muts$cluster_id))
-  t = filter(t, N >100)
+
+  if(pat == "LY_RAP_0001"){
+    t = filter(t, N >50)
+  }
+  if(!(pat == "LY_RAP_0001")){
+    t = filter(t, N >100)
+  }
+
   muts_keep = filter(py_out, cluster_id %in% t$V1)
 
   colnames(t)= c("cluster_id", "num_muts")
