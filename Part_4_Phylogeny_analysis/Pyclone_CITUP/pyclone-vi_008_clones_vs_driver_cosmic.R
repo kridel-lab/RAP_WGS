@@ -53,19 +53,19 @@ read_only$Tissue_Site[z] = "Aorta, ascending"}
 
 #pyclone input files
 p001_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0001_pyclone_input.tsv")
-p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
-p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
+#p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv")
+#p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/23-06-2021")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/18-10-2021")
 p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+#p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+#p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
-p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
-p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+#p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+#p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #----------------------------------------------------------------------
 #purpose
@@ -138,7 +138,13 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
 
   t = as.data.table(table(cluster_muts$cluster_id))
-  t = filter(t, N >100)
+
+  if(patient == "LY_RAP_0001"){
+    t = filter(t, N >50)
+  }
+  if(!(patient == "LY_RAP_0001")){
+    t = filter(t, N >100)
+  }
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
   colnames(t)= c("cluster_id", "num_muts")
 
@@ -265,24 +271,33 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 }
 
 p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
-p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
-p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
+#p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
+#p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #combine into one row plot
-all_pats = rbind(p001, p002, p003)
+#all_pats = rbind(p001, p002, p003)
+all_pats = p001
 
 write.table(all_pats, file=paste(date, "driver_cosmic_mutations_across_pyclone_pairtree_clones.txt", sep="_"),
 quote=F, row.names=F, sep="\t")
 
 setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone")
 
-pdf("cosmic_muts_across_clones.pdf", width=8, height=6)
+pdf("cosmic_muts_across_clones_p1_only.pdf", width=8, height=6)
 g = ggbarplot(all_pats, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
 xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
-theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")+
-ggforce::facet_row(. ~ patient, scales="free", space='free')
+theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")#+
+#ggforce::facet_row(. ~ patient, scales="free", space='free')
 print(g)
 dev.off()
+
+#pdf("cosmic_muts_across_clones.pdf", width=8, height=6)
+#g = ggbarplot(all_pats, x = "Pairtree_cluster", y="Number_of_mutations", fill="Variable")+
+#xlab("Pairtree Clone") + ylab("# of mutations")+theme_classic()+
+#theme(axis.text = element_text(size = 12, color="black"), legend.position="bottom")+
+#ggforce::facet_row(. ~ patient, scales="free", space='free')
+#print(g)
+#dev.off()
 
 #-----
 #DONE-

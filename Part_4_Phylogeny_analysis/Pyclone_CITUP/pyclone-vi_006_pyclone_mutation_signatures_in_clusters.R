@@ -58,20 +58,20 @@ p002_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0002_pyclone_input.tsv"
 p003_pyclone_input = fread("all_samples_pyclonevi_LY_RAP_0003_pyclone_input.tsv")
 
 #pyclone output files
-setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/26-09-2021")
+setwd("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pyclone/18-10-2021")
 p001_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0001_beta-binomial_rap_wgs_all_muts.tsv")
-p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
-p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
+#p002_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0002_beta-binomial_rap_wgs_all_muts.tsv")
+#p003_pyclone_output = fread("all_samples_pyclonevi_LY_RAP_0003_beta-binomial_rap_wgs_all_muts.tsv")
 
 #pairtree clusters - files made manually
-p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
-p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
-p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
+p001_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files/min100_muts/final_chosen_tree/p001_pairtree_clones.txt")
+#p002_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_pairtree_clones.txt")
+#p003_pairtree = fread("/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_pairtree_clones.txt")
 
 #pairtree results json files
-p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p001_solution.json")
-p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
-p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
+p001_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-10-18_input_files/min100_muts/final_chosen_tree/p001_solution.json")
+#p002_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p002_solution.json")
+#p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/ANALYSIS/Pairtree/2021-06-24_input_files/min100_muts/final_chosen_tree/p003_solution.json")
 
 #----------------------------------------------------------------------
 #purpose
@@ -89,9 +89,9 @@ p003_pairtree_json = fromJSON(file="/cluster/projects/kridelgroup/RAP_ANALYSIS/A
 #----------------------------------------------------------------------
 
 #test
-#patient = patients[2]
-#pyclone_output = p002_pyclone_output
-#pairtree_cluster = p002_pairtree
+patient = patients[1]
+pyclone_output = p001_pyclone_output
+pairtree_cluster = p001_pairtree
 
 get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 
@@ -114,7 +114,14 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
   cluster_muts = unique(muts[,c("mutation_id", "cluster_id")])
 
   t = as.data.table(table(cluster_muts$cluster_id))
-  t = filter(t, N >100)
+
+  if(patient == "LY_RAP_0001"){
+    t = filter(t, N >50)
+  }
+  if(!(patient == "LY_RAP_0001")){
+    t = filter(t, N >100)
+  }
+
   muts_keep = filter(cluster_muts, cluster_id %in% t$V1)
   colnames(t)= c("cluster_id", "num_muts")
 
@@ -214,11 +221,13 @@ get_mut_signatures = function(patient, pyclone_output, pairtree_cluster){
 }
 
 p001 = get_mut_signatures("LY_RAP_0001", p001_pyclone_output, p001_pairtree)
-p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
-p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
+#p002 = get_mut_signatures("LY_RAP_0002", p002_pyclone_output, p002_pairtree)
+#p003 = get_mut_signatures("LY_RAP_0003", p003_pyclone_output, p003_pairtree)
 
 #combine all results
-all_results = rbind(p001, p002, p003)
+#all_results = rbind(p001, p002, p003)
+all_results = p001
+
 saveRDS(all_results, file="all_pyclone_clusters_signatures_results.rds")
 
 #-----
